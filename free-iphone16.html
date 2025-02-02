@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Win an iPhone 16 Pro Max!</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      color: #333;
+      text-align: center;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin: 20px 0;
+      color: #ff4757;
+      animation: pulse 1.5s infinite;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin: 10px 0;
+      color: #2f3542;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin: 10px 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .gift-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin: 30px 0;
+    }
+
+    .gift-card {
+      width: 150px;
+      height: 150px;
+      background: #fff;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .gift-card:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .gift-card.selected {
+      background: #ff4757;
+      color: #fff;
+    }
+
+    .result {
+      margin: 30px 0;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #2f3542;
+    }
+
+    .share-prompt {
+      display: none;
+      margin: 30px 0;
+      font-size: 1.2rem;
+      color: #2f3542;
+    }
+
+    .share-prompt a {
+      color: #ff4757;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .share-prompt a:hover {
+      text-decoration: underline;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      50% { transform: translateX(10px); }
+      75% { transform: translateX(-10px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .gift-card {
+        width: 120px;
+        height: 120px;
+        font-size: 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔥 Win a Brand-New iPhone 16 Pro Max! 🔥</h1>
+    <h2>🎉 The latest iPhone 16 Pro Max could be yours—for FREE! 🎉</h2>
+    <p>Follow these steps to enter:</p>
+    <ol>
+      <li>Click the link below 👇</li>
+      <li>Fill out the quick entry form</li>
+      <li>Choose from one of six mystery gift cards in a game-style format</li>
+    </ol>
+
+    <div class="gift-cards">
+      <div class="gift-card" data-card="1">🎁</div>
+      <div class="gift-card" data-card="2">🎁</div>
+      <div class="gift-card" data-card="3">🎁</div>
+      <div class="gift-card" data-card="4">🎁</div>
+      <div class="gift-card" data-card="5">🎁</div>
+      <div class="gift-card" data-card="6">🎁</div>
+    </div>
+
+    <div class="result" id="result"></div>
+    <div class="share-prompt" id="share-prompt">
+      🎉 Congratulations! Share this page with 10 friends to unlock your prize! 🎉<br>
+      <a href="#" onclick="sharePage()">Click here to share</a>
+    </div>
+  </div>
+
+  <script>
+    const giftCards = document.querySelectorAll('.gift-card');
+    const result = document.getElementById('result');
+    const sharePrompt = document.getElementById('share-prompt');
+
+    giftCards.forEach(card => {
+      card.addEventListener('click', () => {
+        if (card.classList.contains('selected')) return;
+
+        // Deselect all cards
+        giftCards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+
+        // Simulate a game
+        setTimeout(() => {
+          const isWinner = Math.random() < 0.3; // 30% chance to win
+          if (isWinner) {
+            result.textContent = '🎉 Congratulations! You won! 🎉';
+            sharePrompt.style.display = 'block';
+          } else {
+            result.textContent = '😢 Sorry, try again next time!';
+            sharePrompt.style.display = 'none';
+          }
+        }, 1000);
+      });
+    });
+
+    function sharePage() {
+      const url = window.location.href;
+      const text = "I just won a chance to get a FREE iPhone 16 Pro Max! Check it out: " + url;
+      if (navigator.share) {
+        navigator.share({
+          title: 'Win an iPhone 16 Pro Max!',
+          text: text,
+          url: url,
+        });
+      } else {
+        alert("Share this link with 10 friends: " + url);
+      }
+    }
+  </script>
+</body>
+</html>
