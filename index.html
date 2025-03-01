@@ -1,201 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Win an iPhone 16 Pro Max!</title>
-  <style>
-    /* General Styles */
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-      color: #333;
-      text-align: center;
-      overflow-x: hidden;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horror Text Messages</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
 
-    h1 {
-      font-size: 2.5rem;
-      margin: 20px 0;
-      color: #ff4757;
-      animation: pulse 1.5s infinite;
-    }
+        body {
+            background-color: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 6s ease;
+        }
 
-    h2 {
-      font-size: 1.8rem;
-      margin: 10px 0;
-      color: #2f3542;
-    }
+        .room {
+            position: relative;
+            width: 700px;
+            height: 400px;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 3s ease;
+        }
 
-    p {
-      font-size: 1.2rem;
-      margin: 10px 0;
-    }
+        .window {
+            position: absolute;
+            top: 50px;
+            right: 30px;
+            width: 150px;
+            height: 200px;
+            background-color: #05050f;
+            border: 5px solid #333;
+            border-radius: 5px;
+            overflow: hidden;
+        }
 
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+        .curtain {
+            position: absolute;
+            top: 0;
+            width: 80px;
+            height: 200px;
+            background-color: #330000;
+        }
 
-    .gift-cards {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
-      margin: 30px 0;
-    }
+        .curtain-left {
+            left: 0;
+            transform-origin: left;
+            transition: transform 5s ease;
+        }
 
-    .gift-card {
-      width: 150px;
-      height: 150px;
-      background: #fff;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+        .curtain-right {
+            right: 0;
+            transform-origin: right;
+            transition: transform 5s ease;
+        }
 
-    .gift-card:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-    }
+        .curtain-move .curtain-left {
+            transform: translateX(10px);
+        }
 
-    .gift-card.selected {
-      background: #ff4757;
-      color: #fff;
-    }
+        .curtain-move .curtain-right {
+            transform: translateX(-10px);
+        }
 
-    .result {
-      margin: 30px 0;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #2f3542;
-    }
+        .phone {
+            position: relative;
+            width: 250px;
+            height: 400px;
+            background-color: #000;
+            border-radius: 20px;
+            border: 8px solid #222;
+            margin: 0 auto;
+            padding: 15px;
+            overflow: hidden;
+        }
 
-    .share-prompt {
-      display: none;
-      margin: 30px 0;
-      font-size: 1.2rem;
-      color: #2f3542;
-    }
+        .phone-screen {
+            background-color: #111;
+            height: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
 
-    .share-prompt a {
-      color: #ff4757;
-      text-decoration: none;
-      font-weight: bold;
-    }
+        .message-container {
+            padding: 10px;
+        }
 
-    .share-prompt a:hover {
-      text-decoration: underline;
-    }
+        .message {
+            max-width: 80%;
+            background-color: #333;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 18px;
+            margin: 5px 0;
+            opacity: 0;
+            position: relative;
+            transition: opacity 1s ease;
+            animation-fill-mode: forwards;
+            overflow: hidden;
+        }
 
-    /* Animations */
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
+        .typing {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0;
+            width: 0;
+            animation: typing 1.5s steps(40, end) forwards;
+        }
 
-    @keyframes shake {
-      0% { transform: translateX(0); }
-      25% { transform: translateX(-10px); }
-      50% { transform: translateX(10px); }
-      75% { transform: translateX(-10px); }
-      100% { transform: translateX(0); }
-    }
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
 
-    /* Responsive Design */
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 2rem;
-      }
+        .glitch {
+            animation: glitch 0.3s ease forwards;
+        }
 
-      h2 {
-        font-size: 1.5rem;
-      }
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-5px, 5px); color: #0ff; }
+            40% { transform: translate(-5px, -5px); color: #f0f; }
+            60% { transform: translate(5px, 5px); color: #ff0; }
+            80% { transform: translate(5px, -5px); color: #f00; }
+            100% { transform: translate(0); }
+        }
 
-      .gift-card {
-        width: 120px;
-        height: 120px;
-        font-size: 1.2rem;
-      }
-    }
-  </style>
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-2px) }
+            20%, 40%, 60%, 80% { transform: translateX(2px) }
+        }
+
+        .blackout {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🔥 Win a Brand-New iPhone 16 Pro Max! 🔥</h1>
-    <h2>🎉 The latest iPhone 16 Pro Max could be yours—for FREE! 🎉</h2>
-    <p>Follow these steps to enter:</p>
-    <ol>
-      <li>Click the link below 👇</li>
-      <li>Fill out the quick entry form</li>
-      <li>Choose from one of six mystery gift cards in a game-style format</li>
-    </ol>
-
-    <div class="gift-cards">
-      <div class="gift-card" data-card="1">🎁</div>
-      <div class="gift-card" data-card="2">🎁</div>
-      <div class="gift-card" data-card="3">🎁</div>
-      <div class="gift-card" data-card="4">🎁</div>
-      <div class="gift-card" data-card="5">🎁</div>
-      <div class="gift-card" data-card="6">🎁</div>
+    <div class="room">
+        <div class="window">
+            <div class="curtain curtain-left"></div>
+            <div class="curtain curtain-right"></div>
+        </div>
+        <div class="phone">
+            <div class="phone-screen">
+                <div class="message-container">
+                    <div id="message1" class="message">
+                        <p class="typing">Don't look outside.</p>
+                    </div>
+                    <div id="message2" class="message">
+                        <p class="typing">I said don't look.</p>
+                    </div>
+                    <div id="message3" class="message">
+                        <p class="typing">Now I see you.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    <div class="blackout"></div>
 
-    <div class="result" id="result"></div>
-    <div class="share-prompt" id="share-prompt">
-      🎉 Congratulations! Share this page with 10 friends to unlock your prize! 🎉<br>
-      <a href="#" onclick="sharePage()">Click here to share</a>
-    </div>
-  </div>
+    <audio id="creepySound" preload="auto">
+        <source src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQwAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAASAAAeMwAUFBQUFCgUFBQUFDMzMzMzM0dHR0dHR1xHR0dHR3BwcHBwcISEhISEhJmZmZmZma2tra2trcDAwMDAwNTU1NTU1OkAAAAAAAAAAABMYXZjNTguMTM0AAAAAAAAAAAAAADkCQKgAAAAAAAeMzGFkf/7kMTmGAAAAaQAAAAwAAABpAAAATQAQA+gG8HQcHiQGgBQHAc+D//B8Hg+D/4PqDlQOA4CAUAwDBsU44SGms24QhIMAgIAg8oCDoqx5u/3o9DgNBQbv/so//wqcH/+sMMHQcGwQDB0HQkOIpQN0CcDAoCoF//+oZUkWvr/AIFhm/+7ov/M5////6RbI9v////+r33///p//f//r/04GkAzf4z/EgQA/fQ7//v9Rf9Q/X6v/////////+QhDECgApq7JxA//OCyrrvHStklS3f//0BISoLqU//yErH/EoKh5bxrKWltMHIqRgwkMgx6EhcbKQs0j/FIrKS5aAn/+5DE5gALZbFVvPNFsYK3Kr+eaLeCnIkkdLAWQ0to2IyKgABAyKlgLIaM0SmLKFTtOociEAACpTGr6ejcAAAAA3TTTB0eCgYLBlBQ0fDQMqAgYHgYGDwGFQiYJAhL8qCjLMojw8WxUdKgRkPmBGfRrSHxI5FIvlxNkw15GB0mZDHULlMmnVQZs0y4qUo8Mky6j2PQA8JFMuNPDLf///7oOTiMGgIQD//8yCvk6FAaPBRWVFIMLQoMMSDXTzpdK4MIBMBgUC4ZeW4WJSbGDQkSsZeHMkxLB4EyuZ9KtOHyVvKPxlfcWjMZE/apG5nvEpJgpPNPYqv/+5DE5gAMKbFfvPHNwXC2rDeeOaD1qK1NUGXBExIXB5GRh6FzCqGjpRtYfQYsUyAAAjnmSSSSSJCgCk7RYRWlpT4NIRUi4KJCqRfTTKLhtgQsKlrSICPHjc2EZFxMKDHxwmWjwdbyXyTl3NVWgTnXuUrWoUss9a1VrWtQ9/QvkpJFoRBGNxlVpQkCBJJFIeDYkASYFAUXHwcADoUHjx8PBx44EsUhTB4Q8EEIPQ4NUKZKPUjZ0JctF0ukSCNBblSpGotGowkUik5lIuVUgQJqRIUAR//ug5OIwbAIDgP//wgA5JIEEEiShH/+5DE5gAMPbNfvPNHIYa2q/eeOaEEIFFB44EEEiQgUUFFH///+g8pH//////9S0jQ6KiNDgXB0XB0VFZcXlJSRJEhKyQpKSJIkJWXF5SUlRUVEEiCQ6HA6Lw6Kig6KCwuKykqKkBQXFxUVkBQVFBYggoICQpIjAuKiwoIkBUUkEiCSCggIigvKSkjQXpIUlxjCxKVMQU1FMy45OC40VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuOTguNFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV" type="audio/mp3">
+    </audio>
 
-  <script>
-    const giftCards = document.querySelectorAll('.gift-card');
-    const result = document.getElementById('result');
-    const sharePrompt = document.getElementById('share-prompt');
-
-    giftCards.forEach(card => {
-      card.addEventListener('click', () => {
-        if (card.classList.contains('selected')) return;
-
-        // Deselect all cards
-        giftCards.forEach(c => c.classList.remove('selected'));
-        card.classList.add('selected');
-
-        // Simulate a game
-        setTimeout(() => {
-          const isWinner = Math.random() < 0.3; // 30% chance to win
-          if (isWinner) {
-            result.textContent = '🎉 Congratulations! You won! 🎉';
-            sharePrompt.style.display = 'block';
-          } else {
-            result.textContent = '😢 Sorry, try again next time!';
-            sharePrompt.style.display = 'none';
-          }
-        }, 1000);
-      });
-    });
-
-    function sharePage() {
-      const url = window.location.href;
-      const text = "I just won a chance to get a FREE iPhone 16 Pro Max! Check it out: " + url;
-      if (navigator.share) {
-        navigator.share({
-          title: 'Win an iPhone 16 Pro Max!',
-          text: text,
-          url: url,
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const message1 = document.getElementById('message1');
+            const message2 = document.getElementById('message2');
+            const message3 = document.getElementById('message3');
+            const room = document.querySelector('.room');
+            const window = document.querySelector('.window');
+            const body = document.querySelector('body');
+            const blackout = document.querySelector('.blackout');
+            const creepySound = document.getElementById('creepySound');
+            
+            // Start the sequence
+            setTimeout(() => {
+                message1.style.opacity = '1';
+                
+                // After clicking anywhere or waiting, show the second message
+                const showMessage2 = () => {
+                    if (message2.style.opacity !== '1') {
+                        message2.style.opacity = '1';
+                        document.querySelector('.window').classList.add('curtain-move');
+                        body.style.backgroundColor = '#070707';
+                        room.style.backgroundColor = '#151515';
+                        
+                        // Show the final message with effects
+                        setTimeout(() => {
+                            message3.style.opacity = '1';
+                            message3.querySelector('p').classList.add('glitch');
+                            window.classList.add('shake');
+                            
+                            // Play sound if available
+                            try {
+                                creepySound.play();
+                            } catch(e) {
+                                console.log('Sound could not be played:', e);
+                            }
+                            
+                            setTimeout(() => {
+                                blackout.style.opacity = '1';
+                            }, 2000);
+                        }, 5000);
+                    }
+                };
+                
+                // Setup event listeners
+                document.addEventListener('click', showMessage2, { once: true });
+                
+                // Or wait for a timer
+                setTimeout(showMessage2, 5000);
+                
+            }, 1000);
         });
-      } else {
-        alert("Share this link with 10 friends: " + url);
-      }
-    }
-  </script>
+    </script>
 </body>
 </html>
