@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Horror Text Messages</title>
+    <title>Horror Text Messages - Cartoon Style</title>
     <style>
         * {
             margin: 0;
@@ -32,6 +32,165 @@
             transition: all 3s ease;
         }
 
+        /* Character styling */
+        .character {
+            position: absolute;
+            bottom: 60px;
+            left: 50px;
+            width: 120px;
+            height: 240px;
+            z-index: 2;
+        }
+
+        .head {
+            position: absolute;
+            top: 0;
+            left: 30px;
+            width: 60px;
+            height: 80px;
+            background-color: #FFD5B8;
+            border: 3px solid #333;
+            border-radius: 50% 50% 45% 45%;
+            z-index: 3;
+        }
+
+        .hair {
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            width: 90px;
+            height: 50px;
+            background-color: #6E3E1C;
+            border-radius: 50% 50% 0 0;
+            z-index: 2;
+        }
+
+        .hair::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: -10px;
+            width: 30px;
+            height: 70px;
+            background-color: #6E3E1C;
+            border-radius: 0 50% 20% 0;
+            transform: rotate(10deg);
+        }
+
+        .hair::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -10px;
+            width: 30px;
+            height: 70px;
+            background-color: #6E3E1C;
+            border-radius: 50% 0 0 20%;
+            transform: rotate(-10deg);
+        }
+
+        .eyes {
+            position: absolute;
+            top: 30px;
+            left: 10px;
+            width: 40px;
+            height: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .eye {
+            width: 12px;
+            height: 12px;
+            background-color: white;
+            border: 2px solid #333;
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .eye::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background-color: #333;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+        }
+
+        .mouth {
+            position: absolute;
+            bottom: 20px;
+            left: 22px;
+            width: 16px;
+            height: 6px;
+            background-color: #333;
+            border-radius: 0 0 10px 10px;
+            transition: all 1s ease;
+        }
+
+        .scared .mouth {
+            width: 20px;
+            height: 15px;
+            border-radius: 50%;
+            bottom: 15px;
+            left: 20px;
+        }
+
+        .body {
+            position: absolute;
+            top: 75px;
+            left: 40px;
+            width: 40px;
+            height: 80px;
+            background-color: #7C0A02;
+            border: 3px solid #333;
+            border-radius: 10px 10px 0 0;
+            z-index: 1;
+        }
+
+        .arm {
+            position: absolute;
+            width: 15px;
+            height: 60px;
+            background-color: #7C0A02;
+            border: 2px solid #333;
+            z-index: 0;
+        }
+
+        .arm-left {
+            top: 80px;
+            left: 25px;
+            transform: rotate(15deg);
+            transform-origin: top right;
+        }
+
+        .arm-right {
+            top: 80px;
+            right: 25px;
+            transform: rotate(-35deg);
+            transform-origin: top left;
+        }
+
+        .legs {
+            position: absolute;
+            bottom: 0;
+            left: 40px;
+            width: 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .leg {
+            width: 15px;
+            height: 80px;
+            background-color: #1E3F66;
+            border: 2px solid #333;
+            border-radius: 0 0 5px 5px;
+        }
+
+        /* Window styling */
         .window {
             position: absolute;
             top: 50px;
@@ -72,16 +231,65 @@
             transform: translateX(-10px);
         }
 
+        /* Shadow figure in window */
+        .shadow-figure {
+            position: absolute;
+            top: 40px;
+            left: 55px;
+            width: 40px;
+            height: 80px;
+            background-color: #000;
+            border-radius: 10px 10px 0 0;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        .shadow-head {
+            position: absolute;
+            top: -25px;
+            left: 5px;
+            width: 30px;
+            height: 30px;
+            background-color: #000;
+            border-radius: 50%;
+        }
+
+        .shadow-eyes {
+            position: absolute;
+            top: 8px;
+            left: 2px;
+            display: flex;
+            justify-content: space-between;
+            width: 25px;
+        }
+
+        .shadow-eye {
+            width: 8px;
+            height: 8px;
+            background-color: #f00;
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        .window.active .shadow-figure,
+        .window.active .shadow-eye {
+            opacity: 1;
+        }
+
+        /* Phone styling */
         .phone {
-            position: relative;
-            width: 250px;
-            height: 400px;
+            position: absolute;
+            bottom: 50px;
+            right: 250px;
+            width: 150px;
+            height: 250px;
             background-color: #000;
             border-radius: 20px;
             border: 8px solid #222;
-            margin: 0 auto;
             padding: 15px;
             overflow: hidden;
+            transform: rotate(15deg);
         }
 
         .phone-screen {
@@ -165,10 +373,40 @@
 </head>
 <body>
     <div class="room">
+        <!-- Cartoon character -->
+        <div class="character">
+            <div class="hair"></div>
+            <div class="head">
+                <div class="eyes">
+                    <div class="eye"></div>
+                    <div class="eye"></div>
+                </div>
+                <div class="mouth"></div>
+            </div>
+            <div class="body"></div>
+            <div class="arm arm-left"></div>
+            <div class="arm arm-right"></div>
+            <div class="legs">
+                <div class="leg"></div>
+                <div class="leg"></div>
+            </div>
+        </div>
+
+        <!-- Window with shadow figure -->
         <div class="window">
             <div class="curtain curtain-left"></div>
             <div class="curtain curtain-right"></div>
+            <div class="shadow-figure">
+                <div class="shadow-head">
+                    <div class="shadow-eyes">
+                        <div class="shadow-eye"></div>
+                        <div class="shadow-eye"></div>
+                    </div>
+                </div>
+            </div>
         </div>
+
+        <!-- Phone with messages -->
         <div class="phone">
             <div class="phone-screen">
                 <div class="message-container">
@@ -201,6 +439,7 @@
             const body = document.querySelector('body');
             const blackout = document.querySelector('.blackout');
             const creepySound = document.getElementById('creepySound');
+            const character = document.querySelector('.character');
             
             // Start the sequence
             setTimeout(() => {
@@ -211,6 +450,8 @@
                     if (message2.style.opacity !== '1') {
                         message2.style.opacity = '1';
                         document.querySelector('.window').classList.add('curtain-move');
+                        character.querySelector('.head').classList.add('scared');
+                        character.querySelector('.mouth').classList.add('scared');
                         body.style.backgroundColor = '#070707';
                         room.style.backgroundColor = '#151515';
                         
@@ -219,6 +460,7 @@
                             message3.style.opacity = '1';
                             message3.querySelector('p').classList.add('glitch');
                             window.classList.add('shake');
+                            window.classList.add('active');
                             
                             // Play sound if available
                             try {
