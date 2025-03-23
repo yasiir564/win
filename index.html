@@ -157,7 +157,7 @@ async function downloadTikTok() {
         // Log success information
         console.log('Video successfully fetched using method:', data.method || 'unknown');
         
-        // Display success result
+        // Display success result with proper video download handling
         document.getElementById('result').innerHTML = `
             <div class="success-result">
                 <h2>Video Preview</h2>
@@ -171,7 +171,7 @@ async function downloadTikTok() {
                     <p><strong>Creator:</strong> @${data.author || 'Unknown'}</p>
                     <p><strong>Description:</strong> ${data.desc || 'No description'}</p>
                     <div class="download-options">
-                        <a href="${data.video_url}" class="download-btn" download="tiktok-${data.video_id || 'video'}.mp4">
+                        <a href="${data.video_url}" class="download-btn" download>
                             Download Video
                         </a>
                         <button onclick="copyVideoLink('${data.video_url}')" class="copy-btn">
