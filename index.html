@@ -120,7 +120,10 @@ async function downloadTikTok() {
         const response = await fetch(apiEndpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: url }),
+            body: JSON.stringify({ 
+                url: url,
+                use_proxy: true  // Explicitly indicate that proxy should be used
+            }),
             signal: controller.signal
         });
         
@@ -156,6 +159,7 @@ async function downloadTikTok() {
         
         // Log success information
         console.log('Video successfully fetched using method:', data.method || 'unknown');
+        console.log('Proxy used:', data.proxy_used ? 'Yes' : 'No');
         
         // Display success result with the proxy_url for playback and video_url for download
         document.getElementById('result').innerHTML = `
@@ -163,13 +167,14 @@ async function downloadTikTok() {
                 <h2>Video Preview</h2>
                 <div class="video-container">
                     <video controls class="video-player" poster="${data.cover_url || ''}">
-                        <source src="${data.proxy_url}" type="video/mp4">
+                        <source src="${data.proxy_url || data.video_url}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
                 </div>
                 <div class="video-info">
                     <p><strong>Creator:</strong> @${data.author || 'Unknown'}</p>
                     <p><strong>Description:</strong> ${data.desc || 'No description'}</p>
+                    <p><strong>Fetched via:</strong> ${data.proxy_used ? 'Proxy server' : 'Direct connection'}</p>
                     <div class="download-options">
                         <a href="${data.video_url}" class="download-btn" download>
                             Download Video
@@ -195,11 +200,17 @@ async function downloadTikTok() {
             errorMessage = 'Request timed out. The server took too long to respond.';
         }
         
+        // Add proxy-specific error messages
+        if (errorMessage.includes('proxy')) {
+            errorMessage = 'Proxy server error: ' + errorMessage;
+        }
+        
         document.getElementById('result').innerHTML = `
             <div class="error-message">
                 <p>❌ ${errorMessage}</p>
                 <p>Try a different TikTok link or try again later.</p>
                 <button onclick="downloadTikTok()" class="retry-btn">Try Again</button>
+                <button onclick="downloadWithoutProxy()" class="alt-btn">Try Without Proxy</button>
             </div>
         `;
     } finally {
@@ -207,6 +218,124 @@ async function downloadTikTok() {
         urlInput.disabled = false;
         document.getElementById('downloadBtn').disabled = false;
     }
+}
+
+// Alternative function to try downloading without proxy
+function downloadWithoutProxy() {
+    const urlInput = document.getElementById('urlInput');
+    const url = urlInput.value.trim();
+    
+    if (!url) {
+        alert('Please enter a TikTok URL');
+        urlInput.focus();
+        return;
+    }
+    
+    // Basic URL validation
+    if (!url.includes('tiktok.com')) {
+        alert('Please enter a valid TikTok URL (must include tiktok.com)');
+        urlInput.focus();
+        return;
+    }
+    
+    // Use the complete WordPress REST API endpoint
+    const apiEndpoint = 'https://denmara.com/wp-json/tiktok/v1/download';
+    
+    // Disable input and button during processing
+    urlInput.disabled = true;
+    document.getElementById('downloadBtn').disabled = true;
+    
+    // Show loading state
+    document.getElementById('result').innerHTML = `
+        <div class="loading">
+            <p>Fetching TikTok video without proxy...</p>
+            <div class="spinner"></div>
+            <p class="loading-message">This may take a few moments...</p>
+        </div>
+    `;
+    
+    // Create an AbortController for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+    
+    // Start the fetch request
+    fetch(apiEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            url: url,
+            use_proxy: false  // Explicitly turn off proxy
+        }),
+        signal: controller.signal
+    })
+    .then(response => {
+        // Clear the timeout
+        clearTimeout(timeoutId);
+        
+        if (!response.ok) {
+            return response.text().then(text => {
+                throw new Error(text || `Server error: ${response.status}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (!data.success) {
+            throw new Error(data.error || 'Error fetching video.');
+        }
+        
+        // Display success result with the direct video_url
+        document.getElementById('result').innerHTML = `
+            <div class="success-result">
+                <h2>Video Preview (Direct Connection)</h2>
+                <div class="video-container">
+                    <video controls class="video-player" poster="${data.cover_url || ''}">
+                        <source src="${data.video_url}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <div class="video-info">
+                    <p><strong>Creator:</strong> @${data.author || 'Unknown'}</p>
+                    <p><strong>Description:</strong> ${data.desc || 'No description'}</p>
+                    <p><strong>Fetched via:</strong> Direct connection</p>
+                    <div class="download-options">
+                        <a href="${data.video_url}" class="download-btn" download>
+                            Download Video
+                        </a>
+                        <button onclick="copyVideoLink('${data.video_url}')" class="copy-btn">
+                            Copy Video Link
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // Clear the input field for next use
+        urlInput.value = '';
+    })
+    .catch(error => {
+        console.error('Error details:', error);
+        
+        let errorMessage = error.message || 'An unknown error occurred';
+        
+        // Specific error handling for timeout
+        if (error.name === 'AbortError') {
+            errorMessage = 'Request timed out. The server took too long to respond.';
+        }
+        
+        document.getElementById('result').innerHTML = `
+            <div class="error-message">
+                <p>❌ ${errorMessage}</p>
+                <p>Direct connection failed. Try a different TikTok link or try again with proxy.</p>
+                <button onclick="downloadTikTok()" class="retry-btn">Try With Proxy</button>
+            </div>
+        `;
+    })
+    .finally(() => {
+        // Re-enable input and button
+        urlInput.disabled = false;
+        document.getElementById('downloadBtn').disabled = false;
+    });
 }
 
 // Function to copy video link to clipboard
