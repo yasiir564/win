@@ -44,7 +44,7 @@ async function downloadTikTok() {
     // Use the complete WordPress REST API endpoint
     const apiEndpoint = 'https://denmara.com/wp-json/tiktok/v1/download';
     
-    document.getElementById('result').innerHTML = '<p>Loading...</p>';
+    document.getElementById('result').innerHTML = '<p>Loading video...</p>';
     
     try {
         console.log('Sending request with URL:', url);
@@ -52,15 +52,12 @@ async function downloadTikTok() {
         const response = await fetch(apiEndpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url }),
-            // Don't use credentials unless you need them for authentication
-            // credentials: 'include'
+            body: JSON.stringify({ url })
         });
         
         // Get response text first to inspect what was returned
         const responseText = await response.text();
         console.log('Response status:', response.status);
-        console.log('Response text:', responseText);
         
         // Try to parse as JSON if possible
         let data;
@@ -78,14 +75,22 @@ async function downloadTikTok() {
         }
         
         document.getElementById('result').innerHTML = `
-            <h2>Video Preview:</h2>
-            <video controls class="w-full max-w-md">
-                <source src="${data.video_url}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-            <p><strong>Author:</strong> ${data.author}</p>
-            <p><strong>Description:</strong> ${data.desc}</p>
-            <a href="${data.video_url}" class="btn btn-primary" download="tiktok-video.mp4">Download Video</a>
+            <h2>Video Preview</h2>
+            <div class="video-container">
+                <video controls class="video-player">
+                    <source src="${data.video_url}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="video-info">
+                <p><strong>Creator:</strong> @${data.author}</p>
+                <p><strong>Description:</strong> ${data.desc}</p>
+                <div class="download-options">
+                    <a href="${data.video_url}" class="download-btn" download="tiktok-${data.video_id}.mp4">
+                        Download Video
+                    </a>
+                </div>
+            </div>
         `;
     } catch (error) {
         alert(`An error occurred: ${error.message}`);
