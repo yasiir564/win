@@ -39,12 +39,27 @@
   <script>
 async function downloadTikTok() {
     const url = document.getElementById('urlInput').value.trim();
-    if (!url) return alert('Please enter a valid TikTok URL');
+    if (!url) {
+        alert('Please enter a valid TikTok URL');
+        return;
+    }
+    
+    // Validate URL format
+    if (!url.includes('tiktok.com')) {
+        alert('Please enter a valid TikTok URL (must include tiktok.com)');
+        return;
+    }
     
     // Use the complete WordPress REST API endpoint
     const apiEndpoint = 'https://denmara.com/wp-json/tiktok/v1/download';
     
-    document.getElementById('result').innerHTML = '<p>Loading video...</p>';
+    // Show loading state
+    document.getElementById('result').innerHTML = `
+        <div class="loading">
+            <p>Fetching TikTok video...</p>
+            <div class="spinner"></div>
+        </div>
+    `;
     
     try {
         console.log('Sending request with URL:', url);
@@ -52,28 +67,37 @@ async function downloadTikTok() {
         const response = await fetch(apiEndpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url })
+            body: JSON.stringify({ url: url })
         });
         
-        // Get response text first to inspect what was returned
-        const responseText = await response.text();
         console.log('Response status:', response.status);
         
-        // Try to parse as JSON if possible
-        let data;
-        try {
-            data = JSON.parse(responseText);
-        } catch (e) {
-            console.error('Failed to parse response as JSON:', e);
-            throw new Error(`Server returned invalid JSON. Status: ${response.status}`);
+        // Handle HTTP errors
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Server error response:', errorText);
+            
+            let errorMessage = 'Error fetching video.';
+            try {
+                // Try to parse error as JSON
+                const errorJson = JSON.parse(errorText);
+                errorMessage = errorJson.error || errorMessage;
+            } catch (e) {
+                // If not JSON, use status text
+                errorMessage = `Server error: ${response.status} ${response.statusText}`;
+            }
+            
+            throw new Error(errorMessage);
         }
+        
+        // Parse JSON response
+        const data = await response.json();
         
         if (!data.success) {
-            alert(data.error || 'Error fetching video.');
-            document.getElementById('result').innerHTML = '';
-            return;
+            throw new Error(data.error || 'Error fetching video.');
         }
         
+        // Display success result
         document.getElementById('result').innerHTML = `
             <h2>Video Preview</h2>
             <div class="video-container">
@@ -93,11 +117,32 @@ async function downloadTikTok() {
             </div>
         `;
     } catch (error) {
-        alert(`An error occurred: ${error.message}`);
         console.error('Error details:', error);
-        document.getElementById('result').innerHTML = '';
+        document.getElementById('result').innerHTML = `
+            <div class="error-message">
+                <p>❌ ${error.message || 'An unknown error occurred'}</p>
+                <button onclick="downloadTikTok()" class="retry-btn">Try Again</button>
+            </div>
+        `;
     }
 }
+
+// Optional: Add input validation as the user types
+document.addEventListener('DOMContentLoaded', function() {
+    const urlInput = document.getElementById('urlInput');
+    if (urlInput) {
+        urlInput.addEventListener('paste', function(e) {
+            // Short timeout to let the paste complete
+            setTimeout(function() {
+                const url = urlInput.value.trim();
+                // Auto-submit if it looks like a TikTok URL was pasted
+                if (url && url.includes('tiktok.com')) {
+                    downloadTikTok();
+                }
+            }, 100);
+        });
+    }
+});
 </script>
 
 </body>
