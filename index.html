@@ -1,489 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Horror Text Messages - Cartoon Style</title>
+    <title>TikTok Video Downloader</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-
         body {
-            background-color: #0a0a0a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            transition: background-color 6s ease;
-        }
-
-        .room {
-            position: relative;
-            width: 700px;
-            height: 400px;
-            background-color: #1a1a1a;
-            border-radius: 10px;
-            padding: 20px;
-            transition: all 3s ease;
-        }
-
-        /* Character styling */
-        .character {
-            position: absolute;
-            bottom: 60px;
-            left: 50px;
-            width: 120px;
-            height: 240px;
-            z-index: 2;
-        }
-
-        .head {
-            position: absolute;
-            top: 0;
-            left: 30px;
-            width: 60px;
-            height: 80px;
-            background-color: #FFD5B8;
-            border: 3px solid #333;
-            border-radius: 50% 50% 45% 45%;
-            z-index: 3;
-        }
-
-        .hair {
-            position: absolute;
-            top: -10px;
-            left: 15px;
-            width: 90px;
-            height: 50px;
-            background-color: #6E3E1C;
-            border-radius: 50% 50% 0 0;
-            z-index: 2;
-        }
-
-        .hair::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: -10px;
-            width: 30px;
-            height: 70px;
-            background-color: #6E3E1C;
-            border-radius: 0 50% 20% 0;
-            transform: rotate(10deg);
-        }
-
-        .hair::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: -10px;
-            width: 30px;
-            height: 70px;
-            background-color: #6E3E1C;
-            border-radius: 50% 0 0 20%;
-            transform: rotate(-10deg);
-        }
-
-        .eyes {
-            position: absolute;
-            top: 30px;
-            left: 10px;
-            width: 40px;
-            height: 8px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .eye {
-            width: 12px;
-            height: 12px;
-            background-color: white;
-            border: 2px solid #333;
-            border-radius: 50%;
-            position: relative;
-        }
-
-        .eye::after {
-            content: '';
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            background-color: #333;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-        }
-
-        .mouth {
-            position: absolute;
-            bottom: 20px;
-            left: 22px;
-            width: 16px;
-            height: 6px;
-            background-color: #333;
-            border-radius: 0 0 10px 10px;
-            transition: all 1s ease;
-        }
-
-        .scared .mouth {
-            width: 20px;
-            height: 15px;
-            border-radius: 50%;
-            bottom: 15px;
-            left: 20px;
-        }
-
-        .body {
-            position: absolute;
-            top: 75px;
-            left: 40px;
-            width: 40px;
-            height: 80px;
-            background-color: #7C0A02;
-            border: 3px solid #333;
-            border-radius: 10px 10px 0 0;
-            z-index: 1;
-        }
-
-        .arm {
-            position: absolute;
-            width: 15px;
-            height: 60px;
-            background-color: #7C0A02;
-            border: 2px solid #333;
-            z-index: 0;
-        }
-
-        .arm-left {
-            top: 80px;
-            left: 25px;
-            transform: rotate(15deg);
-            transform-origin: top right;
-        }
-
-        .arm-right {
-            top: 80px;
-            right: 25px;
-            transform: rotate(-35deg);
-            transform-origin: top left;
-        }
-
-        .legs {
-            position: absolute;
-            bottom: 0;
-            left: 40px;
-            width: 40px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .leg {
-            width: 15px;
-            height: 80px;
-            background-color: #1E3F66;
-            border: 2px solid #333;
-            border-radius: 0 0 5px 5px;
-        }
-
-        /* Window styling */
-        .window {
-            position: absolute;
-            top: 50px;
-            right: 30px;
-            width: 150px;
-            height: 200px;
-            background-color: #05050f;
-            border: 5px solid #333;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .curtain {
-            position: absolute;
-            top: 0;
-            width: 80px;
-            height: 200px;
-            background-color: #330000;
-        }
-
-        .curtain-left {
-            left: 0;
-            transform-origin: left;
-            transition: transform 5s ease;
-        }
-
-        .curtain-right {
-            right: 0;
-            transform-origin: right;
-            transition: transform 5s ease;
-        }
-
-        .curtain-move .curtain-left {
-            transform: translateX(10px);
-        }
-
-        .curtain-move .curtain-right {
-            transform: translateX(-10px);
-        }
-
-        /* Shadow figure in window */
-        .shadow-figure {
-            position: absolute;
-            top: 40px;
-            left: 55px;
-            width: 40px;
-            height: 80px;
-            background-color: #000;
-            border-radius: 10px 10px 0 0;
-            opacity: 0;
-            transition: opacity 2s ease;
-        }
-
-        .shadow-head {
-            position: absolute;
-            top: -25px;
-            left: 5px;
-            width: 30px;
-            height: 30px;
-            background-color: #000;
-            border-radius: 50%;
-        }
-
-        .shadow-eyes {
-            position: absolute;
-            top: 8px;
-            left: 2px;
-            display: flex;
-            justify-content: space-between;
-            width: 25px;
-        }
-
-        .shadow-eye {
-            width: 8px;
-            height: 8px;
-            background-color: #f00;
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 2s ease;
-        }
-
-        .window.active .shadow-figure,
-        .window.active .shadow-eye {
-            opacity: 1;
-        }
-
-        /* Phone styling */
-        .phone {
-            position: absolute;
-            bottom: 50px;
-            right: 250px;
-            width: 150px;
-            height: 250px;
-            background-color: #000;
-            border-radius: 20px;
-            border: 8px solid #222;
-            padding: 15px;
-            overflow: hidden;
-            transform: rotate(15deg);
-        }
-
-        .phone-screen {
-            background-color: #111;
-            height: 100%;
-            border-radius: 12px;
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-        }
-
-        .message-container {
-            padding: 10px;
-        }
-
-        .message {
-            max-width: 80%;
-            background-color: #333;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 18px;
-            margin: 5px 0;
-            opacity: 0;
-            position: relative;
-            transition: opacity 1s ease;
-            animation-fill-mode: forwards;
-            overflow: hidden;
-        }
-
-        .typing {
-            display: inline-block;
-            overflow: hidden;
-            white-space: nowrap;
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            text-align: center;
             margin: 0;
-            width: 0;
-            animation: typing 1.5s steps(40, end) forwards;
+            padding: 50px;
         }
 
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
 
-        .glitch {
-            animation: glitch 0.3s ease forwards;
+        input {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
         }
 
-        @keyframes glitch {
-            0% { transform: translate(0) }
-            20% { transform: translate(-5px, 5px); color: #0ff; }
-            40% { transform: translate(-5px, -5px); color: #f0f; }
-            60% { transform: translate(5px, 5px); color: #ff0; }
-            80% { transform: translate(5px, -5px); color: #f00; }
-            100% { transform: translate(0); }
+        button {
+            background: #ff2d55;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
         }
 
-        .shake {
-            animation: shake 0.5s ease-in-out;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0) }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-2px) }
-            20%, 40%, 60%, 80% { transform: translateX(2px) }
-        }
-
-        .blackout {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: black;
-            z-index: 10;
-            opacity: 0;
-            transition: opacity 0.2s ease;
+        #result {
+            margin-top: 20px;
         }
     </style>
 </head>
+
 <body>
-    <div class="room">
-        <!-- Cartoon character -->
-        <div class="character">
-            <div class="hair"></div>
-            <div class="head">
-                <div class="eyes">
-                    <div class="eye"></div>
-                    <div class="eye"></div>
-                </div>
-                <div class="mouth"></div>
-            </div>
-            <div class="body"></div>
-            <div class="arm arm-left"></div>
-            <div class="arm arm-right"></div>
-            <div class="legs">
-                <div class="leg"></div>
-                <div class="leg"></div>
-            </div>
-        </div>
-
-        <!-- Window with shadow figure -->
-        <div class="window">
-            <div class="curtain curtain-left"></div>
-            <div class="curtain curtain-right"></div>
-            <div class="shadow-figure">
-                <div class="shadow-head">
-                    <div class="shadow-eyes">
-                        <div class="shadow-eye"></div>
-                        <div class="shadow-eye"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Phone with messages -->
-        <div class="phone">
-            <div class="phone-screen">
-                <div class="message-container">
-                    <div id="message1" class="message">
-                        <p class="typing">Don't look outside.</p>
-                    </div>
-                    <div id="message2" class="message">
-                        <p class="typing">I said don't look.</p>
-                    </div>
-                    <div id="message3" class="message">
-                        <p class="typing">Now I see you.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="container">
+        <h2>TikTok Video Downloader</h2>
+        <input type="text" id="videoUrl" placeholder="Paste TikTok Video URL here" />
+        <button onclick="fetchVideo()">Download</button>
+        <div id="result"></div>
     </div>
-    <div class="blackout"></div>
-
-    <audio id="creepySound" preload="auto">
-        <source src="data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQwAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAASAAAeMwAUFBQUFCgUFBQUFDMzMzMzM0dHR0dHR1xHR0dHR3BwcHBwcISEhISEhJmZmZmZma2tra2trcDAwMDAwNTU1NTU1OkAAAAAAAAAAABMYXZjNTguMTM0AAAAAAAAAAAAAADkCQKgAAAAAAAeMzGFkf/7kMTmGAAAAaQAAAAwAAABpAAAATQAQA+gG8HQcHiQGgBQHAc+D//B8Hg+D/4PqDlQOA4CAUAwDBsU44SGms24QhIMAgIAg8oCDoqx5u/3o9DgNBQbv/so//wqcH/+sMMHQcGwQDB0HQkOIpQN0CcDAoCoF//+oZUkWvr/AIFhm/+7ov/M5////6RbI9v////+r33///p//f//r/04GkAzf4z/EgQA/fQ7//v9Rf9Q/X6v/////////+QhDECgApq7JxA//OCyrrvHStklS3f//0BISoLqU//yErH/EoKh5bxrKWltMHIqRgwkMgx6EhcbKQs0j/FIrKS5aAn/+5DE5gALZbFVvPNFsYK3Kr+eaLeCnIkkdLAWQ0to2IyKgABAyKlgLIaM0SmLKFTtOociEAACpTGr6ejcAAAAA3TTTB0eCgYLBlBQ0fDQMqAgYHgYGDwGFQiYJAhL8qCjLMojw8WxUdKgRkPmBGfRrSHxI5FIvlxNkw15GB0mZDHULlMmnVQZs0y4qUo8Mky6j2PQA8JFMuNPDLf///7oOTiMGgIQD//8yCvk6FAaPBRWVFIMLQoMMSDXTzpdK4MIBMBgUC4ZeW4WJSbGDQkSsZeHMkxLB4EyuZ9KtOHyVvKPxlfcWjMZE/apG5nvEpJgpPNPYqv/+5DE5gAMKbFfvPHNwXC2rDeeOaD1qK1NUGXBExIXB5GRh6FzCqGjpRtYfQYsUyAAAjnmSSSSSJCgCk7RYRWlpT4NIRUi4KJCqRfTTKLhtgQsKlrSICPHjc2EZFxMKDHxwmWjwdbyXyTl3NVWgTnXuUrWoUss9a1VrWtQ9/QvkpJFoRBGNxlVpQkCBJJFIeDYkASYFAUXHwcADoUHjx8PBx44EsUhTB4Q8EEIPQ4NUKZKPUjZ0JctF0ukSCNBblSpGotGowkUik5lIuVUgQJqRIUAR//ug5OIwbAIDgP//wgA5JIEEEiShH/+5DE5gAMPbNfvPNHIYa2q/eeOaEEIFFB44EEEiQgUUFFH///+g8pH//////9S0jQ6KiNDgXB0XB0VFZcXlJSRJEhKyQpKSJIkJWXF5SUlRUVEEiCQ6HA6Lw6Kig6KCwuKykqKkBQXFxUVkBQVFBYggoICQpIjAuKiwoIkBUUkEiCSCggIigvKSkjQXpIUlxjCxKVMQU1FMy45OC40VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuOTguNFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV" type="audio/mp3">
-    </audio>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const message1 = document.getElementById('message1');
-            const message2 = document.getElementById('message2');
-            const message3 = document.getElementById('message3');
-            const room = document.querySelector('.room');
-            const window = document.querySelector('.window');
-            const body = document.querySelector('body');
-            const blackout = document.querySelector('.blackout');
-            const creepySound = document.getElementById('creepySound');
-            const character = document.querySelector('.character');
-            
-            // Start the sequence
-            setTimeout(() => {
-                message1.style.opacity = '1';
-                
-                // After clicking anywhere or waiting, show the second message
-                const showMessage2 = () => {
-                    if (message2.style.opacity !== '1') {
-                        message2.style.opacity = '1';
-                        document.querySelector('.window').classList.add('curtain-move');
-                        character.querySelector('.head').classList.add('scared');
-                        character.querySelector('.mouth').classList.add('scared');
-                        body.style.backgroundColor = '#070707';
-                        room.style.backgroundColor = '#151515';
-                        
-                        // Show the final message with effects
-                        setTimeout(() => {
-                            message3.style.opacity = '1';
-                            message3.querySelector('p').classList.add('glitch');
-                            window.classList.add('shake');
-                            window.classList.add('active');
-                            
-                            // Play sound if available
-                            try {
-                                creepySound.play();
-                            } catch(e) {
-                                console.log('Sound could not be played:', e);
-                            }
-                            
-                            setTimeout(() => {
-                                blackout.style.opacity = '1';
-                            }, 2000);
-                        }, 5000);
-                    }
-                };
-                
-                // Setup event listeners
-                document.addEventListener('click', showMessage2, { once: true });
-                
-                // Or wait for a timer
-                setTimeout(showMessage2, 5000);
-                
-            }, 1000);
-        });
+        async function fetchVideo() {
+            const videoUrl = document.getElementById('videoUrl').value.trim();
+            const resultDiv = document.getElementById('result');
+
+            if (!videoUrl.includes("tiktok.com")) {
+                alert("Please enter a valid TikTok video URL!");
+                return;
+            }
+
+            resultDiv.innerHTML = "Processing...";
+
+            try {
+                const response = await fetch('http://ytime.x10.mx/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: videoUrl })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <video src="${data.video_url}" controls width="100%"></video>
+                        <br>
+                        <a href="${data.video_url}" download>Download Video</a>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<p style="color:red;">Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color:red;">Failed to fetch video. Try again!</p>`;
+            }
+        }
     </script>
 </body>
+
 </html>
