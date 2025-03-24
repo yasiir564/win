@@ -1003,7 +1003,7 @@ button {
 
 
     <script>
-       document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function() {
     // Dark Mode Toggle
     const darkModeToggle = document.getElementById('darkModeToggle');
     const body = document.body;
@@ -1105,6 +1105,43 @@ button {
         });
     }
 
+    // Function to show notification
+    function showNotification(message, type = 'success') {
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        const icon = notification.querySelector('i');
+        
+        // Set message
+        notificationText.textContent = message;
+        
+        // Set icon based on type
+        if (type === 'error') {
+            icon.className = 'fas fa-exclamation-circle';
+            icon.style.color = 'var(--tiktok-red)';
+        } else {
+            icon.className = 'fas fa-check-circle';
+            icon.style.color = 'var(--tiktok-blue)';
+        }
+        
+        // Show notification
+        notification.classList.add('show');
+        
+        // Hide after 3 seconds
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    // Function to copy video link to clipboard with visual feedback
+    function copyVideoLink(url) {
+        navigator.clipboard.writeText(url).then(() => {
+            showNotification('Link copied to clipboard!', 'success');
+        }).catch(err => {
+            console.error('Failed to copy: ', err);
+            showNotification('Failed to copy link', 'error');
+        });
+    }
+
     // TikTok Download Function
     async function downloadTikTok() {
         const urlInput = document.getElementById('urlInput');
@@ -1194,30 +1231,72 @@ button {
             // Format creator name with @ if not already present
             const creatorName = data.author && !data.author.startsWith('@') ? `@${data.author}` : (data.author || 'Unknown');
             
-            // Display success result with the proxy_url for playback and video_url for download
+            // Enhanced success result with improved styling and functionality
             document.getElementById('result').innerHTML = `
-                <div class="success-result">
-                    <h2>Video Preview</h2>
-                    <div class="video-container">
-                        <video controls class="video-player" poster="${data.cover_url || ''}">
-                            <source src="${data.proxy_url || data.video_url}" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
+                <div class="video-download-container">
+                    <div class="video-preview-section">
+                        <div class="video-wrapper">
+                            <video controls class="video-player" poster="${data.cover_url || ''}">
+                                <source src="${data.proxy_url || data.video_url}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
                     </div>
-                    <div class="video-info">
-                        <p><strong>${creatorName}</strong></p>
-                        <p>${data.desc || 'No description'}</p>
-                        <div class="download-options">
-                            <a href="${data.video_url}" class="download-btn" download>
-                                <i class="fas fa-download"></i> Download
-                            </a>
-                            <button onclick="copyVideoLink('${data.video_url}')" class="copy-btn">
-                                <i class="fas fa-link"></i> Copy Link
-                            </button>
+                    
+                    <div class="video-metadata-section">
+                        <div class="creator-info">
+                            <h3>${creatorName}</h3>
+                            <p class="video-description">${data.desc || 'No description'}</p>
+                        </div>
+                        
+                        <div class="video-actions">
+                            <div class="download-actions">
+                                <a href="${data.video_url}" class="btn btn-download" download>
+                                    <i class="fas fa-download"></i> Download Video
+                                </a>
+                                
+                                <div class="paste-download-container">
+                                    <input type="text" id="pasteUrlInput" placeholder="Paste URL here" class="paste-url-input">
+                                    <button id="pasteButton" class="btn btn-paste">
+                                        <i class="fas fa-paste"></i> Paste
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="link-actions">
+                                <input type="text" id="videoLinkInput" value="${data.video_url}" readonly class="video-link-input">
+                                <button onclick="copyVideoLink('${data.video_url}')" class="btn btn-copy">
+                                    <i class="fas fa-link"></i> Copy Link
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
+            
+            // Add event listener for paste button
+            const pasteButton = document.getElementById('pasteButton');
+            const pasteUrlInput = document.getElementById('pasteUrlInput');
+            
+            pasteButton.addEventListener('click', async () => {
+                try {
+                    const clipboardText = await navigator.clipboard.readText();
+                    pasteUrlInput.value = clipboardText;
+                    
+                    // Automatically validate and download if a TikTok URL is pasted
+                    if (clipboardText.includes('tiktok.com')) {
+                        urlInput.value = clipboardText;
+                        downloadTikTok();
+                    }
+                } catch (err) {
+                    console.error('Failed to read clipboard:', err);
+                    showNotification('Failed to paste URL', 'error');
+                }
+            });
+            
+            // Automatically trigger download
+            const downloadLink = document.querySelector('.btn-download');
+            downloadLink.click();
             
             // Clear the input field for next use
             urlInput.value = '';
@@ -1382,43 +1461,6 @@ button {
         });
     }
 
-    // Function to copy video link to clipboard with visual feedback
-    function copyVideoLink(url) {
-        navigator.clipboard.writeText(url).then(() => {
-            showNotification('Link copied to clipboard!', 'success');
-        }).catch(err => {
-            console.error('Failed to copy: ', err);
-            showNotification('Failed to copy link', 'error');
-        });
-    }
-
-    // Function to show notification
-    function showNotification(message, type = 'success') {
-        const notification = document.getElementById('notification');
-        const notificationText = document.getElementById('notificationText');
-        const icon = notification.querySelector('i');
-        
-        // Set message
-        notificationText.textContent = message;
-        
-        // Set icon based on type
-        if (type === 'error') {
-            icon.className = 'fas fa-exclamation-circle';
-            icon.style.color = 'var(--tiktok-red)';
-        } else {
-            icon.className = 'fas fa-check-circle';
-            icon.style.color = 'var(--tiktok-blue)';
-        }
-        
-        // Show notification
-        notification.classList.add('show');
-        
-        // Hide after 3 seconds
-        setTimeout(() => {
-            notification.classList.remove('show');
-        }, 3000);
-    }
-
     // Auto-detect and process URLs as they're pasted
     const downloadBtn = document.getElementById('downloadBtn');
     if (urlInput && downloadBtn) {
@@ -1455,6 +1497,124 @@ button {
             circle.style.animationDelay = `${randomDelay}s`;
         });
     }
+
+    // Add CSS for enhanced styling
+    const styleTag = document.createElement('style');
+    styleTag.textContent = `
+        .video-download-container {
+            display: flex;
+            gap: 20px;
+            background-color: #f9f9f9;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .video-preview-section {
+            flex: 1;
+        }
+
+        .video-wrapper {
+            max-width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .video-player {
+            width: 100%;
+            height: auto;
+        }
+
+        .video-metadata-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .creator-info h3 {
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .video-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .video-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .download-actions,
+        .link-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-download {
+            background-color: #1DB954;
+            color: white;
+        }
+
+        .btn-download:hover {
+            background-color: #1aa34a;
+        }
+
+        .btn-paste {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-paste:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-copy {
+            background-color: #2ecc71;
+            color: white;
+        }
+
+        .btn-copy:hover {
+            background-color: #27ae60;
+        }
+
+        .paste-download-container,
+        .link-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .paste-url-input,
+        .video-link-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .video-download-container {
+                flex-direction: column;
+            }
+        }
+    `;
+    document.head.appendChild(styleTag);
 });
     </script>
 
