@@ -1678,13 +1678,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('downloadBtn').disabled = true;
         
         // Show loading state with TikTok-like animation
-        document.getElementById('result').innerHTML = `
-            <div class="loading">
-                <p>Getting your TikTok video...</p>
-                <div class="spinner"></div>
-                <p class="loading-message">This might take a moment</p>
-            </div>
-        `;
+       document.getElementById('result').innerHTML = createTikTokLoader();
+
         
         try {
             console.log('Sending request with URL:', url);
