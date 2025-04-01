@@ -1004,6 +1004,12 @@ button {
 
     <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Debug which elements might be missing
+    console.log("darkModeToggle exists:", !!document.getElementById('darkModeToggle'));
+    console.log("urlInput exists:", !!document.getElementById('urlInput'));
+    console.log("downloadBtn exists:", !!document.getElementById('downloadBtn'));
+    console.log("notification exists:", !!document.getElementById('notification'));
+    console.log("result exists:", !!document.getElementById('result'));
     // Add TikTok color scheme to CSS
     const styleTag = document.createElement('style');
     styleTag.textContent = `
