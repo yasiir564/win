@@ -1074,20 +1074,64 @@ document.addEventListener('DOMContentLoaded', function() {
             border-radius: var(--border-radius);
             padding: 15px 20px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 12px;
             box-shadow: var(--card-shadow);
             transform: translateX(150%);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 1000;
+            max-width: 400px;
+            min-width: 300px;
+        }
+        
+        .dark-mode #notification {
+            background: var(--tiktok-dark-gray);
+            color: var(--tiktok-white);
         }
 
         #notification.show {
             transform: translateX(0);
         }
 
-        #notification i {
+        #notification i:first-child {
             font-size: 20px;
+            margin-top: 3px;
+        }
+        
+        .notification-content {
+            flex: 1;
+        }
+        
+        #notificationText {
+            font-weight: 600;
+            display: block;
+        }
+        
+        .notification-details {
+            display: block;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            opacity: 0.8;
+            word-break: break-word;
+        }
+        
+        #closeNotification {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            font-size: 14px;
+            color: var(--tiktok-dark-gray);
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+        
+        .dark-mode #closeNotification {
+            color: var(--tiktok-light-gray);
+        }
+        
+        #closeNotification:hover {
+            opacity: 1;
         }
 
         /* Improved URL input container */
@@ -1277,13 +1321,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 clearInputBtn.style.display = 'block';
             } catch (err) {
                 console.error('Failed to read clipboard:', err);
-                showNotification('Failed to paste URL', 'error');
+                showNotification('Failed to paste URL', 'error', 'The app was unable to access your clipboard. Please check your browser permissions.');
             }
         });
     }
 
     // Enhanced notification function
-    function showNotification(message, type = 'success') {
+    function showNotification(message, type = 'success', details = '') {
         let notification = document.getElementById('notification');
         
         // Create notification if it doesn't exist
@@ -1292,42 +1336,74 @@ document.addEventListener('DOMContentLoaded', function() {
             notification.id = 'notification';
             notification.innerHTML = `
                 <i class="fas fa-check-circle"></i>
-                <span id="notificationText"></span>
+                <div class="notification-content">
+                    <span id="notificationText"></span>
+                    <span id="notificationDetails" class="notification-details"></span>
+                </div>
+                <button id="closeNotification" aria-label="Close notification">
+                    <i class="fas fa-times"></i>
+                </button>
             `;
             document.body.appendChild(notification);
+            
+            // Add close button functionality
+            document.getElementById('closeNotification').addEventListener('click', () => {
+                notification.classList.remove('show');
+            });
         }
         
         const notificationText = document.getElementById('notificationText');
-        const icon = notification.querySelector('i');
+        const notificationDetails = document.getElementById('notificationDetails');
+        const icon = notification.querySelector('i:first-child');
         
-        // Set message
+        // Set message and details
         notificationText.textContent = message;
+        notificationDetails.textContent = details;
+        notificationDetails.style.display = details ? 'block' : 'none';
         
         // Set icon and color based on type
         if (type === 'error') {
             icon.className = 'fas fa-exclamation-circle';
             icon.style.color = 'var(--tiktok-red)';
+            notification.style.borderLeft = '4px solid var(--tiktok-red)';
+        } else if (type === 'warning') {
+            icon.className = 'fas fa-exclamation-triangle';
+            icon.style.color = '#FFC107';
+            notification.style.borderLeft = '4px solid #FFC107';
+        } else if (type === 'info') {
+            icon.className = 'fas fa-info-circle';
+            icon.style.color = 'var(--tiktok-blue)';
+            notification.style.borderLeft = '4px solid var(--tiktok-blue)';
         } else {
             icon.className = 'fas fa-check-circle';
-            icon.style.color = 'var(--tiktok-blue)';
+            icon.style.color = '#4CAF50';
+            notification.style.borderLeft = '4px solid #4CAF50';
         }
         
         // Show notification
         notification.classList.add('show');
         
-        // Hide after 3 seconds
-        setTimeout(() => {
+        // Set timeout for auto-dismiss (longer for errors and if there are details)
+        const dismissTime = (type === 'error' || details) ? 5000 : 3000;
+        
+        // Clear any existing timeout
+        if (notification.timeoutId) {
+            clearTimeout(notification.timeoutId);
+        }
+        
+        // Set new timeout
+        notification.timeoutId = setTimeout(() => {
             notification.classList.remove('show');
-        }, 3000);
+        }, dismissTime);
     }
 
     // Function to copy video link to clipboard with visual feedback
     function copyVideoLink(url) {
         navigator.clipboard.writeText(url).then(() => {
-            showNotification('Link copied to clipboard!', 'success');
+            showNotification('Link copied', 'success', 'Video link has been copied to your clipboard.');
         }).catch(err => {
             console.error('Failed to copy: ', err);
-            showNotification('Failed to copy link', 'error');
+            showNotification('Copy failed', 'error', 'Unable to copy to clipboard. Please try again.');
         });
     }
 
@@ -1340,14 +1416,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const url = urlInput.value.trim();
         
         if (!url) {
-            showNotification('Please enter a TikTok URL', 'error');
+            showNotification('Missing URL', 'error', 'Please enter a TikTok video URL in the input field.');
             urlInput.focus();
             return;
         }
         
         // Basic URL validation
         if (!url.includes('tiktok.com')) {
-            showNotification('Please enter a valid TikTok URL', 'error');
+            showNotification('Invalid URL format', 'error', 'Please enter a valid TikTok URL (e.g., https://www.tiktok.com/@username/video/123456789)');
             urlInput.focus();
             return;
         }
@@ -1396,16 +1472,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 const errorText = await response.text();
                 console.error('Server error response:', errorText);
                 
-                let errorMessage = 'Error fetching video.';
+                let errorMessage = 'Error fetching video';
+                let errorDetails = '';
+                
                 try {
                     // Try to parse error as JSON
                     const errorJson = JSON.parse(errorText);
                     errorMessage = errorJson.error || errorMessage;
+                    errorDetails = errorJson.message || 'Server returned an error response. Please try again.';
                 } catch (e) {
                     // If not JSON, use status text
-                    errorMessage = `Server error: ${response.status} ${response.statusText}`;
+                    errorMessage = `Server error: ${response.status}`;
+                    errorDetails = `${response.statusText}. This could be due to server issues or the video may be private.`;
                 }
                 
+                showNotification(errorMessage, 'error', errorDetails);
                 throw new Error(errorMessage);
             }
             
@@ -1413,7 +1494,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             
             if (!data.success) {
-                throw new Error(data.error || 'Error fetching video.');
+                const errorMsg = data.error || 'Error fetching video';
+                const errorDetails = data.message || 'The server was unable to process this TikTok video. Please try a different video.';
+                
+                showNotification(errorMsg, 'error', errorDetails);
+                throw new Error(errorMsg);
             }
             
             // Log success information
@@ -1422,6 +1507,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Format creator name with @ if not already present
             const creatorName = data.author && !data.author.startsWith('@') ? `@${data.author}` : (data.author || 'Unknown');
+            
+            // Show success notification
+            showNotification(
+                'Download successful!', 
+                'success', 
+                `Video from ${creatorName} has been downloaded.`
+            );
             
             // Enhanced success result with improved styling and functionality
             document.getElementById('result').innerHTML = `
@@ -1470,22 +1562,28 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error('Error details:', error);
             
-            let errorMessage = error.message || 'An unknown error occurred';
+            let errorMessage = 'Download failed';
+            let errorDetails = error.message || 'An unknown error occurred while trying to download the video.';
             
             // Specific error handling for timeout
             if (error.name === 'AbortError') {
-                errorMessage = 'Request timed out. The server took too long to respond.';
+                errorMessage = 'Request timed out';
+                errorDetails = 'The server took too long to respond. This could be due to network issues or high server load.';
             }
             
             // Add proxy-specific error messages
-            if (errorMessage.includes('proxy')) {
-                errorMessage = 'Proxy server error: ' + errorMessage;
+            if (errorDetails.toLowerCase().includes('proxy')) {
+                errorMessage = 'Proxy server error';
+                errorDetails = 'There was an issue with the proxy server. You can try again without using a proxy.';
             }
+            
+            // Show error notification
+            showNotification(errorMessage, 'error', errorDetails);
             
             document.getElementById('result').innerHTML = `
                 <div class="error-message">
                     <p><i class="fas fa-exclamation-circle"></i> ${errorMessage}</p>
-                    <p>Try a different TikTok link or try again later.</p>
+                    <p>${errorDetails}</p>
                     <div class="download-options">
                         <button onclick="downloadTikTok()" class="retry-btn btn">
                             <i class="fas fa-redo"></i> Try Again
@@ -1509,14 +1607,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const url = urlInput.value.trim();
         
         if (!url) {
-            showNotification('Please enter a TikTok URL', 'error');
+            showNotification('Missing URL', 'error', 'Please enter a TikTok video URL in the input field.');
             urlInput.focus();
             return;
         }
         
         // Basic URL validation
         if (!url.includes('tiktok.com')) {
-            showNotification('Please enter a valid TikTok URL', 'error');
+            showNotification('Invalid URL format', 'error', 'Please enter a valid TikTok URL (e.g., https://www.tiktok.com/@username/video/123456789)');
             urlInput.focus();
             return;
         }
@@ -1536,6 +1634,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p class="loading-message">This might take a moment</p>
             </div>
         `;
+        
+        // Show info notification
+        showNotification('Using direct connection', 'info', 'Attempting to download without using a proxy server. This might work better for some videos.');
         
         // Create an AbortController for timeout
         const controller = new AbortController();
@@ -1557,18 +1658,44 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (!response.ok) {
                 return response.text().then(text => {
-                    throw new Error(text || `Server Error: ${response.status}`);
+                    let errorMessage = 'Server error';
+                    let errorDetails = '';
+                    
+                    try {
+                        // Try to parse error as JSON
+                        const errorJson = JSON.parse(text);
+                        errorMessage = errorJson.error || errorMessage;
+                        errorDetails = errorJson.message || `Status: ${response.status} ${response.statusText}`;
+                    } catch (e) {
+                        // If not JSON, use status text
+                        errorMessage = `Server error: ${response.status}`;
+                        errorDetails = response.statusText;
+                    }
+                    
+                    showNotification(errorMessage, 'error', errorDetails);
+                    throw new Error(errorMessage);
                 });
             }
             return response.json();
         })
         .then(data => {
             if (!data.success) {
-                throw new Error(data.error || 'Error fetching video.');
+                const errorMsg = data.error || 'Error fetching video';
+                const errorDetails = data.message || 'The server was unable to process this TikTok video directly. You may need to try with proxy.';
+                
+                showNotification(errorMsg, 'error', errorDetails);
+                throw new Error(errorMsg);
             }
             
             // Format creator name with @ if not already present
             const creatorName = data.author && !data.author.startsWith('@') ? `@${data.author}` : (data.author || 'Unknown');
+            
+            // Show success notification
+            showNotification(
+                'Download successful!', 
+                'success', 
+                `Video from ${creatorName} has been successfully downloaded via direct connection.`
+            );
             
             // Display success result with the direct video_url
             document.getElementById('result').innerHTML = `
@@ -1613,17 +1740,21 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('Error details:', error);
             
-            let errorMessage = error.message || 'An unknown error occurred';
+            let errorMessage = 'Direct download failed';
+            let errorDetails = error.message || 'An unknown error occurred during direct download attempt.';
             
             // Specific error handling for timeout
             if (error.name === 'AbortError') {
-                errorMessage = 'Request timed out. The server took too long to respond.';
+                errorMessage = 'Request timed out';
+                errorDetails = 'The direct connection took too long to respond. You might want to try using a proxy.';
             }
+            
+            showNotification(errorMessage, 'error', errorDetails);
             
             document.getElementById('result').innerHTML = `
                 <div class="error-message">
                     <p><i class="fas fa-exclamation-circle"></i> ${errorMessage}</p>
-                    <p>Direct connection failed. Try a different TikTok link or try with proxy.</p>
+                    <p>${errorDetails}</p>
                     <div class="download-options">
                         <button onclick="downloadTikTok()" class="retry-btn btn">
                             <i class="fas fa-redo"></i> Try With Proxy
