@@ -1004,12 +1004,6 @@ button {
 
     <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Debug which elements might be missing
-    console.log("darkModeToggle exists:", !!document.getElementById('darkModeToggle'));
-    console.log("urlInput exists:", !!document.getElementById('urlInput'));
-    console.log("downloadBtn exists:", !!document.getElementById('downloadBtn'));
-    console.log("notification exists:", !!document.getElementById('notification'));
-    console.log("result exists:", !!document.getElementById('result'));
     // Add TikTok color scheme to CSS
     const styleTag = document.createElement('style');
     styleTag.textContent = `
@@ -1038,12 +1032,6 @@ document.addEventListener('DOMContentLoaded', function() {
             border: none;
             cursor: pointer;
             font-weight: 600;
-            padding: 12px 20px;
-            font-size: 14px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
         }
 
         .btn-download {
@@ -1198,376 +1186,249 @@ document.addEventListener('DOMContentLoaded', function() {
             opacity: 0.9;
             transform: translateY(-2px);
         }
-        
-        /* TikTok loader animation */
-        .tiktok-loader {
-            position: relative;
-            width: 100px;
-            height: 100px;
-            perspective: 500px;
-            transform-style: preserve-3d;
-            margin: 20px auto;
-        }
-        
-        .music-note {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--tiktok-red);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: musicBounce 2.5s ease-in-out infinite;
-        }
-        
-        .music-note.blue {
-            background: var(--tiktok-blue);
-            animation-delay: 0.3s;
-            left: -20px;
-            top: 25px;
-        }
-        
-        .music-note.red {
-            background: var(--tiktok-red);
-            left: 20px;
-            top: 0;
-        }
-        
-        .music-note svg {
-            width: 20px;
-            height: 20px;
-            fill: white;
-            animation: noteSpin 2.5s ease-in-out infinite;
-        }
-        
-        .music-note.blue svg {
-            animation-delay: 0.3s;
-        }
-        
-        .tick-tock {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--tiktok-blue) 0%, var(--tiktok-red) 100%);
-            border-radius: 15px;
-            left: 20px;
-            top: 55px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: clockRotate 2.5s ease-in-out infinite;
-        }
-        
-        .tick-tock::before {
-            content: "";
-            position: absolute;
-            width: 52px;
-            height: 52px;
-            background: white;
-            border-radius: 12px;
-        }
-        
-        .dark-mode .tick-tock::before {
-            background: var(--tiktok-dark-gray);
-        }
-        
-        .tick-tock::after {
-            content: "";
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(135deg, var(--tiktok-blue) 0%, var(--tiktok-red) 100%);
-            border-radius: 8px;
-            animation: pulseEffect 2.5s ease-in-out infinite;
-        }
-        
-        .progress-ring {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            top: -10px;
-            left: -10px;
-            animation: ringRotate 8s linear infinite;
-        }
-        
-        .progress-ring circle {
-            fill: none;
-            stroke-width: 4;
-            stroke-linecap: round;
-            transform-origin: center;
-        }
-        
-        .progress-ring .bg-circle {
-            stroke: rgba(0, 0, 0, 0.1);
-        }
-        
-        .dark-mode .progress-ring .bg-circle {
-            stroke: rgba(255, 255, 255, 0.1);
-        }
-        
-        .progress-ring .blue-circle {
-            stroke: var(--tiktok-blue);
-            stroke-dasharray: 251;
-            stroke-dashoffset: 200;
-            animation: circleProgress 2.5s ease-in-out infinite;
-        }
-        
-        .progress-ring .red-circle {
-            stroke: var(--tiktok-red);
-            stroke-dasharray: 251;
-            stroke-dashoffset: 200;
-            animation: circleProgress 2.5s ease-in-out infinite;
-            animation-delay: 0.3s;
-        }
-        
-        .shimmer-text {
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(90deg, var(--tiktok-dark-gray) 0%, var(--tiktok-light-gray) 50%, var(--tiktok-dark-gray) 100%);
-            background-size: 200% 100%;
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            animation: shimmer 2s linear infinite;
-        }
-        
-        .dark-mode .shimmer-text {
-            background: linear-gradient(90deg, var(--tiktok-light-gray) 0%, var(--tiktok-darker-gray) 50%, var(--tiktok-light-gray) 100%);
-            background-size: 200% 100%;
-            background-clip: text;
-            -webkit-background-clip: text;
-        }
-        
-        /* Video container styling */
-        .video-download-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background: var(--tiktok-white);
-            border-radius: var(--border-radius);
-            box-shadow: var(--card-shadow);
-            overflow: hidden;
-        }
-        
-        .dark-mode .video-download-container {
-            background: var(--tiktok-dark-gray);
-            color: var(--tiktok-white);
-        }
-        
-        .video-wrapper {
-            position: relative;
-            width: 100%;
-            padding-top: 177.78%; /* 16:9 Aspect Ratio (9 / 16 = 0.5625) */
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            background: #000;
-        }
-        
-        .video-player {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: var(--border-radius);
-            background: #000;
-        }
-        
-        .creator-info {
-            margin-bottom: 20px;
-        }
-        
-        .creator-info h3 {
-            font-size: 18px;
-            margin: 0 0 10px 0;
-            color: var(--tiktok-black);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .dark-mode .creator-info h3 {
-            color: var(--tiktok-white);
-        }
-        
-        .creator-info h3::before {
-            content: "@";
-            color: var(--tiktok-red);
-        }
-        
-        .video-description {
-            font-size: 14px;
-            line-height: 1.4;
-            margin: 0;
-            color: var(--tiktok-dark-gray);
-            opacity: 0.9;
-            overflow-wrap: break-word;
-            word-break: break-word;
-        }
-        
-        .dark-mode .video-description {
-            color: var(--tiktok-light-gray);
-        }
-        
-        .video-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .download-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .btn-download {
-            width: 100%;
-            max-width: 300px;
-        }
-        
-        .link-actions {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .video-link-input {
-            width: 100%;
-            font-size: 14px;
-            background-color: var(--tiktok-light-gray);
-            border-color: transparent;
-            color: var(--tiktok-dark-gray);
-        }
-        
-        .dark-mode .video-link-input {
-            background-color: #2a2b36;
-            color: var(--tiktok-white);
-        }
-        
-        .btn-copy {
-            width: 100%;
-            max-width: 300px;
-        }
-        
-        .loading-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            max-width: 300px;
-            margin: 0 auto;
-            padding: 20px 0;
-        }
-        
-        .loading-text {
-            font-weight: 600;
-            font-size: 1.2rem;
-            margin-bottom: 25px;
-            color: var(--tiktok-black);
-        }
-        
-        .dark-mode .loading-text {
-            color: var(--tiktok-white);
-        }
-        
-        .loading-subtext {
-            font-size: 0.9rem;
-            opacity: 0.7;
-            margin-top: 20px;
-            color: var(--tiktok-black);
-        }
-        
-        .dark-mode .loading-subtext {
-            color: var(--tiktok-white);
-        }
-        
-        /* Responsive breakpoints */
-        @media (min-width: 768px) {
-            .video-download-container {
-                grid-template-columns: minmax(300px, 1fr) 1fr;
-                max-width: 900px;
-            }
-        }
-        
-        @keyframes musicBounce {
-            0%, 100% {
-                transform: translateY(0) scale(1);
-            }
-            50% {
-                transform: translateY(-30px) scale(1.1);
-            }
-        }
-        
-        @keyframes noteSpin {
-            0%, 100% {
-                transform: rotate(0deg);
-            }
-            50% {
-                transform: rotate(180deg);
-            }
-        }
-        
-        @keyframes clockRotate {
-            0%, 100% {
-                transform: rotate(0deg);
-            }
-            25% {
-                transform: rotate(10deg);
-            }
-            75% {
-                transform: rotate(-10deg);
-            }
-        }
-        
-        @keyframes pulseEffect {
-            0%, 100% {
-                transform: scale(1);
-                opacity: 0.8;
-            }
-            50% {
-                transform: scale(0.9);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes ringRotate {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-        
-        @keyframes circleProgress {
-            0%, 100% {
-                stroke-dashoffset: 251;
-            }
-            50% {
-                stroke-dashoffset: 0;
-            }
-            100% {
-                stroke-dashoffset: 251;
-            }
-        }
-        
-        @keyframes shimmer {
-            0% {
-                background-position: 0% 50%;
-            }
-            100% {
-                background-position: 200% 50%;
-            }
-        }
-    `;
+    .tiktok-loader {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      perspective: 500px;
+      transform-style: preserve-3d;
+      margin: 20px auto;
+    }
+    
+    .music-note {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--tiktok-red);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: musicBounce 2.5s ease-in-out infinite;
+    }
+    
+    .music-note.blue {
+      background: var(--tiktok-blue);
+      animation-delay: 0.3s;
+      left: -20px;
+      top: 25px;
+    }
+    
+    .music-note.red {
+      background: var(--tiktok-red);
+      left: 20px;
+      top: 0;
+    }
+    
+    .music-note svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+      animation: noteSpin 2.5s ease-in-out infinite;
+    }
+    
+    .music-note.blue svg {
+      animation-delay: 0.3s;
+    }
+    
+    .tick-tock {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--tiktok-blue) 0%, var(--tiktok-red) 100%);
+      border-radius: 15px;
+      left: 20px;
+      top: 55px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: clockRotate 2.5s ease-in-out infinite;
+    }
+    
+    .tick-tock::before {
+      content: "";
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      background: white;
+      border-radius: 12px;
+    }
+    
+    .dark-mode .tick-tock::before {
+      background: var(--tiktok-dark-gray);
+    }
+    
+    .tick-tock::after {
+      content: "";
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, var(--tiktok-blue) 0%, var(--tiktok-red) 100%);
+      border-radius: 8px;
+      animation: pulseEffect 2.5s ease-in-out infinite;
+    }
+    
+    .progress-ring {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      top: -10px;
+      left: -10px;
+      animation: ringRotate 8s linear infinite;
+    }
+    
+    .progress-ring circle {
+      fill: none;
+      stroke-width: 4;
+      stroke-linecap: round;
+      transform-origin: center;
+    }
+    
+    .progress-ring .bg-circle {
+      stroke: rgba(0, 0, 0, 0.1);
+    }
+    
+    .dark-mode .progress-ring .bg-circle {
+      stroke: rgba(255, 255, 255, 0.1);
+    }
+    
+    .progress-ring .blue-circle {
+      stroke: var(--tiktok-blue);
+      stroke-dasharray: 251;
+      stroke-dashoffset: 200;
+      animation: circleProgress 2.5s ease-in-out infinite;
+    }
+    
+    .progress-ring .red-circle {
+      stroke: var(--tiktok-red);
+      stroke-dasharray: 251;
+      stroke-dashoffset: 200;
+      animation: circleProgress 2.5s ease-in-out infinite;
+      animation-delay: 0.3s;
+    }
+    
+    .shimmer-text {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(90deg, var(--tiktok-dark-gray) 0%, var(--tiktok-light-gray) 50%, var(--tiktok-dark-gray) 100%);
+      background-size: 200% 100%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: shimmer 2s linear infinite;
+    }
+    
+    .dark-mode .shimmer-text {
+      background: linear-gradient(90deg, var(--tiktok-light-gray) 0%, var(--tiktok-darker-gray) 50%, var(--tiktok-light-gray) 100%);
+      background-size: 200% 100%;
+      background-clip: text;
+      -webkit-background-clip: text;
+    }
+    
+    @keyframes musicBounce {
+      0%, 100% {
+        transform: translateY(0) scale(1);
+      }
+      50% {
+        transform: translateY(-30px) scale(1.1);
+      }
+    }
+    
+    @keyframes noteSpin {
+      0%, 100% {
+        transform: rotate(0deg);
+      }
+      50% {
+        transform: rotate(180deg);
+      }
+    }
+    
+    @keyframes clockRotate {
+      0%, 100% {
+        transform: rotate(0deg);
+      }
+      25% {
+        transform: rotate(10deg);
+      }
+      75% {
+        transform: rotate(-10deg);
+      }
+    }
+    
+    @keyframes pulseEffect {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+      50% {
+        transform: scale(0.9);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes ringRotate {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    
+    @keyframes circleProgress {
+      0%, 100% {
+        stroke-dashoffset: 251;
+      }
+      50% {
+        stroke-dashoffset: 0;
+      }
+      100% {
+        stroke-dashoffset: 251;
+      }
+    }
+    
+    @keyframes shimmer {
+      0% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 200% 50%;
+      }
+    }
+    
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      max-width: 300px;
+      margin: 0 auto;
+      padding: 20px 0;
+    }
+    
+    .loading-text {
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-bottom: 25px;
+      color: var(--tiktok-black);
+    }
+    
+    .dark-mode .loading-text {
+      color: var(--tiktok-white);
+    }
+    
+    .loading-subtext {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      margin-top: 20px;
+      color: var(--tiktok-black);
+    }
+    
+    .dark-mode .loading-subtext {
+      color: var(--tiktok-white);
+    }
+`;
     document.head.appendChild(styleTag);
 
     // Dark Mode Toggle
@@ -1600,12 +1461,67 @@ document.addEventListener('DOMContentLoaded', function() {
         icon.className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
     }
 
+    // FAQ Accordion Functionality
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+            // Toggle active class on clicked question
+            question.classList.toggle('active');
+            
+            // Get the answer element
+            const answer = question.nextElementSibling;
+            
+            // Toggle visibility of answer
+            if (answer.style.maxHeight) {
+                answer.style.maxHeight = null;
+            } else {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+            }
+            
+            // Rotate chevron icon
+            const chevron = question.querySelector('.fa-chevron-down');
+            chevron.classList.toggle('rotate');
+        });
+
+        // Add keyboard support (Enter and Space key)
+        question.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                question.click();
+            }
+        });
+    });
+
+    // Mobile Menu Toggle
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const navLinks = document.querySelector('.nav-links');
+
+    mobileMenuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('mobile-active');
+        mobileMenuToggle.classList.toggle('active');
+        
+        // Toggle menu icon
+        const menuIcon = mobileMenuToggle.querySelector('i');
+        menuIcon.className = navLinks.classList.contains('mobile-active') 
+            ? 'fas fa-times' 
+            : 'fas fa-bars';
+    });
+
+    // Sign In Button Functionality
+    const signInButton = document.querySelector('.btn-sign-in');
+    if (signInButton) {
+        signInButton.addEventListener('click', () => {
+            // Redirect to login page
+            window.location.href = 'login.html';
+        });
+    }
+
     // Enhance URL Input Container with Paste Button
-    const urlInput = document.getElementById('urlInput');
-    const urlInputContainer = urlInput.parentElement;
+    const urlInputContainer = document.getElementById('urlInput').parentElement;
     urlInputContainer.classList.add('url-input-container');
     
     // Input Clear Button Functionality
+    const urlInput = document.getElementById('urlInput');
     const clearInputBtn = document.getElementById('clearInput');
 
     if (urlInput && clearInputBtn) {
@@ -1736,42 +1652,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Make the copyVideoLink function globally available
     window.copyVideoLink = copyVideoLink;
 
-    // Create TikTok Loader HTML
-    function createTikTokLoader() {
-        return `
-            <div class="loading-container">
-                <p class="loading-text shimmer-text">Getting your TikTok video...</p>
-                
-                <div class="tiktok-loader">
-                    <!-- Circular progress ring -->
-                    <svg class="progress-ring" viewBox="0 0 100 100">
-                        <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
-                        <circle class="blue-circle" cx="50" cy="50" r="40"></circle>
-                        <circle class="red-circle" cx="50" cy="50" r="40"></circle>
-                    </svg>
-                    
-                    <!-- Music notes -->
-                    <div class="music-note blue">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                        </svg>
-                    </div>
-                    
-                    <div class="music-note red">
-                        <svg viewBox="0 0 24 24">
-                            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                        </svg>
-                    </div>
-                    
-                    <!-- TikTok logo center piece -->
-                    <div class="tick-tock"></div>
-                </div>
-                
-                <p class="loading-subtext">This might take a moment</p>
-            </div>
-        `;
-    }
-
     // TikTok Download Function
     async function downloadTikTok() {
         const urlInput = document.getElementById('urlInput');
@@ -1798,7 +1678,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('downloadBtn').disabled = true;
         
         // Show loading state with TikTok-like animation
-        document.getElementById('result').innerHTML = createTikTokLoader();
+       document.getElementById('result').innerHTML = createTikTokLoader();
+
         
         try {
             console.log('Sending request with URL:', url);
@@ -1861,33 +1742,23 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Video successfully fetched using method:', data.method || 'unknown');
             console.log('Proxy used:', data.proxy_used ? 'Yes' : 'No');
             
-            // Format creator name correctly (removing @ if it exists in the data already)
-            let creatorName = data.author || 'Unknown';
-            if (creatorName.startsWith('@')) {
-                creatorName = creatorName.substring(1); // Remove @ if it exists
-            }
-            
-            // Get the correct video URL (proxy_url takes precedence if available)
-            const videoUrl = data.proxy_url || data.video_url || '';
-            
-            if (!videoUrl) {
-                throw new Error('No valid video URL found in the response');
-            }
+            // Format creator name with @ if not already present
+            const creatorName = data.author && !data.author.startsWith('@') ? `@${data.author}` : (data.author || 'Unknown');
             
             // Show success notification
             showNotification(
                 'Download successful!', 
                 'success', 
-                `Video from @${creatorName} has been downloaded.`
+                `Video from ${creatorName} has been downloaded.`
             );
             
-            // Create the enhanced TikTok-like container for video display
+            // Enhanced success result with improved styling and functionality
             document.getElementById('result').innerHTML = `
                 <div class="video-download-container">
                     <div class="video-preview-section">
                         <div class="video-wrapper">
-                            <video controls autoplay muted class="video-player" poster="${data.cover_url || ''}">
-                                <source src="${videoUrl}" type="video/mp4">
+                            <video controls class="video-player" poster="${data.cover_url || ''}">
+                                <source src="${data.proxy_url || data.video_url}" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>
                         </div>
@@ -1901,14 +1772,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         
                         <div class="video-actions">
                             <div class="download-actions">
-                                <a href="${videoUrl}" class="btn btn-download" download="tiktok-video.mp4">
+                                <a href="${data.video_url}" class="btn btn-download" download>
                                     <i class="fas fa-download"></i> Download Video
                                 </a>
                             </div>
+                            
                             <div class="link-actions">
-                                <input type="text" class="video-link-input" value="${videoUrl}" readonly>
-                                <button class="btn btn-copy" onclick="copyVideoLink('${videoUrl}')">
-                                    <i class="fas fa-copy"></i> Copy Video Link
+                                <input type="text" id="videoLinkInput" value="${data.video_url}" readonly class="video-link-input">
+                                <button onclick="copyVideoLink('${data.video_url}')" class="btn btn-copy">
+                                    <i class="fas fa-link"></i> Copy Link
                                 </button>
                             </div>
                         </div>
@@ -1916,44 +1788,49 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
             
-            // Add event listener to the video for error handling
-            const videoPlayer = document.querySelector('.video-player');
-            if (videoPlayer) {
-                videoPlayer.addEventListener('error', (e) => {
-                    console.error('Video loading error:', e);
-                    showNotification(
-                        'Video playback error', 
-                        'error', 
-                        'There was an issue playing this video. You can still try downloading it directly.'
-                    );
-                });
-            }
+            // Automatically trigger download
+            const downloadLink = document.querySelector('.btn-download');
+            downloadLink.click();
+            
+            // Clear the input field for next use
+            urlInput.value = '';
+            clearInputBtn.style.display = 'none';
             
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error details:', error);
             
-            // Handle abort/timeout specifically
+            let errorMessage = 'Download failed';
+            let errorDetails = error.message || 'An unknown error occurred while trying to download the video.';
+            
+            // Specific error handling for timeout
             if (error.name === 'AbortError') {
-                showNotification(
-                    'Request timeout', 
-                    'error', 
-                    'The server took too long to respond. Please try again later or with a different video.'
-                );
-                document.getElementById('result').innerHTML = `
-                    <div class="error-container">
-                        <p><i class="fas fa-exclamation-triangle"></i> Request timed out</p>
-                        <p>The server took too long to respond. Please try again later.</p>
-                    </div>
-                `;
-            } else if (document.getElementById('result').innerHTML.includes('loading-container')) {
-                // Only update the error display if we're still showing the loading screen
-                document.getElementById('result').innerHTML = `
-                    <div class="error-container">
-                        <p><i class="fas fa-exclamation-triangle"></i> Error</p>
-                        <p>${error.message || 'Failed to process the TikTok video. Please try again.'}</p>
-                    </div>
-                `;
+                errorMessage = 'Request timed out';
+                errorDetails = 'The server took too long to respond. This could be due to network issues or high server load.';
             }
+            
+            // Add proxy-specific error messages
+            if (errorDetails.toLowerCase().includes('proxy')) {
+                errorMessage = 'Proxy server error';
+                errorDetails = 'There was an issue with the proxy server. You can try again without using a proxy.';
+            }
+            
+            // Show error notification
+            showNotification(errorMessage, 'error', errorDetails);
+            
+            document.getElementById('result').innerHTML = `
+                <div class="error-message">
+                    <p><i class="fas fa-exclamation-circle"></i> ${errorMessage}</p>
+                    <p>${errorDetails}</p>
+                    <div class="download-options">
+                        <button onclick="downloadTikTok()" class="retry-btn btn">
+                            <i class="fas fa-redo"></i> Try Again
+                        </button>
+                        <button onclick="downloadWithoutProxy()" class="alt-btn btn">
+                            <i class="fas fa-server"></i> Try Without Proxy
+                        </button>
+                    </div>
+                </div>
+            `;
         } finally {
             // Re-enable input and button
             urlInput.disabled = false;
@@ -1961,91 +1838,247 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Attach the downloadTikTok function to the download button
-    const downloadBtn = document.getElementById('downloadBtn');
-    if (downloadBtn) {
-        downloadBtn.addEventListener('click', downloadTikTok);
-    }
-
-    // Add Enter key handler for URL input
-    const urlInputElement = document.getElementById('urlInput');
-    if (urlInputElement) {
-        urlInputElement.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                downloadTikTok();
+    // Alternative function to try downloading without proxy
+    function downloadWithoutProxy() {
+        const urlInput = document.getElementById('urlInput');
+        const url = urlInput.value.trim();
+        
+        if (!url) {
+            showNotification('Missing URL', 'error', 'Please enter a TikTok video URL in the input field.');
+            urlInput.focus();
+            return;
+        }
+        
+        // Basic URL validation
+        if (!url.includes('tiktok.com')) {
+            showNotification('Invalid URL format', 'error', 'Please enter a valid TikTok URL (e.g., https://www.tiktok.com/@username/video/123456789)');
+            urlInput.focus();
+            return;
+        }
+        
+        // Use the complete WordPress REST API endpoint
+        const apiEndpoint = 'https://denmara.com/wp-json/tiktok/v1/download';
+        
+        // Disable input and button during processing
+        urlInput.disabled = true;
+        document.getElementById('downloadBtn').disabled = true;
+        
+        // Show loading state
+        document.getElementById('result').innerHTML = createTikTokLoader();
+        
+        // Show info notification
+        showNotification('Using direct connection', 'info', 'Attempting to download without using a proxy server. This might work better for some videos.');
+        
+        // Create an AbortController for timeout
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        
+        // Start the fetch request
+        fetch(apiEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                url: url,
+                use_proxy: false  // Explicitly turn off proxy
+            }),
+            signal: controller.signal
+        })
+        .then(response => {
+            // Clear the timeout
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                return response.text().then(text => {
+                    let errorMessage = 'Server error';
+                    let errorDetails = '';
+                    
+                    try {
+                        // Try to parse error as JSON
+                        const errorJson = JSON.parse(text);
+                        errorMessage = errorJson.error || errorMessage;
+                        errorDetails = errorJson.message || `Status: ${response.status} ${response.statusText}`;
+                    } catch (e) {
+                        // If not JSON, use status text
+                        errorMessage = `Server error: ${response.status}`;
+                        errorDetails = response.statusText;
+                    }
+                    
+                    showNotification(errorMessage, 'error', errorDetails);
+                    throw new Error(errorMessage);
+                });
             }
+            return response.json();
+        })
+        .then(data => {
+            if (!data.success) {
+                const errorMsg = data.error || 'Error fetching video';
+                const errorDetails = data.message || 'The server was unable to process this TikTok video directly. You may need to try with proxy.';
+                
+                showNotification(errorMsg, 'error', errorDetails);
+                throw new Error(errorMsg);
+            }
+            
+            // Format creator name with @ if not already present
+            const creatorName = data.author && !data.author.startsWith('@') ? `@${data.author}` : (data.author || 'Unknown');
+            
+            // Show success notification
+            showNotification(
+                'Download successful!', 
+                'success', 
+                `Video from ${creatorName} has been successfully downloaded via direct connection.`
+            );
+            
+            // Display success result with the direct video_url
+            document.getElementById('result').innerHTML = `
+                <div class="video-download-container">
+                    <div class="video-preview-section">
+                        <div class="video-wrapper">
+                            <video controls class="video-player" poster="${data.cover_url || ''}">
+                                <source src="${data.video_url}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div>
+                    
+                    <div class="video-metadata-section">
+                        <div class="creator-info">
+                            <h3>${creatorName}</h3>
+                            <p class="video-description">${data.desc || 'No description'}</p>
+                        </div>
+                        
+                        <div class="video-actions">
+                            <div class="download-actions">
+                                <a href="${data.video_url}" class="btn btn-download" download>
+                                    <i class="fas fa-download"></i> Download Video
+                                </a>
+                            </div>
+                            
+                            <div class="link-actions">
+                                <input type="text" id="videoLinkInput" value="${data.video_url}" readonly class="video-link-input">
+                                <button onclick="copyVideoLink('${data.video_url}')" class="btn btn-copy">
+                                    <i class="fas fa-link"></i> Copy Link
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Clear the input field for next use
+            urlInput.value = '';
+            clearInputBtn.style.display = 'none';
+        })
+        .catch(error => {
+            console.error('Error details:', error);
+            
+            let errorMessage = 'Direct download failed';
+            let errorDetails = error.message || 'An unknown error occurred during direct download attempt.';
+            
+            // Specific error handling for timeout
+            if (error.name === 'AbortError') {
+                errorMessage = 'Request timed out';
+                errorDetails = 'The direct connection took too long to respond. You might want to try using a proxy.';
+            }
+            
+            showNotification(errorMessage, 'error', errorDetails);
+            
+            document.getElementById('result').innerHTML = `
+                <div class="error-message">
+                    <p><i class="fas fa-exclamation-circle"></i> ${errorMessage}</p>
+                    <p>${errorDetails}</p>
+                    <div class="download-options">
+                        <button onclick="downloadTikTok()" class="retry-btn btn">
+                            <i class="fas fa-redo"></i> Try With Proxy
+                        </button>
+                    </div>
+                </div>
+            `;
+        })
+        .finally(() => {
+            // Re-enable input and button
+            urlInput.disabled = false;
+            document.getElementById('downloadBtn').disabled = false;
         });
     }
 
-    // Initialize by hiding the clear button if input is empty
-    const clearInputButton = document.getElementById('clearInput');
-    if (clearInputButton && urlInputElement) {
-        clearInputButton.style.display = urlInputElement.value ? 'block' : 'none';
-    }
-    
-    // Check for URL in query parameters and auto-populate
-    function getUrlParameter(name) {
-        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-        const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-        const results = regex.exec(location.search);
-        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-    }
-    
-    const urlParam = getUrlParameter('url');
-    if (urlParam && urlInputElement) {
-        urlInputElement.value = urlParam;
+    // Make downloadTikTok and downloadWithoutProxy functions globally available
+    window.downloadTikTok = downloadTikTok;
+    window.downloadWithoutProxy = downloadWithoutProxy;
+
+    // Auto-detect and process URLs as they're pasted
+    const downloadBtn = document.getElementById('downloadBtn');
+    if (urlInput && downloadBtn) {
+        urlInput.addEventListener('paste', function(e) {
+            setTimeout(function() {
+                const url = urlInput.value.trim();
+                if (url && url.includes('tiktok.com')) {
+                    downloadTikTok();
+                }
+            }, 100);
+        });
         
-        // Auto-download if URL is provided
-        if (urlParam.includes('tiktok.com')) {
-            // Small delay to ensure DOM is fully loaded
-            setTimeout(downloadTikTok, 500);
-        }
+        urlInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                downloadTikTok();
+            }
+        });
+
+        downloadBtn.addEventListener('click', downloadTikTok);
+
+        urlInput.focus();
     }
-    
-    // Handle share functionality
-    function shareWithFriends() {
-        if (navigator.share) {
-            navigator.share({
-                title: 'TikTok Downloader',
-                text: 'Download TikTok videos without watermark!',
-                url: window.location.href
-            })
-            .then(() => {
-                showNotification('Shared successfully', 'success', 'Thanks for sharing!');
-            })
-            .catch((error) => {
-                console.error('Error sharing:', error);
-                showNotification('Sharing failed', 'error', 'Unable to share content. Please try again.');
-            });
-        } else {
-            // Fallback for browsers that don't support the Web Share API
-            copyVideoLink(window.location.href);
-        }
+
+    // Cool floating background effect
+    animateBackgrounds();
+
+    function animateBackgrounds() {
+        const circles = document.querySelectorAll('.bg-circle');
+        circles.forEach(circle => {
+            const randomDuration = 15 + Math.random() * 10;
+            const randomDelay = Math.random() * 5;
+            circle.style.animationDuration = `${randomDuration}s`;
+            circle.style.animationDelay = `${randomDelay}s`;
+        });
     }
-    
-    // Make sharing function globally available
-    window.shareWithFriends = shareWithFriends;
-    
-    // Add share button if not already exists
-    const headerActions = document.querySelector('.header-actions');
-    if (headerActions && !document.getElementById('shareButton')) {
-        const shareButton = document.createElement('button');
-        shareButton.id = 'shareButton';
-        shareButton.className = 'btn';
-        shareButton.innerHTML = '<i class="fas fa-share-alt"></i>';
-        shareButton.setAttribute('aria-label', 'Share with friends');
-        shareButton.onclick = shareWithFriends;
-        
-        headerActions.appendChild(shareButton);
-    }
-    
-    // Display initial welcome message
-    showNotification(
-        'Welcome to TikTok Downloader!', 
-        'info', 
-        'Paste a TikTok video URL to get started.'
-    );
 });
+        function createTikTokLoader() {
+  return `
+    <div class="loading-container">
+      <p class="loading-text shimmer-text">Getting your TikTok video...</p>
+      
+      <div class="tiktok-loader">
+        <!-- Circular progress ring -->
+        <svg class="progress-ring" viewBox="0 0 100 100">
+          <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
+          <circle class="blue-circle" cx="50" cy="50" r="40"></circle>
+          <circle class="red-circle" cx="50" cy="50" r="40"></circle>
+        </svg>
+        
+        <!-- Music notes -->
+        <div class="music-note blue">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+          </svg>
+        </div>
+        
+        <div class="music-note red">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+          </svg>
+        </div>
+        
+        <!-- TikTok logo center piece -->
+        <div class="tick-tock"></div>
+      </div>
+      
+      <p class="loading-subtext">This might take a moment</p>
+    </div>
+  `;
+}
+
+// Make it globally available
+window.createTikTokLoader = createTikTokLoader;
     </script>
 
 </body>
