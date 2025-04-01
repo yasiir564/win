@@ -1186,6 +1186,250 @@ document.addEventListener('DOMContentLoaded', function() {
             opacity: 0.9;
             transform: translateY(-2px);
         }
+         /* TikTok Loader Animation */
+    .tiktok-loader {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      perspective: 500px;
+      transform-style: preserve-3d;
+      margin: 20px auto;
+    }
+    
+    .music-note {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--tiktok-red);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: musicBounce 2.5s ease-in-out infinite;
+    }
+    
+    .music-note.blue {
+      background: var(--tiktok-blue);
+      animation-delay: 0.3s;
+      left: -20px;
+      top: 25px;
+    }
+    
+    .music-note.red {
+      background: var(--tiktok-red);
+      left: 20px;
+      top: 0;
+    }
+    
+    .music-note svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+      animation: noteSpin 2.5s ease-in-out infinite;
+    }
+    
+    .music-note.blue svg {
+      animation-delay: 0.3s;
+    }
+    
+    .tick-tock {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, var(--tiktok-blue) 0%, var(--tiktok-red) 100%);
+      border-radius: 15px;
+      left: 20px;
+      top: 55px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: clockRotate 2.5s ease-in-out infinite;
+    }
+    
+    .tick-tock::before {
+      content: "";
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      background: white;
+      border-radius: 12px;
+    }
+    
+    .dark-mode .tick-tock::before {
+      background: var(--tiktok-dark-gray);
+    }
+    
+    .tick-tock::after {
+      content: "";
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, var(--tiktok-blue) 0%, var(--tiktok-red) 100%);
+      border-radius: 8px;
+      animation: pulseEffect 2.5s ease-in-out infinite;
+    }
+    
+    .progress-ring {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      top: -10px;
+      left: -10px;
+      animation: ringRotate 8s linear infinite;
+    }
+    
+    .progress-ring circle {
+      fill: none;
+      stroke-width: 4;
+      stroke-linecap: round;
+      transform-origin: center;
+    }
+    
+    .progress-ring .bg-circle {
+      stroke: rgba(0, 0, 0, 0.1);
+    }
+    
+    .dark-mode .progress-ring .bg-circle {
+      stroke: rgba(255, 255, 255, 0.1);
+    }
+    
+    .progress-ring .blue-circle {
+      stroke: var(--tiktok-blue);
+      stroke-dasharray: 251;
+      stroke-dashoffset: 200;
+      animation: circleProgress 2.5s ease-in-out infinite;
+    }
+    
+    .progress-ring .red-circle {
+      stroke: var(--tiktok-red);
+      stroke-dasharray: 251;
+      stroke-dashoffset: 200;
+      animation: circleProgress 2.5s ease-in-out infinite;
+      animation-delay: 0.3s;
+    }
+    
+    .shimmer-text {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(90deg, var(--tiktok-dark-gray) 0%, var(--tiktok-light-gray) 50%, var(--tiktok-dark-gray) 100%);
+      background-size: 200% 100%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: shimmer 2s linear infinite;
+    }
+    
+    .dark-mode .shimmer-text {
+      background: linear-gradient(90deg, var(--tiktok-light-gray) 0%, var(--tiktok-darker-gray) 50%, var(--tiktok-light-gray) 100%);
+      background-size: 200% 100%;
+      background-clip: text;
+      -webkit-background-clip: text;
+    }
+    
+    @keyframes musicBounce {
+      0%, 100% {
+        transform: translateY(0) scale(1);
+      }
+      50% {
+        transform: translateY(-30px) scale(1.1);
+      }
+    }
+    
+    @keyframes noteSpin {
+      0%, 100% {
+        transform: rotate(0deg);
+      }
+      50% {
+        transform: rotate(180deg);
+      }
+    }
+    
+    @keyframes clockRotate {
+      0%, 100% {
+        transform: rotate(0deg);
+      }
+      25% {
+        transform: rotate(10deg);
+      }
+      75% {
+        transform: rotate(-10deg);
+      }
+    }
+    
+    @keyframes pulseEffect {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+      50% {
+        transform: scale(0.9);
+        opacity: 1;
+      }
+    }
+    
+    @keyframes ringRotate {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+    
+    @keyframes circleProgress {
+      0%, 100% {
+        stroke-dashoffset: 251;
+      }
+      50% {
+        stroke-dashoffset: 0;
+      }
+      100% {
+        stroke-dashoffset: 251;
+      }
+    }
+    
+    @keyframes shimmer {
+      0% {
+        background-position: 0% 50%;
+      }
+      100% {
+        background-position: 200% 50%;
+      }
+    }
+    
+    .loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      max-width: 300px;
+      margin: 0 auto;
+      padding: 20px 0;
+    }
+    
+    .loading-text {
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin-bottom: 25px;
+      color: var(--tiktok-black);
+    }
+    
+    .dark-mode .loading-text {
+      color: var(--tiktok-white);
+    }
+    
+    .loading-subtext {
+      font-size: 0.9rem;
+      opacity: 0.7;
+      margin-top: 20px;
+      color: var(--tiktok-black);
+    }
+    
+    .dark-mode .loading-subtext {
+      color: var(--tiktok-white);
+    }
+`;
     `;
     document.head.appendChild(styleTag);
 
@@ -1811,6 +2055,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+function createTikTokLoader() {
+  return `
+    <div class="loading-container">
+      <p class="loading-text shimmer-text">Getting your TikTok video...</p>
+      
+      <div class="tiktok-loader">
+        <!-- Circular progress ring -->
+        <svg class="progress-ring" viewBox="0 0 100 100">
+          <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
+          <circle class="blue-circle" cx="50" cy="50" r="40"></circle>
+          <circle class="red-circle" cx="50" cy="50" r="40"></circle>
+        </svg>
+        
+        <!-- Music notes -->
+        <div class="music-note blue">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+          </svg>
+        </div>
+        
+        <div class="music-note red">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+          </svg>
+        </div>
+        
+        <!-- TikTok logo center piece -->
+        <div class="tick-tock"></div>
+      </div>
+      
+      <p class="loading-subtext">This might take a moment</p>
+    </div>
+  `;
+}
+
+// Make it globally available
+window.createTikTokLoader = createTikTokLoader;
     </script>
 
 </body>
