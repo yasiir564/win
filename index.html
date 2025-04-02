@@ -1664,43 +1664,21 @@ button {
         <i class="fas fa-moon"></i>
     </button>
     
-    <!-- Language Selector Dropdown with Google Translate -->
-    <div class="language-selector">
-        <button class="language-toggle" id="languageToggle" aria-label="Change language">
-            <span class="current-lang">EN</span>
-            <i class="fas fa-globe"></i>
-        </button>
-        <div class="language-dropdown" id="languageDropdown">
-            <div class="language-option" data-lang="en">
-                <span class="lang-code">EN</span>
-                <span class="lang-name">English</span>
-            </div>
-            <div class="language-option" data-lang="es">
-                <span class="lang-code">ES</span>
-                <span class="lang-name">Español</span>
-            </div>
-            <div class="language-option" data-lang="fr">
-                <span class="lang-code">FR</span>
-                <span class="lang-name">Français</span>
-            </div>
-            <div class="language-option" data-lang="de">
-                <span class="lang-code">DE</span>
-                <span class="lang-name">Deutsch</span>
-            </div>
-            <div class="language-option" data-lang="zh">
-                <span class="lang-code">ZH</span>
-                <span class="lang-name">中文</span>
-            </div>
-            <div class="language-option" data-lang="ja">
-                <span class="lang-code">JA</span>
-                <span class="lang-name">日本語</span>
-            </div>
-            <div class="language-option" data-lang="ko">
-                <span class="lang-code">KO</span>
-                <span class="lang-name">한국어</span>
-            </div>
-        </div>
-    </div>
+    <!-- Language toggle button -->
+<button id="languageToggle">
+  <span class="current-lang">EN</span>
+  <span class="dropdown-arrow">▼</span>
+</button>
+        <!-- Language dropdown menu -->
+<div id="languageDropdown" class="language-dropdown">
+  <div class="language-option active" data-lang="en">English</div>
+  <div class="language-option" data-lang="es">Español</div>
+  <div class="language-option" data-lang="fr">Français</div>
+  <div class="language-option" data-lang="de">Deutsch</div>
+  <div class="language-option" data-lang="zh">中文</div>
+  <div class="language-option" data-lang="ja">日本語</div>
+  <div class="language-option" data-lang="ko">한국어</div>
+</div>
     
     <button class="btn-sign-in">Sign In</button>
     <button class="menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
@@ -2146,48 +2124,88 @@ document.addEventListener('DOMContentLoaded', function() {
   // Start checking for initialization after a delay
   setTimeout(checkTranslateInitialized, 2000);
   
-  // Toggle dropdown with improved checking
+  // ----- DROPDOWN SPECIFIC CODE -----
+  
+  // Make sure the dropdown exists in the DOM
+  if (languageDropdown) {
+    // Set initial state - hidden by default
+    languageDropdown.style.display = 'none';
+    
+    // Ensure the dropdown has position styling - critical for proper display
+    const currentPosition = window.getComputedStyle(languageDropdown).getPropertyValue('position');
+    if (currentPosition !== 'absolute' && currentPosition !== 'fixed') {
+      languageDropdown.style.position = 'absolute';
+    }
+    
+    // Ensure z-index is high enough to appear above other elements
+    languageDropdown.style.zIndex = '1000';
+  } else {
+    console.error('Language dropdown element not found');
+  }
+  
+  // Toggle dropdown with fixed display property handling
   if (languageToggle) {
-    languageToggle.addEventListener('click', function(e) {
+    // Remove any existing click listeners to prevent conflicts
+    const newToggle = languageToggle.cloneNode(true);
+    if (languageToggle.parentNode) {
+      languageToggle.parentNode.replaceChild(newToggle, languageToggle);
+    }
+    
+    // Store reference to the new toggle
+    const activeToggle = newToggle;
+    
+    // Add the click event listener to the new element
+    activeToggle.addEventListener('click', function(e) {
       e.preventDefault();
       e.stopPropagation();
       
       console.log('Language toggle clicked');
       
-      // Force display block to ensure it shows
-      if (languageDropdown.style.display === 'block') {
-        languageDropdown.style.display = 'none';
-      } else {
-        languageDropdown.style.display = 'block';
+      if (!languageDropdown) {
+        console.error('Cannot toggle dropdown: element not found');
+        return;
       }
       
-      // Also toggle the active class
-      languageDropdown.classList.toggle('active');
+      // Force visibility toggle with !important to override any CSS
+      if (languageDropdown.style.display === 'block') {
+        languageDropdown.style.setProperty('display', 'none', 'important');
+        languageDropdown.classList.remove('active');
+      } else {
+        languageDropdown.style.setProperty('display', 'block', 'important');
+        languageDropdown.classList.add('active');
+        
+        // Position the dropdown relative to the toggle button
+        const toggleRect = activeToggle.getBoundingClientRect();
+        languageDropdown.style.top = (toggleRect.bottom + window.scrollY) + 'px';
+        languageDropdown.style.left = (toggleRect.left + window.scrollX) + 'px';
+      }
     });
   } else {
     console.error('Language toggle button not found');
   }
   
-  // Close dropdown when clicking elsewhere
+  // Close dropdown when clicking elsewhere with improved detection
   document.addEventListener('click', function(e) {
-    if (languageDropdown && e.target !== languageToggle && !languageToggle.contains(e.target)) {
-      languageDropdown.style.display = 'none';
+    if (languageDropdown && languageToggle && 
+        e.target !== languageToggle && 
+        !languageToggle.contains(e.target) && 
+        e.target !== languageDropdown && 
+        !languageDropdown.contains(e.target)) {
+      languageDropdown.style.setProperty('display', 'none', 'important');
       languageDropdown.classList.remove('active');
     }
   });
-  
-  // Prevent dropdown from closing when clicking inside it
-  if (languageDropdown) {
-    languageDropdown.addEventListener('click', function(e) {
-      e.stopPropagation();
-    });
-  }
   
   // Language selection with improved error handling and retry mechanism
   if (languageOptions && languageOptions.length > 0) {
     languageOptions.forEach(option => {
       option.addEventListener('click', function() {
         const selectedLang = this.getAttribute('data-lang');
+        
+        if (!selectedLang) {
+          console.error('Language option is missing data-lang attribute');
+          return;
+        }
         
         // Update current language display
         if (currentLangElement) {
@@ -2205,7 +2223,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Close dropdown
         if (languageDropdown) {
-          languageDropdown.style.display = 'none';
+          languageDropdown.style.setProperty('display', 'none', 'important');
           languageDropdown.classList.remove('active');
         }
         
@@ -2250,10 +2268,6 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('preferredLanguage', selectedLang);
       });
     });
-  } else {
-    console.error('No language options found');
-  }
-});
 
     // FAQ Accordion Functionality
     const faqQuestions = document.querySelectorAll('.faq-question');
