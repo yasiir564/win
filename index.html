@@ -2026,6 +2026,116 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    / Load Google Translate API
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        autoDisplay: false,
+        includedLanguages: 'en,es,fr,de,zh-CN,ja,ko', // Specify languages to include
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    }, 'google_translate_element');
+}
+
+// Function to change language using Google Translate
+function changeGoogleTranslateLanguage(langCode) {
+    // Map our language codes to Google Translate codes if needed
+    const googleLangMap = {
+        'en': 'en',
+        'es': 'es',
+        'fr': 'fr',
+        'de': 'de',
+        'zh': 'zh-CN',
+        'ja': 'ja',
+        'ko': 'ko'
+    };
+    
+    const googleLang = googleLangMap[langCode] || langCode;
+    
+    // Access the Google Translate dropdown
+    const gtCombo = document.querySelector('.goog-te-combo');
+    
+    if (gtCombo) {
+        gtCombo.value = googleLang;
+        
+        // Trigger the change event
+        gtCombo.dispatchEvent(new Event('change'));
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Load Google Translate Script
+    const googleScript = document.createElement('script');
+    googleScript.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    document.body.appendChild(googleScript);
+    
+    const languageToggle = document.getElementById('languageToggle');
+    const languageDropdown = document.getElementById('languageDropdown');
+    const languageOptions = document.querySelectorAll('.language-option');
+    const currentLangElement = document.querySelector('.current-lang');
+    
+    // Default language
+    let currentLanguage = 'en';
+    
+    // Toggle dropdown
+    languageToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        languageDropdown.classList.toggle('active');
+    });
+    
+    // Close dropdown when clicking elsewhere
+    document.addEventListener('click', function() {
+        languageDropdown.classList.remove('active');
+    });
+    
+    // Prevent dropdown from closing when clicking inside it
+    languageDropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+    
+    // Language selection
+    languageOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            const selectedLang = this.getAttribute('data-lang');
+            
+            // Update current language display
+            currentLangElement.textContent = selectedLang.toUpperCase();
+            
+            // Remove active class from all options
+            languageOptions.forEach(opt => opt.classList.remove('active'));
+            
+            // Add active class to selected option
+            this.classList.add('active');
+            
+            // Save selected language
+            currentLanguage = selectedLang;
+            
+            // Close dropdown
+            languageDropdown.classList.remove('active');
+            
+            // Change language using Google Translate
+            changeGoogleTranslateLanguage(selectedLang);
+            
+            // Store language preference
+            localStorage.setItem('preferredLanguage', selectedLang);
+        });
+    });
+    
+    // Load saved language preference on page load
+    window.addEventListener('load', function() {
+        // Wait a bit for Google Translate to initialize
+        setTimeout(() => {
+            const savedLanguage = localStorage.getItem('preferredLanguage');
+            if (savedLanguage && savedLanguage !== 'en') {
+                // Find and click the saved language option
+                const savedOption = document.querySelector(`.language-option[data-lang="${savedLanguage}"]`);
+                if (savedOption) {
+                    savedOption.click();
+                }
+            }
+        }, 1000);
+    });
+});
+
     // FAQ Accordion Functionality
     const faqQuestions = document.querySelectorAll('.faq-question');
     faqQuestions.forEach(question => {
@@ -2635,115 +2745,6 @@ document.addEventListener('DOMContentLoaded', function() {
             circle.style.animationDelay = `${randomDelay}s`;
         });
     }
-});
-        / Load Google Translate API
-function googleTranslateElementInit() {
-    new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        autoDisplay: false,
-        includedLanguages: 'en,es,fr,de,zh-CN,ja,ko', // Specify languages to include
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-    }, 'google_translate_element');
-}
-
-// Function to change language using Google Translate
-function changeGoogleTranslateLanguage(langCode) {
-    // Map our language codes to Google Translate codes if needed
-    const googleLangMap = {
-        'en': 'en',
-        'es': 'es',
-        'fr': 'fr',
-        'de': 'de',
-        'zh': 'zh-CN',
-        'ja': 'ja',
-        'ko': 'ko'
-    };
-    
-    const googleLang = googleLangMap[langCode] || langCode;
-    
-    // Access the Google Translate dropdown
-    const gtCombo = document.querySelector('.goog-te-combo');
-    
-    if (gtCombo) {
-        gtCombo.value = googleLang;
-        
-        // Trigger the change event
-        gtCombo.dispatchEvent(new Event('change'));
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Load Google Translate Script
-    const googleScript = document.createElement('script');
-    googleScript.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-    document.body.appendChild(googleScript);
-    
-    const languageToggle = document.getElementById('languageToggle');
-    const languageDropdown = document.getElementById('languageDropdown');
-    const languageOptions = document.querySelectorAll('.language-option');
-    const currentLangElement = document.querySelector('.current-lang');
-    
-    // Default language
-    let currentLanguage = 'en';
-    
-    // Toggle dropdown
-    languageToggle.addEventListener('click', function(e) {
-        e.stopPropagation();
-        languageDropdown.classList.toggle('active');
-    });
-    
-    // Close dropdown when clicking elsewhere
-    document.addEventListener('click', function() {
-        languageDropdown.classList.remove('active');
-    });
-    
-    // Prevent dropdown from closing when clicking inside it
-    languageDropdown.addEventListener('click', function(e) {
-        e.stopPropagation();
-    });
-    
-    // Language selection
-    languageOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            const selectedLang = this.getAttribute('data-lang');
-            
-            // Update current language display
-            currentLangElement.textContent = selectedLang.toUpperCase();
-            
-            // Remove active class from all options
-            languageOptions.forEach(opt => opt.classList.remove('active'));
-            
-            // Add active class to selected option
-            this.classList.add('active');
-            
-            // Save selected language
-            currentLanguage = selectedLang;
-            
-            // Close dropdown
-            languageDropdown.classList.remove('active');
-            
-            // Change language using Google Translate
-            changeGoogleTranslateLanguage(selectedLang);
-            
-            // Store language preference
-            localStorage.setItem('preferredLanguage', selectedLang);
-        });
-    });
-    
-    // Load saved language preference on page load
-    window.addEventListener('load', function() {
-        // Wait a bit for Google Translate to initialize
-        setTimeout(() => {
-            const savedLanguage = localStorage.getItem('preferredLanguage');
-            if (savedLanguage && savedLanguage !== 'en') {
-                // Find and click the saved language option
-                const savedOption = document.querySelector(`.language-option[data-lang="${savedLanguage}"]`);
-                if (savedOption) {
-                    savedOption.click();
-                }
-            }
-        }, 1000);
-    });
 });
     </script>
 
