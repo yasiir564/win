@@ -1564,134 +1564,81 @@ button {
     background: var(--tiktok-red);
 }
 
-        /* Language Selector Styles */
+       /* Fix for language dropdown styling */
 .language-selector {
-    position: relative;
-    display: flex;
-    align-items: center;
+  position: relative;
+  display: inline-block;
 }
 
 .language-toggle {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 12px;
-    background: transparent;
-    border: 1px solid var(--tiktok-medium-gray);
-    border-radius: 20px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  padding: 8px 12px;
+  font-size: 16px;
 }
 
 .language-toggle:hover {
-    background: var(--tiktok-hover);
-}
-
-.language-toggle .current-lang {
-    font-weight: 600;
+  opacity: 0.8;
 }
 
 .language-toggle i {
-    font-size: 12px;
-    color: var(--tiktok-dark-gray);
+  margin-left: 5px;
 }
 
+/* Critical dropdown styling fixes */
 .language-dropdown {
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    width: 180px;
-    background: var(--tiktok-white);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 100;
-    overflow: hidden;
-    transform-origin: top right;
-    transform: scale(0.95);
-    opacity: 0;
-    visibility: hidden;
-    transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  min-width: 160px;
+  z-index: 1000;
+  display: none; /* Hidden by default */
 }
 
+/* Show the dropdown when active class is present */
 .language-dropdown.active {
-    transform: scale(1);
-    opacity: 1;
-    visibility: visible;
+  display: block !important;
 }
 
 .language-option {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 16px;
-    cursor: pointer;
-    transition: background 0.2s ease;
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
 .language-option:hover {
-    background: var(--tiktok-light-gray);
+  background: #f5f5f5;
 }
 
 .language-option.active {
-    background: var(--tiktok-light-gray);
+  background: #e6f7ff;
 }
 
-.language-option .lang-code {
-    font-weight: 600;
-    font-size: 14px;
-    color: var(--tiktok-red);
-    width: 24px;
+.lang-code {
+  font-weight: bold;
+  margin-right: 10px;
+  width: 30px;
 }
 
-.language-option .lang-name {
-    font-size: 14px;
+.lang-name {
+  font-size: 14px;
 }
 
-/* Hide Google Translate attribution and toolbar */
-.goog-te-gadget {
-    display: none !important;
-}
-
-.goog-te-banner-frame {
-    display: none !important;
-}
-
-/* Dark Mode Styles */
-.dark-mode .language-toggle {
-    border-color: #2d2d2d;
-    color: var(--tiktok-white);
-}
-
-.dark-mode .language-dropdown {
-    background: var(--tiktok-black);
-}
-
-.dark-mode .language-option {
-    color: var(--tiktok-white);
-}
-
-.dark-mode .language-option:hover {
-    background: #1f1f1f;
-}
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-    .language-toggle {
-        padding: 6px 10px;
-    }
-    
-    .language-toggle .current-lang {
-        display: none;
-    }
-    
-    .language-toggle i {
-        margin: 0;
-    }
-    
-    .language-dropdown {
-        right: -40px;
-    }
+/* Hide Google Translate element properly */
+#google_translate_element {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  height: 0;
+  overflow: hidden;
 }
 
     </style>
@@ -2026,12 +1973,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Load Google Translate API function
+   // Load Google Translate API function
 function googleTranslateElementInit() {
   new google.translate.TranslateElement({
     pageLanguage: 'en',
     autoDisplay: false,
-    includedLanguages: 'en,es,fr,de,zh-CN,ja,ko', // Specify languages to include
+    includedLanguages: 'en,es,fr,de,zh-CN,ja,ko',
     layout: google.translate.TranslateElement.InlineLayout.SIMPLE
   }, 'google_translate_element');
   
@@ -2041,7 +1988,7 @@ function googleTranslateElementInit() {
 
 // Function to change language using Google Translate
 function changeGoogleTranslateLanguage(langCode) {
-  // Map our language codes to Google Translate codes if needed
+  // Map our language codes to Google Translate codes
   const googleLangMap = {
     'en': 'en',
     'es': 'es',
@@ -2054,7 +2001,7 @@ function changeGoogleTranslateLanguage(langCode) {
   
   const googleLang = googleLangMap[langCode] || langCode;
   
-  // Try to access the Google Translate dropdown with a more robust selector
+  // Try to access the Google Translate dropdown
   const gtCombo = document.querySelector('.goog-te-combo, .VIpgJd-ZVi9od-xl07Ob-lTBxed');
   
   if (gtCombo) {
@@ -2097,10 +2044,12 @@ document.addEventListener('DOMContentLoaded', function() {
   sweetAlertScript.src = 'https://cdn.jsdelivr.net/npm/sweetalert2@11';
   document.head.appendChild(sweetAlertScript);
   
-  // Load Google Translate Script
-  const googleScript = document.createElement('script');
-  googleScript.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-  document.body.appendChild(googleScript);
+  // Load Google Translate Script with delay to ensure SweetAlert loads first
+  setTimeout(() => {
+    const googleScript = document.createElement('script');
+    googleScript.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    document.body.appendChild(googleScript);
+  }, 500);
   
   // Get DOM elements
   const languageToggle = document.getElementById('languageToggle');
@@ -2119,6 +2068,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Listen for Google Translate initialization
   document.addEventListener('google-translate-ready', function() {
     translateInitialized = true;
+    console.log('Google Translate initialized!');
     
     // Apply saved language once Google Translate is ready
     const savedLanguage = localStorage.getItem('preferredLanguage');
@@ -2130,59 +2080,42 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
-  // Toggle dropdown with improved checking
-  languageToggle.addEventListener('click', function(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Check if Google Translate has loaded
-    if (!translateInitialized && initAttempts < maxAttempts) {
-      initAttempts++;
+  // Toggle dropdown with improved checking - THIS IS THE KEY FIX
+  if (languageToggle) {
+    languageToggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
       
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'info',
-        title: 'Loading translation service...',
-        showConfirmButton: false,
-        timer: 2000
-      });
+      console.log('Language toggle clicked');
       
-      // Try to initialize again
-      setTimeout(() => {
-        const gtCombo = document.querySelector('.goog-te-combo, .VIpgJd-ZVi9od-xl07Ob-lTBxed');
-        if (gtCombo) {
-          translateInitialized = true;
-          languageDropdown.classList.toggle('active');
-        }
-      }, 1000);
-    } else if (initAttempts >= maxAttempts) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Translation Service Error',
-        text: 'Could not load Google Translate. Please refresh the page and try again.',
-        confirmButtonText: 'Refresh',
-        showCancelButton: true
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.reload();
-        }
-      });
-    } else {
-      // Normal toggle if everything is loaded
+      // Force display block to ensure it shows
+      if (languageDropdown.style.display === 'block') {
+        languageDropdown.style.display = 'none';
+      } else {
+        languageDropdown.style.display = 'block';
+      }
+      
+      // Also toggle the active class
       languageDropdown.classList.toggle('active');
+    });
+  } else {
+    console.error('Language toggle button not found');
+  }
+  
+  // Close dropdown when clicking elsewhere
+  document.addEventListener('click', function(e) {
+    if (languageDropdown && e.target !== languageToggle) {
+      languageDropdown.style.display = 'none';
+      languageDropdown.classList.remove('active');
     }
   });
   
-  // Close dropdown when clicking elsewhere
-  document.addEventListener('click', function() {
-    languageDropdown.classList.remove('active');
-  });
-  
   // Prevent dropdown from closing when clicking inside it
-  languageDropdown.addEventListener('click', function(e) {
-    e.stopPropagation();
-  });
+  if (languageDropdown) {
+    languageDropdown.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  }
   
   // Language selection with improved error handling
   languageOptions.forEach(option => {
@@ -2190,7 +2123,9 @@ document.addEventListener('DOMContentLoaded', function() {
       const selectedLang = this.getAttribute('data-lang');
       
       // Update current language display
-      currentLangElement.textContent = selectedLang.toUpperCase();
+      if (currentLangElement) {
+        currentLangElement.textContent = selectedLang.toUpperCase();
+      }
       
       // Remove active class from all options
       languageOptions.forEach(opt => opt.classList.remove('active'));
@@ -2202,9 +2137,25 @@ document.addEventListener('DOMContentLoaded', function() {
       currentLanguage = selectedLang;
       
       // Close dropdown
-      languageDropdown.classList.remove('active');
+      if (languageDropdown) {
+        languageDropdown.style.display = 'none';
+        languageDropdown.classList.remove('active');
+      }
       
-      // Change language with retry mechanism
+      // Check if Google Translate is ready
+      if (!translateInitialized) {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'info',
+          title: 'Translation service is still loading',
+          text: 'Your language preference will be applied shortly',
+          showConfirmButton: false,
+          timer: 3000
+        });
+      }
+      
+      // Try to change language with a retry mechanism
       const success = changeGoogleTranslateLanguage(selectedLang);
       if (!success) {
         // If failed, try again after a delay
