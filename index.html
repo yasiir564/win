@@ -2124,7 +2124,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // Start checking for initialization after a delay
   setTimeout(checkTranslateInitialized, 2000);
   
-  // ----- DROPDOWN SPECIFIC CODE -----
   
   // Make sure the dropdown exists in the DOM
   if (languageDropdown) {
@@ -2268,6 +2267,10 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('preferredLanguage', selectedLang);
       });
     });
+      } else {
+    console.error('No language options found');
+  }
+      
 
     // FAQ Accordion Functionality
     const faqQuestions = document.querySelectorAll('.faq-question');
