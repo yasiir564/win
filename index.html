@@ -1968,6 +1968,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Scroll to result area function
+    function scrollToResult() {
+        const resultDiv = document.getElementById('result');
+        if (resultDiv) {
+            // Add small delay to ensure content is rendered before scrolling
+            setTimeout(() => {
+                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        }
+    }
+
+    // Function to trigger automatic file download
+    function triggerDownload(url, filename) {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename || 'tiktok-video.mp4';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     // Function to show SweetAlert notifications
     function showSweetAlert(title, text, icon = 'success') {
         Swal.fire({
@@ -1994,6 +2015,12 @@ document.addEventListener('DOMContentLoaded', function() {
             console.error('Failed to copy: ', err);
             showSweetAlert('Copy failed', 'Unable to copy to clipboard. Please try again.', 'error');
         });
+    }
+
+    // Function to extract video ID from TikTok URL for filename
+    function extractVideoIdFromUrl(url) {
+        const matches = url.match(/video\/(\d+)/);
+        return matches && matches[1] ? `tiktok-${matches[1]}.mp4` : 'tiktok-video.mp4';
     }
 
     // Make the copyVideoLink function globally available
@@ -2076,6 +2103,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show loading state with TikTok-like animation
         resultDiv.innerHTML = createTikTokLoader();
         
+        // Scroll to result area to show the loading animation
+        scrollToResult();
+        
         try {
             console.log('Sending request with URL:', url);
             
@@ -2140,17 +2170,23 @@ document.addEventListener('DOMContentLoaded', function() {
             // Format creator name with @ if not already present
             const creatorName = data.author && !data.author.startsWith('@') ? `@${data.author}` : (data.author || 'Unknown');
             
+            // Create a filename for the download
+            const videoFileName = extractVideoIdFromUrl(url);
+            
+            // Trigger automatic download
+            triggerDownload(data.proxy_url || data.video_url, videoFileName);
+            
             // Show success notification
             showSweetAlert(
                 'Download successful!', 
-                `Video from ${creatorName} has been downloaded.`
+                `Video from ${creatorName} has been downloaded to your device.`
             );
             
             // Create modern TikTok-style video display
             resultDiv.innerHTML = `
                 <div class="tiktok-video-container">
                     <div class="video-player-section">
-                        <video controls class="tiktok-video-player" poster="${data.cover_url || ''}">
+                        <video controls autoplay class="tiktok-video-player" poster="${data.cover_url || ''}">
                             <source src="${data.proxy_url || data.video_url}" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -2171,8 +2207,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p class="video-caption">${data.desc || 'No description'}</p>
                         
                         <div class="video-actions">
-                            <button class="tiktok-btn download-btn" onclick="window.location.href='${data.video_url}'">
-                                <i class="fas fa-download"></i> Download
+                            <button class="tiktok-btn download-btn" onclick="triggerDownload('${data.proxy_url || data.video_url}', '${videoFileName}')">
+                                <i class="fas fa-download"></i> Download Again
                             </button>
                             
                             <button class="tiktok-btn copy-btn" onclick="copyVideoLink('${data.video_url}')">
@@ -2182,6 +2218,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             `;
+            
+            // Scroll to result area again to show the video
+            scrollToResult();
                         
             // Clear the input field for next use
             urlInput.value = '';
@@ -2230,6 +2269,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             `;
+            
+            // Scroll to result area to show the error
+            scrollToResult();
         } finally {
             // Re-enable input and button
             urlInput.disabled = false;
@@ -2276,6 +2318,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Show loading state
         resultDiv.innerHTML = createTikTokLoader();
+        
+        // Scroll to result area to show the loading animation
+        scrollToResult();
         
         // Show info notification
         showSweetAlert('Using direct connection', 'Attempting to download without using a proxy server.', 'info');
@@ -2332,17 +2377,23 @@ document.addEventListener('DOMContentLoaded', function() {
             // Format creator name with @ if not already present
             const creatorName = data.author && !data.author.startsWith('@') ? `@${data.author}` : (data.author || 'Unknown');
             
+            // Create a filename for the download
+            const videoFileName = extractVideoIdFromUrl(url);
+            
+            // Trigger automatic download
+            triggerDownload(data.video_url, videoFileName);
+            
             // Show success notification
             showSweetAlert(
                 'Download successful!', 
-                `Video from ${creatorName} has been successfully downloaded via direct connection.`
+                `Video from ${creatorName} has been successfully downloaded to your device.`
             );
             
             // Create modern TikTok-style video display
             resultDiv.innerHTML = `
                 <div class="tiktok-video-container">
                     <div class="video-player-section">
-                        <video controls class="tiktok-video-player" poster="${data.cover_url || ''}">
+                        <video controls autoplay class="tiktok-video-player" poster="${data.cover_url || ''}">
                             <source src="${data.video_url}" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -2363,8 +2414,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p class="video-caption">${data.desc || 'No description'}</p>
                         
                         <div class="video-actions">
-                            <button class="tiktok-btn download-btn" onclick="window.location.href='${data.video_url}'">
-                                <i class="fas fa-download"></i> Download
+                            <button class="tiktok-btn download-btn" onclick="triggerDownload('${data.video_url}', '${videoFileName}')">
+                                <i class="fas fa-download"></i> Download Again
                             </button>
                             
                             <button class="tiktok-btn copy-btn" onclick="copyVideoLink('${data.video_url}')">
@@ -2374,6 +2425,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             `;
+            
+            // Scroll to result area again to show the video
+            scrollToResult();
             
             // Clear the input field for next use
             urlInput.value = '';
@@ -2412,6 +2466,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             `;
+            
+            // Scroll to result area to show the error
+            scrollToResult();
         })
         .finally(() => {
             // Re-enable input and button
@@ -2422,9 +2479,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Make downloadTikTok and downloadWithoutProxy functions globally available
+    // Make functions globally available
     window.downloadTikTok = downloadTikTok;
     window.downloadWithoutProxy = downloadWithoutProxy;
+    window.triggerDownload = triggerDownload;
+    window.scrollToResult = scrollToResult;
 
     // Auto-detect and process URLs as they're pasted
     const downloadBtn = document.getElementById('downloadBtn');
@@ -2462,6 +2521,19 @@ document.addEventListener('DOMContentLoaded', function() {
             circle.style.animationDelay = `${randomDelay}s`;
         });
     }
+
+    // Add event listener for page visibility changes
+    // This helps resume video playback if the user switches tabs and returns
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+            const videoPlayer = document.querySelector('.tiktok-video-player');
+            if (videoPlayer) {
+                videoPlayer.play().catch(err => {
+                    console.log('Auto-play prevented by browser:', err);
+                });
+            }
+        }
+    });
 });
     </script>
 
