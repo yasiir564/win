@@ -1543,6 +1543,27 @@ button {
         font-size: 0.9rem;
       }
     }
+        /* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--tiktok-darker-gray);
+    border-radius: var(--border-radius);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--tiktok-gradient);
+    border-radius: var(--border-radius);
+    box-shadow: var(--btn-shadow);
+    transition: var(--transition);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--tiktok-red);
+}
+
     </style>
 </head>
 
