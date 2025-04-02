@@ -771,242 +771,6 @@ button {
 .js-hidden {
     display: none !important;
 }
-    </style>
-</head>
-
-<body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <i class="fab fa-tiktok"></i>
-                <span>TikDownloader</span>
-            </div>
-            
-            <div class="nav-links">
-                <a href="#" class="active">Home</a>
-                <a href="privacy-policy.html">Privacy</a>
-                <a href="contact.html">Contact</a>
-            </div>
-            
-            <div class="nav-actions">
-                <button class="theme-toggle" id="darkModeToggle" aria-label="Toggle dark mode">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <button class="btn-sign-in">Sign In</button>
-                <button class="menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-container">
-            <div class="hero-content">
-                <div class="hero-logo">
-                    <i class="fab fa-tiktok pulse"></i>
-                    <h1>TikTok Downloader</h1>
-                </div>
-                <p class="hero-subtitle">Download TikTok videos without watermark in seconds</p>
-                
-                <div class="download-form">
-                    <div class="input-wrapper">
-                        <input type="url" id="urlInput" placeholder="Paste TikTok URL here..." autocomplete="off">
-                        <button class="clear-btn" id="clearInput" aria-label="Clear input">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <button id="downloadBtn" class="download-btn">
-                        <i class="fas fa-arrow-down"></i> Download
-                    </button>
-                </div>
-                
-                <div id="result" class="download-result"></div>
-            </div>
-        </div>
-        
-        <div class="shape-divider">
-            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"></path>
-            </svg>
-        </div>
-    </section>
-
-    <!-- How to Use Section -->
-    <section class="how-to-use">
-        <div class="section-container">
-            <h2 class="section-title">How to Use <span class="highlight">TikDownloader</span></h2>
-            
-            <div class="steps-container">
-                <div class="step-card">
-                    <div class="step-icon">
-                        <i class="fas fa-link"></i>
-                    </div>
-                    <h3 class="step-title">Copy Link</h3>
-                    <p>Copy the TikTok video link from the app or website</p>
-                </div>
-                
-                <div class="step-connector"></div>
-                
-                <div class="step-card">
-                    <div class="step-icon">
-                        <i class="fas fa-paste"></i>
-                    </div>
-                    <h3 class="step-title">Paste URL</h3>
-                    <p>Paste the link in the input field above</p>
-                </div>
-                
-                <div class="step-connector"></div>
-                
-                <div class="step-card">
-                    <div class="step-icon">
-                        <i class="fas fa-download"></i>
-                    </div>
-                    <h3 class="step-title">Download</h3>
-                    <p>Click the download button and save your video</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features">
-        <div class="section-container">
-            <h2 class="section-title">Why Choose <span class="highlight">TikDownloader</span></h2>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <i class="fas fa-bolt"></i>
-                    <h3>Fast Download</h3>
-                    <p>Download videos in seconds with our high-speed servers</p>
-                </div>
-                
-                <div class="feature-card">
-                    <i class="fas fa-ban"></i>
-                    <h3>No Watermark</h3>
-                    <p>Download videos without the TikTok watermark</p>
-                </div>
-                
-                <div class="feature-card">
-                    <i class="fas fa-shield-alt"></i>
-                    <h3>Secure & Private</h3>
-                    <p>We don't store your videos or personal information</p>
-                </div>
-                
-                <div class="feature-card">
-                    <i class="fas fa-globe"></i>
-                    <h3>Works Everywhere</h3>
-                    <p>Compatible with all devices and browsers</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="faq">
-        <div class="section-container">
-            <h2 class="section-title">Frequently Asked Questions</h2>
-            
-            <div class="faq-container">
-                <div class="faq-item">
-                    <div class="faq-question" tabindex="0">
-                        <span>Is this tool free to use?</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Yes, our TikTok downloader is completely free to use with no hidden charges or subscription fees.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question" tabindex="0">
-                        <span>Can I download TikTok videos without watermark?</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Yes, our tool provides options to download videos with or without the TikTok watermark.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question" tabindex="0">
-                        <span>Is there a limit to how many videos I can download?</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>There is no strict limit, but we recommend reasonable usage to ensure the service remains available for everyone.</p>
-                    </div>
-                </div>
-                
-                <div class="faq-item">
-                    <div class="faq-question" tabindex="0">
-                        <span>What devices can I use this tool on?</span>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Our TikTok downloader works on all devices including desktop computers, laptops, tablets, and mobile phones.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Notification -->
-    <div class="notification" id="notification">
-        <div class="notification-content">
-            <i class="fas fa-check-circle"></i>
-            <span id="notificationText">Link copied to clipboard!</span>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-top">
-                <div class="footer-logo">
-                    <i class="fab fa-tiktok"></i>
-                    <span>TikDownloader</span>
-                </div>
-                <div class="footer-links">
-                    <div class="footer-column">
-                        <h3>Pages</h3>
-                        <a href="#">Home</a>
-                        <a href="privacy-policy.html">Privacy Policy</a>
-                        <a href="contact.html">Contact Us</a>
-                    </div>
-                    <div class="footer-column">
-                        <h3>Support</h3>
-                        <a href="#">FAQ</a>
-                        <a href="#">Help Center</a>
-                        <a href="#">Report an Issue</a>
-                    </div>
-                    <div class="footer-column">
-                        <h3>Legal</h3>
-                        <a href="#">Terms of Service</a>
-                        <a href="#">Cookie Policy</a>
-                        <a href="#">DMCA</a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 TikDownloader. All rights reserved.</p>
-                <div class="social-links">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-
-    <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Add TikTok color scheme to CSS
-    const styleTag = document.createElement('style');
-    styleTag.textContent = `
         :root {
             --tiktok-black: #000000;
             --tiktok-white: #FFFFFF;
@@ -1428,8 +1192,239 @@ document.addEventListener('DOMContentLoaded', function() {
     .dark-mode .loading-subtext {
       color: var(--tiktok-white);
     }
-`;
-    document.head.appendChild(styleTag);
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fab fa-tiktok"></i>
+                <span>TikDownloader</span>
+            </div>
+            
+            <div class="nav-links">
+                <a href="#" class="active">Home</a>
+                <a href="privacy-policy.html">Privacy</a>
+                <a href="contact.html">Contact</a>
+            </div>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" id="darkModeToggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="btn-sign-in">Sign In</button>
+                <button class="menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-logo">
+                    <i class="fab fa-tiktok pulse"></i>
+                    <h1>TikTok Downloader</h1>
+                </div>
+                <p class="hero-subtitle">Download TikTok videos without watermark in seconds</p>
+                
+                <div class="download-form">
+                    <div class="input-wrapper">
+                        <input type="url" id="urlInput" placeholder="Paste TikTok URL here..." autocomplete="off">
+                        <button class="clear-btn" id="clearInput" aria-label="Clear input">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <button id="downloadBtn" class="download-btn">
+                        <i class="fas fa-arrow-down"></i> Download
+                    </button>
+                </div>
+                
+                <div id="result" class="download-result"></div>
+            </div>
+        </div>
+        
+        <div class="shape-divider">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- How to Use Section -->
+    <section class="how-to-use">
+        <div class="section-container">
+            <h2 class="section-title">How to Use <span class="highlight">TikDownloader</span></h2>
+            
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-icon">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <h3 class="step-title">Copy Link</h3>
+                    <p>Copy the TikTok video link from the app or website</p>
+                </div>
+                
+                <div class="step-connector"></div>
+                
+                <div class="step-card">
+                    <div class="step-icon">
+                        <i class="fas fa-paste"></i>
+                    </div>
+                    <h3 class="step-title">Paste URL</h3>
+                    <p>Paste the link in the input field above</p>
+                </div>
+                
+                <div class="step-connector"></div>
+                
+                <div class="step-card">
+                    <div class="step-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <h3 class="step-title">Download</h3>
+                    <p>Click the download button and save your video</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="section-container">
+            <h2 class="section-title">Why Choose <span class="highlight">TikDownloader</span></h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-bolt"></i>
+                    <h3>Fast Download</h3>
+                    <p>Download videos in seconds with our high-speed servers</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-ban"></i>
+                    <h3>No Watermark</h3>
+                    <p>Download videos without the TikTok watermark</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Secure & Private</h3>
+                    <p>We don't store your videos or personal information</p>
+                </div>
+                
+                <div class="feature-card">
+                    <i class="fas fa-globe"></i>
+                    <h3>Works Everywhere</h3>
+                    <p>Compatible with all devices and browsers</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq">
+        <div class="section-container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question" tabindex="0">
+                        <span>Is this tool free to use?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, our TikTok downloader is completely free to use with no hidden charges or subscription fees.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" tabindex="0">
+                        <span>Can I download TikTok videos without watermark?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, our tool provides options to download videos with or without the TikTok watermark.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" tabindex="0">
+                        <span>Is there a limit to how many videos I can download?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>There is no strict limit, but we recommend reasonable usage to ensure the service remains available for everyone.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" tabindex="0">
+                        <span>What devices can I use this tool on?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our TikTok downloader works on all devices including desktop computers, laptops, tablets, and mobile phones.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <i class="fas fa-check-circle"></i>
+            <span id="notificationText">Link copied to clipboard!</span>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-logo">
+                    <i class="fab fa-tiktok"></i>
+                    <span>TikDownloader</span>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Pages</h3>
+                        <a href="#">Home</a>
+                        <a href="privacy-policy.html">Privacy Policy</a>
+                        <a href="contact.html">Contact Us</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Support</h3>
+                        <a href="#">FAQ</a>
+                        <a href="#">Help Center</a>
+                        <a href="#">Report an Issue</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Legal</h3>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">Cookie Policy</a>
+                        <a href="#">DMCA</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 TikDownloader. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
 
     // Dark Mode Toggle
     const darkModeToggle = document.getElementById('darkModeToggle');
