@@ -11,6 +11,10 @@
     <!-- Firebase SDK -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10c.0.0/firebase-app.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.0.0/firebase-auth.min.js"></script>
+    <!-- SweetAlert2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
     <style>
         :root {
@@ -507,79 +511,132 @@
 
     <!-- Scripts -->
     <script>
-        // Initialize Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyB3B371U-rRCQRPKNLoCjCcsxN2_PW0K0s",
-            authDomain: "denmara-de138.firebaseapp.com",
-            projectId: "denmara-de138",
-            storageBucket: "denmara-de138.firebasestorage.app",
-            messagingSenderId: "38873058291",
-            appId: "1:38873058291:web:f3891630c469d0e6696086",
-            measurementId: "G-Y4XP9RSQKK"
-        };
-        
-        // Initialize Firebase (will run after Firebase SDK loads)
-        document.addEventListener('DOMContentLoaded', function() {
-            try {
-                firebase.initializeApp(firebaseConfig);
-                console.log("Firebase initialized successfully");
-            } catch (error) {
-                console.error("Error initializing Firebase:", error);
-            }
-        });
-        
-        // Dark Mode Toggle
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const body = document.body;
-        const isDarkMode = localStorage.getItem('darkMode') === 'true';
-        
-        // Set initial theme based on localStorage
-        if (isDarkMode) {
-            body.classList.add('dark-mode');
-            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        }
-        
-        darkModeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-            const isDark = body.classList.contains('dark-mode');
+       // Initialize Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyCR0P8gljJWHtHF4xuJiZCVEwLORk3TwWI",
+  authDomain: "tiktok-downloder-f0f16.firebaseapp.com",
+  projectId: "tiktok-downloder-f0f16",
+  storageBucket: "tiktok-downloder-f0f16.firebasestorage.app",
+  messagingSenderId: "247398523894",
+  appId: "1:247398523894:web:07602561b0440e387bddd7"
+};
+
+// Initialize Firebase (will run after Firebase SDK loads)
+document.addEventListener('DOMContentLoaded', function() {
+    try {
+        firebase.initializeApp(firebaseConfig);
+        console.log("Firebase initialized successfully");
+        showToast('success', 'Firebase initialized successfully');
+    } catch (error) {
+        console.error("Error initializing Firebase:", error);
+        showToast('error', 'Firebase initialization failed: ' + error.message);
+    }
+});
+
+// Dark Mode Toggle
+const darkModeToggle = document.getElementById('darkModeToggle');
+const body = document.body;
+const isDarkMode = localStorage.getItem('darkMode') === 'true';
+
+// Set initial theme based on localStorage
+if (isDarkMode) {
+    body.classList.add('dark-mode');
+    darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+}
+
+darkModeToggle.addEventListener('click', () => {
+    body.classList.toggle('dark-mode');
+    const isDark = body.classList.contains('dark-mode');
+    
+    // Update icon
+    darkModeToggle.innerHTML = isDark ? 
+        '<i class="fas fa-sun"></i>' : 
+        '<i class="fas fa-moon"></i>';
+    
+    // Save preference
+    localStorage.setItem('darkMode', isDark);
+    
+    // Show theme change notification
+    showToast('info', isDark ? 'Dark mode activated' : 'Light mode activated', 'top-end', 1500);
+});
+
+// Google Sign In
+document.getElementById('googleLogin').addEventListener('click', () => {
+    showLoading('Connecting with Google...');
+    const provider = new firebase.auth.GoogleAuthProvider();
+    authenticateWithProvider(provider, 'Google');
+});
+
+// Apple Sign In
+document.getElementById('appleLogin').addEventListener('click', () => {
+    showLoading('Connecting with Apple...');
+    const provider = new firebase.auth.OAuthProvider('apple.com');
+    authenticateWithProvider(provider, 'Apple');
+});
+
+// Authentication function
+function authenticateWithProvider(provider, providerName) {
+    firebase.auth().signInWithPopup(provider)
+        .then((result) => {
+            // User signed in successfully
+            const user = result.user;
+            console.log("User signed in:", user);
             
-            // Update icon
-            darkModeToggle.innerHTML = isDark ? 
-                '<i class="fas fa-sun"></i>' : 
-                '<i class="fas fa-moon"></i>';
+            // Close loading popup
+            Swal.close();
             
-            // Save preference
-            localStorage.setItem('darkMode', isDark);
+            // Show success message
+            showToast('success', `Successfully signed in with ${providerName}!`, 'top', 2000);
+            
+            // Redirect to index.html after short delay
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 1000);
+        })
+        .catch((error) => {
+            // Handle errors
+            console.error("Authentication error:", error);
+            
+            // Show error message
+            Swal.fire({
+                icon: 'error',
+                title: 'Authentication Failed',
+                text: error.message || `Unable to sign in with ${providerName}. Please try again.`,
+                confirmButtonText: 'Try Again'
+            });
         });
-        
-        // Google Sign In
-        document.getElementById('googleLogin').addEventListener('click', () => {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            authenticateWithProvider(provider);
-        });
-        
-        // Apple Sign In
-        document.getElementById('appleLogin').addEventListener('click', () => {
-            const provider = new firebase.auth.OAuthProvider('apple.com');
-            authenticateWithProvider(provider);
-        });
-        
-        // Authentication function
-        function authenticateWithProvider(provider) {
-            firebase.auth().signInWithPopup(provider)
-                .then((result) => {
-                    // User signed in successfully
-                    const user = result.user;
-                    console.log("User signed in:", user);
-                    // Redirect or update UI as needed
-                    window.location.href = "dashboard.html";
-                })
-                .catch((error) => {
-                    // Handle errors
-                    console.error("Authentication error:", error);
-                    alert("Login failed. Please try again.");
-                });
+}
+
+// Helper function for SweetAlert toasts
+function showToast(icon, text, position = 'top-end', timer = 3000) {
+    const Toast = Swal.mixin({
+        toast: true,
+        position: position,
+        showConfirmButton: false,
+        timer: timer,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer);
+            toast.addEventListener('mouseleave', Swal.resumeTimer);
         }
+    });
+    
+    Toast.fire({
+        icon: icon,
+        title: text
+    });
+}
+
+// Helper function for SweetAlert loading state
+function showLoading(title) {
+    Swal.fire({
+        title: title,
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+}
     </script>
 </body>
 </html>
