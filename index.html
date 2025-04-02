@@ -1564,6 +1564,136 @@ button {
     background: var(--tiktok-red);
 }
 
+        /* Language Selector Styles */
+.language-selector {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.language-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid var(--tiktok-medium-gray);
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.language-toggle:hover {
+    background: var(--tiktok-hover);
+}
+
+.language-toggle .current-lang {
+    font-weight: 600;
+}
+
+.language-toggle i {
+    font-size: 12px;
+    color: var(--tiktok-dark-gray);
+}
+
+.language-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 180px;
+    background: var(--tiktok-white);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    overflow: hidden;
+    transform-origin: top right;
+    transform: scale(0.95);
+    opacity: 0;
+    visibility: hidden;
+    transition: transform 0.2s ease, opacity 0.2s ease, visibility 0.2s;
+}
+
+.language-dropdown.active {
+    transform: scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+.language-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.language-option:hover {
+    background: var(--tiktok-light-gray);
+}
+
+.language-option.active {
+    background: var(--tiktok-light-gray);
+}
+
+.language-option .lang-code {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--tiktok-red);
+    width: 24px;
+}
+
+.language-option .lang-name {
+    font-size: 14px;
+}
+
+/* Hide Google Translate attribution and toolbar */
+.goog-te-gadget {
+    display: none !important;
+}
+
+.goog-te-banner-frame {
+    display: none !important;
+}
+
+/* Dark Mode Styles */
+.dark-mode .language-toggle {
+    border-color: #2d2d2d;
+    color: var(--tiktok-white);
+}
+
+.dark-mode .language-dropdown {
+    background: var(--tiktok-black);
+}
+
+.dark-mode .language-option {
+    color: var(--tiktok-white);
+}
+
+.dark-mode .language-option:hover {
+    background: #1f1f1f;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .language-toggle {
+        padding: 6px 10px;
+    }
+    
+    .language-toggle .current-lang {
+        display: none;
+    }
+    
+    .language-toggle i {
+        margin: 0;
+    }
+    
+    .language-dropdown {
+        right: -40px;
+    }
+}
+
     </style>
 </head>
 
@@ -1582,15 +1712,58 @@ button {
                 <a href="contact.html">Contact</a>
             </div>
             
-            <div class="nav-actions">
-                <button class="theme-toggle" id="darkModeToggle" aria-label="Toggle dark mode">
-                    <i class="fas fa-moon"></i>
-                </button>
-                <button class="btn-sign-in">Sign In</button>
-                <button class="menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
-                    <i class="fas fa-bars"></i>
-                </button>
+           <div class="nav-actions">
+    <button class="theme-toggle" id="darkModeToggle" aria-label="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+    </button>
+    
+    <!-- Language Selector Dropdown with Google Translate -->
+    <div class="language-selector">
+        <button class="language-toggle" id="languageToggle" aria-label="Change language">
+            <span class="current-lang">EN</span>
+            <i class="fas fa-globe"></i>
+        </button>
+        <div class="language-dropdown" id="languageDropdown">
+            <div class="language-option" data-lang="en">
+                <span class="lang-code">EN</span>
+                <span class="lang-name">English</span>
             </div>
+            <div class="language-option" data-lang="es">
+                <span class="lang-code">ES</span>
+                <span class="lang-name">Español</span>
+            </div>
+            <div class="language-option" data-lang="fr">
+                <span class="lang-code">FR</span>
+                <span class="lang-name">Français</span>
+            </div>
+            <div class="language-option" data-lang="de">
+                <span class="lang-code">DE</span>
+                <span class="lang-name">Deutsch</span>
+            </div>
+            <div class="language-option" data-lang="zh">
+                <span class="lang-code">ZH</span>
+                <span class="lang-name">中文</span>
+            </div>
+            <div class="language-option" data-lang="ja">
+                <span class="lang-code">JA</span>
+                <span class="lang-name">日本語</span>
+            </div>
+            <div class="language-option" data-lang="ko">
+                <span class="lang-code">KO</span>
+                <span class="lang-name">한국어</span>
+            </div>
+        </div>
+    </div>
+    
+    <button class="btn-sign-in">Sign In</button>
+    <button class="menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+        <i class="fas fa-bars"></i>
+    </button>
+</div>
+
+<!-- Google Translate Element (hidden) -->
+<div id="google_translate_element" style="display: none;"></div>
+
         </div>
     </nav>
 
@@ -2462,6 +2635,115 @@ document.addEventListener('DOMContentLoaded', function() {
             circle.style.animationDelay = `${randomDelay}s`;
         });
     }
+});
+        / Load Google Translate API
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        autoDisplay: false,
+        includedLanguages: 'en,es,fr,de,zh-CN,ja,ko', // Specify languages to include
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    }, 'google_translate_element');
+}
+
+// Function to change language using Google Translate
+function changeGoogleTranslateLanguage(langCode) {
+    // Map our language codes to Google Translate codes if needed
+    const googleLangMap = {
+        'en': 'en',
+        'es': 'es',
+        'fr': 'fr',
+        'de': 'de',
+        'zh': 'zh-CN',
+        'ja': 'ja',
+        'ko': 'ko'
+    };
+    
+    const googleLang = googleLangMap[langCode] || langCode;
+    
+    // Access the Google Translate dropdown
+    const gtCombo = document.querySelector('.goog-te-combo');
+    
+    if (gtCombo) {
+        gtCombo.value = googleLang;
+        
+        // Trigger the change event
+        gtCombo.dispatchEvent(new Event('change'));
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Load Google Translate Script
+    const googleScript = document.createElement('script');
+    googleScript.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    document.body.appendChild(googleScript);
+    
+    const languageToggle = document.getElementById('languageToggle');
+    const languageDropdown = document.getElementById('languageDropdown');
+    const languageOptions = document.querySelectorAll('.language-option');
+    const currentLangElement = document.querySelector('.current-lang');
+    
+    // Default language
+    let currentLanguage = 'en';
+    
+    // Toggle dropdown
+    languageToggle.addEventListener('click', function(e) {
+        e.stopPropagation();
+        languageDropdown.classList.toggle('active');
+    });
+    
+    // Close dropdown when clicking elsewhere
+    document.addEventListener('click', function() {
+        languageDropdown.classList.remove('active');
+    });
+    
+    // Prevent dropdown from closing when clicking inside it
+    languageDropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+    
+    // Language selection
+    languageOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            const selectedLang = this.getAttribute('data-lang');
+            
+            // Update current language display
+            currentLangElement.textContent = selectedLang.toUpperCase();
+            
+            // Remove active class from all options
+            languageOptions.forEach(opt => opt.classList.remove('active'));
+            
+            // Add active class to selected option
+            this.classList.add('active');
+            
+            // Save selected language
+            currentLanguage = selectedLang;
+            
+            // Close dropdown
+            languageDropdown.classList.remove('active');
+            
+            // Change language using Google Translate
+            changeGoogleTranslateLanguage(selectedLang);
+            
+            // Store language preference
+            localStorage.setItem('preferredLanguage', selectedLang);
+        });
+    });
+    
+    // Load saved language preference on page load
+    window.addEventListener('load', function() {
+        // Wait a bit for Google Translate to initialize
+        setTimeout(() => {
+            const savedLanguage = localStorage.getItem('preferredLanguage');
+            if (savedLanguage && savedLanguage !== 'en') {
+                // Find and click the saved language option
+                const savedOption = document.querySelector(`.language-option[data-lang="${savedLanguage}"]`);
+                if (savedOption) {
+                    savedOption.click();
+                }
+            }
+        }, 1000);
+    });
 });
     </script>
 
