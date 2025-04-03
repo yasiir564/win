@@ -2092,6 +2092,12 @@ document.addEventListener('DOMContentLoaded', function() {
         return matches && matches[1] ? `tiktok-${matches[1]}.mp4` : 'tiktok-video.mp4';
     }
 
+    // Function to extract username from TikTok URL
+    function extractUsernameFromUrl(url) {
+        const matches = url.match(/@([a-zA-Z0-9_.]+)/);
+        return matches && matches[1] ? matches[1] : 'user';
+    }
+
     // Create TikTok-style loader
     function createTikTokLoader() {
         return `
@@ -2124,6 +2130,124 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 
                 <p class="loading-subtext">This might take a moment</p>
+            </div>
+        `;
+    }
+
+    // Create TikTok style video player UI
+    function createTikTokVideoPlayer(videoUrl, originalUrl) {
+        // Extract username from original URL
+        const username = extractUsernameFromUrl(originalUrl);
+        
+        // Generate random stats for engagement
+        const likes = Math.floor(Math.random() * 900000) + 100000;
+        const comments = Math.floor(Math.random() * 50000) + 5000;
+        const shares = Math.floor(Math.random() * 150000) + 10000;
+        
+        // Format numbers for display with K or M suffix
+        const formatNumber = (num) => {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        };
+        
+        // Random video description
+        const captions = [
+            "This trend is everything 😂 #fyp #viral",
+            "Can't believe this worked! 🔥 #tiktokviral",
+            "Wait for it... 👀 #trending",
+            "POV: when you finally nail it ✨ #foryou",
+            "Day 1 of posting this until it goes viral 🙏 #foryoupage"
+        ];
+        const randomCaption = captions[Math.floor(Math.random() * captions.length)];
+        
+        return `
+            <div class="tiktok-video-container">
+                <div class="tiktok-video-inner">
+                    <!-- Video Player -->
+                    <div class="tiktok-video-player">
+                        <video 
+                            src="${videoUrl}" 
+                            loop 
+                            controls
+                            autoplay
+                            muted
+                            onclick="this.paused ? this.play() : this.pause()"
+                            class="tiktok-video-element">
+                        </video>
+                        
+                        <!-- Video Overlay for Play/Pause -->
+                        <div class="video-overlay">
+                            <div class="play-indicator">
+                                <i class="fas fa-play"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Progress Bar -->
+                        <div class="video-progress-container">
+                            <div class="video-progress"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Side Interaction Icons -->
+                    <div class="tiktok-interaction-sidebar">
+                        <!-- Profile Image -->
+                        <div class="tiktok-profile-image">
+                            <img src="/api/placeholder/80/80" alt="Profile" class="rounded-full">
+                            <div class="follow-button">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                        
+                        <!-- Like Button -->
+                        <div class="tiktok-interaction-button">
+                            <div class="interaction-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <span class="interaction-count">${formatNumber(likes)}</span>
+                        </div>
+                        
+                        <!-- Comments Button -->
+                        <div class="tiktok-interaction-button">
+                            <div class="interaction-icon">
+                                <i class="fas fa-comment-dots"></i>
+                            </div>
+                            <span class="interaction-count">${formatNumber(comments)}</span>
+                        </div>
+                        
+                        <!-- Share Button -->
+                        <div class="tiktok-interaction-button">
+                            <div class="interaction-icon">
+                                <i class="fas fa-share"></i>
+                            </div>
+                            <span class="interaction-count">${formatNumber(shares)}</span>
+                        </div>
+                        
+                        <!-- Sound Disc -->
+                        <div class="tiktok-sound-disc">
+                            <img src="/api/placeholder/50/50" alt="Music" class="rotating">
+                        </div>
+                    </div>
+                    
+                    <!-- Video Info Bottom Section -->
+                    <div class="tiktok-video-info">
+                        <div class="video-username">@${username}</div>
+                        <div class="video-description">${randomCaption}</div>
+                        <div class="video-music">
+                            <i class="fas fa-music"></i> Original Sound - ${username}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Download Button fixed at bottom -->
+                <div class="tiktok-download-action">
+                    <button onclick="triggerDownload('${videoUrl}', 'tiktok-${Date.now()}.mp4')" class="tiktok-download-btn">
+                        <i class="fas fa-download"></i> Save Video
+                    </button>
+                </div>
             </div>
         `;
     }
@@ -2234,32 +2358,17 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create a filename for the download
             const videoFileName = extractVideoIdFromUrl(url);
             
-            // Start download automatically using the improved method
-            triggerDownload(data.video_url, videoFileName);
+            // Render the TikTok-style video player instead of auto-downloading
+            resultDiv.innerHTML = createTikTokVideoPlayer(data.video_url, url);
             
-            // Show download in progress message
-            resultDiv.innerHTML = `
-                <div class="success-container">
-                    <div class="success-icon">
-                        <i class="fas fa-download"></i>
-                    </div>
-                    <div class="success-message">
-                        <h3>Download Started!</h3>
-                        <p>Your video is being downloaded. If download doesn't start automatically, click the button below.</p>
-                    </div>
-                    <div class="success-actions">
-                        <button onclick="triggerDownload('${data.video_url}', '${videoFileName}')" class="tiktok-btn download-btn">
-                            <i class="fas fa-download"></i> Download Again
-                        </button>
-                        <button onclick="document.getElementById('urlInput').value = ''; document.getElementById('clearInput').style.display = 'none';" class="tiktok-btn clear-btn">
-                            <i class="fas fa-times"></i> New Download
-                        </button>
-                    </div>
-                </div>
-            `;
+            // Set up video player functionality
+            setupVideoPlayer();
             
-            // Scroll to result area again to show the success message
+            // Scroll to result area again to show the video
             scrollToResult();
+            
+            // Show a subtle notification that the video is ready
+            showSweetAlert('Video Ready', 'Your TikTok video is ready to watch!', 'success');
                         
             // Clear the input field for next use
             urlInput.value = '';
@@ -2311,11 +2420,85 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Setup video player functionality after rendering
+    function setupVideoPlayer() {
+        const videoElement = document.querySelector('.tiktok-video-element');
+        const videoOverlay = document.querySelector('.video-overlay');
+        const playIndicator = document.querySelector('.play-indicator');
+        const progressBar = document.querySelector('.video-progress');
+        
+        if (!videoElement || !videoOverlay || !playIndicator || !progressBar) {
+            return;
+        }
+        
+        // Toggle play/pause on overlay click
+        videoOverlay.addEventListener('click', () => {
+            if (videoElement.paused) {
+                videoElement.play();
+                playIndicator.style.opacity = '0';
+            } else {
+                videoElement.pause();
+                playIndicator.style.opacity = '1';
+            }
+        });
+        
+        // Hide play button when playing
+        videoElement.addEventListener('play', () => {
+            playIndicator.style.opacity = '0';
+        });
+        
+        // Show play button when paused
+        videoElement.addEventListener('pause', () => {
+            playIndicator.style.opacity = '1';
+        });
+        
+        // Update progress bar
+        videoElement.addEventListener('timeupdate', () => {
+            const progress = (videoElement.currentTime / videoElement.duration) * 100;
+            if (progressBar) {
+                progressBar.style.width = `${progress}%`;
+            }
+        });
+        
+        // Handle like button clicks (toggle active state)
+        const likeButton = document.querySelector('.tiktok-interaction-button:nth-child(2)');
+        if (likeButton) {
+            likeButton.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const icon = this.querySelector('.fa-heart');
+                if (icon) {
+                    icon.classList.toggle('liked');
+                }
+            });
+        }
+        
+        // Handle interaction with other buttons
+        const interactionButtons = document.querySelectorAll('.tiktok-interaction-button');
+        interactionButtons.forEach(button => {
+            if (button !== likeButton) {
+                button.addEventListener('click', function() {
+                    this.classList.add('animate-pop');
+                    setTimeout(() => {
+                        this.classList.remove('animate-pop');
+                    }, 300);
+                });
+            }
+        });
+        
+        // Make video autoplay
+        videoElement.play().catch(error => {
+            console.log('Auto-play prevented by browser:', error);
+            // Show play button if autoplay is prevented
+            playIndicator.style.opacity = '1';
+        });
+    }
+
     // Make functions globally available
     window.downloadTikTok = downloadTikTok;
     window.triggerDownload = triggerDownload;
     window.scrollToResult = scrollToResult;
     window.tryIframeDownload = tryIframeDownload;
+    window.setupVideoPlayer = setupVideoPlayer;
 
     // Auto-detect and process URLs as they're pasted
     const downloadBtn = document.getElementById('downloadBtn');
