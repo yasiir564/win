@@ -2118,14 +2118,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Function to trigger automatic file download
+    // Function to trigger automatic file download without redirect
     function triggerDownload(url, filename) {
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename || 'tiktok-video.mp4';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                const blobUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = filename || 'tiktok-video.mp4';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(blobUrl);
+            })
+            .catch(error => {
+                console.error('Download error:', error);
+                showSweetAlert('Download failed', 'The video could not be downloaded. Please try again.', 'error');
+            });
     }
 
     // Function to show SweetAlert notifications
@@ -2297,7 +2308,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create a filename for the download
             const videoFileName = extractVideoIdFromUrl(url);
             
-            // Trigger automatic download
+            // Trigger automatic download without redirect
             triggerDownload(data.video_url, videoFileName);
             
             // Show success notification
@@ -2306,10 +2317,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 `Video from ${creatorName} has been downloaded to your device.`
             );
             
-            // Generate random engagement stats if they don't exist in data
-            const likes = data.likes || Math.floor(Math.random() * 50000) + 1000;
-            const comments = data.comments || Math.floor(Math.random() * 5000) + 100;
-            const shares = data.shares || Math.floor(Math.random() * 10000) + 500;
+            // Use actual engagement metrics from TikTok data
+            const likes = data.likes || 0;
+            const comments = data.comments || 0;
+            const shares = data.shares || 0;
             
             // Format large numbers
             const formatNumber = (num) => {
@@ -2361,7 +2372,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                         
                         <div class="video-actions">
-                            <button class="tiktok-btn download-btn" onclick="triggerDownload('${data.video_url}', '${videoFileName}')">
+                            <button class="tiktok-btn download-btn" onclick="window.triggerDownload('${data.video_url}', '${videoFileName}')">
                                 <i class="fas fa-download"></i> Download Again
                             </button>
                         </div>
