@@ -1980,14 +1980,92 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Function to trigger automatic file download
-    function triggerDownload(url, filename) {
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename || 'tiktok-video.mp4';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    // Improved function to trigger automatic file download using fetch and Blob
+    async function triggerDownload(url, filename) {
+        try {
+            // Show download in progress notification
+            showSweetAlert('Download in progress', 'Please wait while we download your video...', 'info');
+            
+            // Use fetch to get the file as a blob
+            const response = await fetch(url, {
+                method: 'GET',
+                mode: 'cors',
+                cache: 'no-cache',
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Failed to fetch video: ${response.statusText}`);
+            }
+            
+            // Get the response as a blob
+            const blob = await response.blob();
+            
+            // Create a blob URL
+            const blobUrl = URL.createObjectURL(blob);
+            
+            // Create a hidden download link
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = filename || 'tiktok-video.mp4';
+            link.style.display = 'none';
+            
+            // Add to document, click and remove
+            document.body.appendChild(link);
+            link.click();
+            
+            // Small timeout before cleanup to ensure download starts
+            setTimeout(() => {
+                document.body.removeChild(link);
+                URL.revokeObjectURL(blobUrl);
+                showSweetAlert('Download complete', 'Your video has been downloaded successfully!', 'success');
+            }, 1000);
+            
+        } catch (error) {
+            console.error('Download error:', error);
+            showSweetAlert('Download failed', `Could not download video: ${error.message}. Trying alternative method...`, 'error');
+            
+            // Fallback to iframe download method
+            tryIframeDownload(url, filename);
+        }
+    }
+    
+    // Fallback download method using iframe
+    function tryIframeDownload(url, filename) {
+        try {
+            // Create a form to submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = 'https://denmara.com/wp-json/tiktok/v1/direct-download';
+            form.target = '_blank';
+            form.style.display = 'none';
+            
+            // Add URL as input
+            const urlInput = document.createElement('input');
+            urlInput.type = 'hidden';
+            urlInput.name = 'video_url';
+            urlInput.value = url;
+            form.appendChild(urlInput);
+            
+            // Add filename as input
+            const filenameInput = document.createElement('input');
+            filenameInput.type = 'hidden';
+            filenameInput.name = 'filename';
+            filenameInput.value = filename;
+            form.appendChild(filenameInput);
+            
+            // Submit the form
+            document.body.appendChild(form);
+            form.submit();
+            
+            // Remove form after submission
+            setTimeout(() => {
+                document.body.removeChild(form);
+            }, 1000);
+            
+        } catch (error) {
+            console.error('Iframe download error:', error);
+            showSweetAlert('Download failed', 'All download methods failed. Please try another video.', 'error');
+        }
     }
 
     // Function to show SweetAlert notifications
@@ -2156,18 +2234,18 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create a filename for the download
             const videoFileName = extractVideoIdFromUrl(url);
             
-            // Start download automatically
+            // Start download automatically using the improved method
             triggerDownload(data.video_url, videoFileName);
             
-            // Show download success message
+            // Show download in progress message
             resultDiv.innerHTML = `
                 <div class="success-container">
                     <div class="success-icon">
-                        <i class="fas fa-check-circle"></i>
+                        <i class="fas fa-download"></i>
                     </div>
                     <div class="success-message">
                         <h3>Download Started!</h3>
-                        <p>Your video is being downloaded.</p>
+                        <p>Your video is being downloaded. If download doesn't start automatically, click the button below.</p>
                     </div>
                     <div class="success-actions">
                         <button onclick="triggerDownload('${data.video_url}', '${videoFileName}')" class="tiktok-btn download-btn">
@@ -2179,12 +2257,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
             `;
-            
-            // Show success notification
-            showSweetAlert(
-                'Download successful!', 
-                `The video is being downloaded to your device.`
-            );
             
             // Scroll to result area again to show the success message
             scrollToResult();
@@ -2243,6 +2315,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.downloadTikTok = downloadTikTok;
     window.triggerDownload = triggerDownload;
     window.scrollToResult = scrollToResult;
+    window.tryIframeDownload = tryIframeDownload;
 
     // Auto-detect and process URLs as they're pasted
     const downloadBtn = document.getElementById('downloadBtn');
