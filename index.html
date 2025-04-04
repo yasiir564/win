@@ -1702,6 +1702,209 @@ button {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+        /* TikTok-style engagement buttons styling */
+.engagement-stats {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    min-width: 42px;
+}
+
+/* Button icon styling */
+.stat-item i {
+    font-size: 24px;
+    margin-bottom: 3px;
+    transition: transform 0.3s ease;
+    padding: 10px;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(22, 24, 35, 0.06);
+}
+
+/* Button text styling */
+.stat-item span {
+    font-size: 12px;
+    font-weight: 600;
+    color: #161823;
+}
+
+/* Like button specific styling */
+.stat-item:nth-child(1) i {
+    color: #FE2C55;
+}
+
+.stat-item:nth-child(1):hover i {
+    background-color: rgba(254, 44, 85, 0.1);
+}
+
+/* Comment button specific styling */
+.stat-item:nth-child(2) i {
+    color: #12B886;
+}
+
+.stat-item:nth-child(2):hover i {
+    background-color: rgba(18, 184, 134, 0.1);
+}
+
+/* Share button specific styling */
+.stat-item:nth-child(3) i {
+    color: #0094FF;
+}
+
+.stat-item:nth-child(3):hover i {
+    background-color: rgba(0, 148, 255, 0.1);
+}
+
+/* Button hover effects */
+.stat-item:hover i {
+    transform: scale(1.1);
+}
+
+/* Ripple animation on click */
+.stat-item::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 44px;
+    height: 44px;
+    background-color: currentColor;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.stat-item:active::after {
+    animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+    0% {
+        transform: translateX(-50%) scale(0.5);
+        opacity: 0.3;
+    }
+    100% {
+        transform: translateX(-50%) scale(1.5);
+        opacity: 0;
+    }
+}
+
+/* Active state for like button */
+.stat-item.liked i {
+    color: #FE2C55;
+    background-color: rgba(254, 44, 85, 0.1);
+}
+
+/* Dark mode compatibility */
+.dark-mode .stat-item span {
+    color: #fff;
+}
+
+.dark-mode .stat-item i {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .engagement-stats {
+        justify-content: space-around;
+        padding: 0 5px;
+    }
+    
+    .stat-item {
+        min-width: 38px;
+    }
+    
+    .stat-item i {
+        font-size: 22px;
+        width: 40px;
+        height: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .engagement-stats {
+        gap: 10px;
+        margin: 10px 0;
+    }
+    
+    .stat-item i {
+        font-size: 20px;
+        width: 36px;
+        height: 36px;
+        padding: 8px;
+    }
+    
+    .stat-item span {
+        font-size: 11px;
+    }
+    
+    /* Adjust ripple position for smaller buttons */
+    .stat-item::after {
+        top: 8px;
+        width: 38px;
+        height: 38px;
+    }
+}
+
+/* For very small screens */
+@media (max-width: 320px) {
+    .engagement-stats {
+        gap: 8px;
+    }
+    
+    .stat-item i {
+        font-size: 18px;
+        width: 34px;
+        height: 34px;
+        padding: 7px;
+    }
+}
+
+/* Make video details responsive */
+.video-details {
+    padding: 10px 15px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* TikTok-styled animation for the like button */
+@keyframes heart-burst {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.stat-item:nth-child(1).liked i {
+    animation: heart-burst 0.5s ease-out;
+}
+
     </style>
 </head>
 
