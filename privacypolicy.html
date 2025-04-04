@@ -497,6 +497,34 @@
         .fade-in {
             animation: fadeIn 0.5s ease forwards;
         }
+                /* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--tiktok-darker-gray);
+    border-radius: var(--border-radius);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--tiktok-gradient);
+    border-radius: var(--border-radius);
+    box-shadow: var(--btn-shadow);
+    transition: var(--transition);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--tiktok-red);
+}
+
+        /* Animation for interaction buttons */
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
     </style>
 </head>
 <body data-theme="light">
