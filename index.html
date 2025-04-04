@@ -1702,7 +1702,7 @@ button {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-        /* TikTok-style engagement buttons styling */
+       /* TikTok-style engagement buttons styling */
 .engagement-stats {
     display: flex;
     align-items: center;
@@ -1710,6 +1710,7 @@ button {
     gap: 20px;
     margin: 15px 0;
     flex-wrap: wrap;
+    width: 100%;
 }
 
 .stat-item {
@@ -1742,6 +1743,10 @@ button {
     font-size: 12px;
     font-weight: 600;
     color: #161823;
+    display: block; /* Ensure spans are block elements */
+    text-align: center;
+    width: 100%;
+    overflow: visible; /* Prevent text cutoff */
 }
 
 /* Like button specific styling */
@@ -1821,63 +1826,6 @@ button {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Mobile responsiveness */
-@media (max-width: 768px) {
-    .engagement-stats {
-        justify-content: space-around;
-        padding: 0 5px;
-    }
-    
-    .stat-item {
-        min-width: 38px;
-    }
-    
-    .stat-item i {
-        font-size: 22px;
-        width: 40px;
-        height: 40px;
-    }
-}
-
-@media (max-width: 480px) {
-    .engagement-stats {
-        gap: 10px;
-        margin: 10px 0;
-    }
-    
-    .stat-item i {
-        font-size: 20px;
-        width: 36px;
-        height: 36px;
-        padding: 8px;
-    }
-    
-    .stat-item span {
-        font-size: 11px;
-    }
-    
-    /* Adjust ripple position for smaller buttons */
-    .stat-item::after {
-        top: 8px;
-        width: 38px;
-        height: 38px;
-    }
-}
-
-/* For very small screens */
-@media (max-width: 320px) {
-    .engagement-stats {
-        gap: 8px;
-    }
-    
-    .stat-item i {
-        font-size: 18px;
-        width: 34px;
-        height: 34px;
-        padding: 7px;
-    }
-}
-
 /* Make video details responsive */
 .video-details {
     padding: 10px 15px;
@@ -1905,6 +1853,138 @@ button {
     animation: heart-burst 0.5s ease-out;
 }
 
+/* Improved Mobile responsiveness */
+@media (max-width: 768px) {
+    .engagement-stats {
+        justify-content: space-around;
+        padding: 0 5px;
+        margin: 12px 0;
+        gap: 15px;
+    }
+    
+    .stat-item {
+        min-width: 60px; /* Increased width for mobile */
+        margin-bottom: 5px;
+    }
+    
+    .stat-item i {
+        font-size: 22px;
+        width: 40px;
+        height: 40px;
+    }
+    
+    /* Ensure the text is visible */
+    .stat-item span {
+        margin-top: 2px;
+        font-size: 12px;
+        visibility: visible !important;
+        display: block !important;
+        opacity: 1 !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .engagement-stats {
+        gap: 10px;
+        margin: 10px 0;
+        display: flex !important; /* Force display */
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .stat-item {
+        min-width: 50px;
+        display: flex !important; /* Force display */
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .stat-item i {
+        font-size: 20px;
+        width: 36px;
+        height: 36px;
+        padding: 8px;
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .stat-item span {
+        font-size: 11px;
+        margin-top: 2px;
+        white-space: nowrap;
+        visibility: visible !important;
+        display: block !important;
+        opacity: 1 !important;
+    }
+    
+    /* Adjust ripple position for smaller buttons */
+    .stat-item::after {
+        top: 8px;
+        width: 38px;
+        height: 38px;
+    }
+    
+    /* Force the container to be visible */
+    .video-details {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+/* For very small screens */
+@media (max-width: 320px) {
+    .engagement-stats {
+        gap: 5px;
+        width: 100%;
+        justify-content: space-between;
+        padding: 0;
+    }
+    
+    .stat-item {
+        min-width: 40px;
+    }
+    
+    .stat-item i {
+        font-size: 18px;
+        width: 34px;
+        height: 34px;
+        padding: 7px;
+    }
+    
+    .stat-item span {
+        font-size: 10px;
+    }
+}
+
+/* Fix any potential z-index issues */
+.tiktok-video-container {
+    position: relative;
+    z-index: 1;
+}
+
+.video-details {
+    position: relative;
+    z-index: 2;
+}
+
+.engagement-stats {
+    position: relative;
+    z-index: 3;
+}
+
+/* Fix for possible overflow issues */
+.video-player-section {
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Ensure metrics are always visible */
+.stat-item span {
+    pointer-events: none; /* Prevent text from blocking clicks */
+    min-height: 14px; /* Minimum height to ensure visibility */
+}
     </style>
 </head>
 
