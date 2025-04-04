@@ -1915,64 +1915,122 @@ button {
     min-height: 14px; /* Minimum height to ensure visibility */
 }
 
-     .disclaimer-card::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: clamp(60px, 15vw, 100px);
-      height: clamp(60px, 15vw, 100px);
-      background: var(--tiktok-gradient);
-      opacity: 0.1;
-      border-bottom-left-radius: 100%;
-    }
+    .disclaimer-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--border-radius, 12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
 
-    .disclaimer-card .disclaimer-title {
-      color: var(--tiktok-dark-gray);
-      font-size: clamp(18px, 4vw, 22px);
-      font-weight: 700;
-      margin: 0 0 16px 0;
-      padding-bottom: 12px;
-      border-bottom: 2px solid var(--tiktok-light-gray);
-      position: relative;
-    }
+.disclaimer-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
 
-    .disclaimer-card .disclaimer-title::after {
-      content: "";
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: clamp(40px, 10vw, 60px);
-      height: 2px;
-      background: var(--tiktok-gradient);
-    }
+.disclaimer-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: clamp(80px, 20vw, 120px);
+  height: clamp(80px, 20vw, 120px);
+  background: var(--tiktok-gradient);
+  opacity: 0.08;
+  border-bottom-left-radius: 100%;
+  transition: width 0.3s ease, height 0.3s ease;
+  z-index: 0;
+}
 
-    .disclaimer-card .disclaimer-content {
-      color: var(--tiktok-dark-gray);
-      line-height: 1.6;
-      margin: 0;
-      font-size: clamp(14px, 3vw, 15px);
-    }
+.disclaimer-card .disclaimer-title {
+  color: var(--tiktok-dark-gray);
+  font-size: clamp(18px, 4vw, 24px);
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--tiktok-light-gray);
+  position: relative;
+  letter-spacing: -0.02em;
+  z-index: 1;
+}
 
-    /* Media queries for better responsiveness */
-    @media (max-width: 600px) {
-      .disclaimer-card {
-        border-left-width: 3px;
-        border-radius: calc(var(--border-radius) * 0.75);
-      }
-    }
+.disclaimer-card .disclaimer-title::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: clamp(50px, 15vw, 80px);
+  height: 3px;
+  background: var(--tiktok-gradient);
+  border-radius: 1.5px;
+  transition: width 0.3s ease;
+}
 
-    @media (max-width: 400px) {
-      .disclaimer-card {
-        padding: 16px;
-        margin: 15px 0;
-      }
-      
-      .disclaimer-card .disclaimer-title {
-        margin-bottom: 12px;
-        padding-bottom: 8px;
-      }
-    }
+.disclaimer-card:hover .disclaimer-title::after {
+  width: clamp(70px, 20vw, 100px);
+}
+
+.disclaimer-card .disclaimer-content {
+  color: var(--tiktok-dark-gray);
+  line-height: 1.7;
+  margin: 0;
+  font-size: clamp(14px, 3vw, 16px);
+  position: relative;
+  z-index: 1;
+  font-weight: 400;
+}
+
+/* Responsive layout improvements */
+@media (min-width: 601px) {
+  .disclaimer-card {
+    padding: clamp(24px, 5vw, 32px);
+    margin: clamp(20px, 5vw, 30px) 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .disclaimer-card {
+    border-left-width: 3px;
+    border-radius: calc(var(--border-radius, 12px) * 0.75);
+    padding: 20px;
+    margin: 18px 0;
+  }
+  
+  .disclaimer-card::before {
+    width: clamp(60px, 18vw, 90px);
+    height: clamp(60px, 18vw, 90px);
+  }
+}
+
+@media (max-width: 400px) {
+  .disclaimer-card {
+    padding: 16px;
+    margin: 15px 0;
+  }
+  
+  .disclaimer-card .disclaimer-title {
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+  }
+  
+  .disclaimer-card::before {
+    width: clamp(50px, 15vw, 70px);
+    height: clamp(50px, 15vw, 70px);
+  }
+}
+
+/* Fluid typography for screens between breakpoints */
+@media (min-width: 401px) and (max-width: 600px) {
+  .disclaimer-card .disclaimer-content {
+    font-size: calc(14px + 0.5vw);
+  }
+  
+  .disclaimer-card .disclaimer-title {
+    font-size: calc(18px + 0.7vw);
+  }
+}
     </style>
 </head>
 
