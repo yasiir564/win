@@ -1959,6 +1959,7 @@ button {
 
     <script>
 document.addEventListener('DOMContentLoaded', function() {
+
     // Dark Mode Toggle
     const darkModeToggle = document.getElementById('darkModeToggle');
     const body = document.body;
@@ -2024,7 +2025,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Mobile Menu Toggle - Enhanced for better mobile experience
+    // Mobile Menu Toggle
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const navLinks = document.querySelector('.nav-links');
 
@@ -2038,22 +2039,6 @@ document.addEventListener('DOMContentLoaded', function() {
             menuIcon.className = navLinks?.classList.contains('mobile-active') 
                 ? 'fas fa-times' 
                 : 'fas fa-bars';
-        }
-        
-        // Prevent body scrolling when menu is open
-        if (navLinks?.classList.contains('mobile-active')) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-    });
-    
-    // Close mobile menu when clicking outside
-    document.addEventListener('click', (e) => {
-        if (navLinks?.classList.contains('mobile-active') && 
-            !e.target.closest('.nav-links') && 
-            !e.target.closest('#mobileMenuToggle')) {
-            mobileMenuToggle?.click();
         }
     });
 
@@ -2098,7 +2083,6 @@ document.addEventListener('DOMContentLoaded', function() {
         pasteButton.innerHTML = '<i class="fas fa-paste"></i> Paste';
         pasteButton.setAttribute('aria-label', 'Paste TikTok URL');
         pasteButton.setAttribute('type', 'button');
-        pasteButton.classList.add('paste-btn');
         
         urlInputContainer.appendChild(pasteButton);
         
@@ -2123,40 +2107,36 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Smooth scroll to result area function
+    // Scroll to result area function
     function scrollToResult() {
         const resultDiv = document.getElementById('result');
         if (resultDiv) {
             // Add small delay to ensure content is rendered before scrolling
             setTimeout(() => {
                 resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100); // Reduced from 300ms to 100ms for faster scrolling
+            }, 300);
         }
     }
 
-    // Function to trigger immediate file download
+    // Function to trigger automatic file download without redirect
     function triggerDownload(url, filename) {
-        // Preload the file before triggering the download to make it seem instant
-        const preloadLink = document.createElement('link');
-        preloadLink.rel = 'prefetch';
-        preloadLink.href = url;
-        document.head.appendChild(preloadLink);
-        
-        // Create download link
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename || 'tiktok-video.mp4';
-        link.style.display = 'none';
-        document.body.appendChild(link);
-        
-        // Trigger download immediately
-        link.click();
-        
-        // Clean up
-        setTimeout(() => {
-            document.body.removeChild(link);
-            document.head.removeChild(preloadLink);
-        }, 100);
+        fetch(url)
+            .then(response => response.blob())
+            .then(blob => {
+                const blobUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = filename || 'tiktok-video.mp4';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(blobUrl);
+            })
+            .catch(error => {
+                console.error('Download error:', error);
+                showSweetAlert('Download failed', 'The video could not be downloaded. Please try again.', 'error');
+            });
     }
 
     // Function to show SweetAlert notifications
@@ -2222,30 +2202,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Make createTikTokLoader globally available
     window.createTikTokLoader = createTikTokLoader;
 
-    // Format large numbers with K, M suffixes
-    function formatNumber(num) {
-        if (!num) return '0';
-        if (num >= 1000000) {
-            return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
-        } else if (num >= 1000) {
-            return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
-        }
-        return num.toString();
-    }
-
-    // Create animated TikTok-style engagement buttons
-    function createEngagementButton(icon, count, type) {
-        return `
-            <div class="engagement-btn ${type}-btn">
-                <div class="engagement-icon">
-                    <i class="${icon}"></i>
-                </div>
-                <span class="engagement-count">${formatNumber(count)}</span>
-            </div>
-        `;
-    }
-
-    // TikTok Download Function - Optimized for speed and mobile
+    // TikTok Download Function
     async function downloadTikTok() {
         const urlInput = document.getElementById('urlInput');
         const resultDiv = document.getElementById('result');
@@ -2287,6 +2244,8 @@ document.addEventListener('DOMContentLoaded', function() {
         scrollToResult();
         
         try {
+            console.log('Sending request with URL:', url);
+            
             // Create an AbortController for timeout
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
@@ -2295,16 +2254,21 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch(apiEndpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: url }),
+                body: JSON.stringify({ 
+                    url: url
+                }),
                 signal: controller.signal
             });
             
             // Clear the timeout
             clearTimeout(timeoutId);
             
+            console.log('Response status:', response.status);
+            
             // Handle HTTP errors
             if (!response.ok) {
                 const errorText = await response.text();
+                console.error('Server error response:', errorText);
                 
                 let errorMessage = 'Error fetching video';
                 let errorDetails = '';
@@ -2335,22 +2299,44 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(errorMsg);
             }
             
+            // Log success information
+            console.log('Video successfully fetched using method:', data.method || 'unknown');
+            
             // Format creator name with @ if not already present
             const creatorName = data.author && !data.author.startsWith('@') ? `@${data.author}` : (data.author || 'Unknown');
             
             // Create a filename for the download
             const videoFileName = extractVideoIdFromUrl(url);
             
-            // Get engagement metrics - use actual values when available or default to 0
+            // Trigger automatic download without redirect
+            triggerDownload(data.video_url, videoFileName);
+            
+            // Show success notification
+            showSweetAlert(
+                'Download successful!', 
+                `Video from ${creatorName} has been downloaded to your device.`
+            );
+            
+            // Use actual engagement metrics from TikTok data
             const likes = data.likes || 0;
             const comments = data.comments || 0;
             const shares = data.shares || 0;
+            
+            // Format large numbers
+            const formatNumber = (num) => {
+                if (num >= 1000000) {
+                    return (num / 1000000).toFixed(1) + 'M';
+                } else if (num >= 1000) {
+                    return (num / 1000).toFixed(1) + 'K';
+                }
+                return num;
+            };
             
             // Create modern TikTok-style video display with engagement metrics
             resultDiv.innerHTML = `
                 <div class="tiktok-video-container">
                     <div class="video-player-section">
-                        <video controls autoplay loop class="tiktok-video-player" poster="${data.cover_url || ''}">
+                        <video controls autoplay class="tiktok-video-player" poster="${data.cover_url || ''}">
                             <source src="${data.video_url}" type="video/mp4">
                             Your browser does not support the video tag.
                         </video>
@@ -2362,43 +2348,37 @@ document.addEventListener('DOMContentLoaded', function() {
                                 </div>
                                 <div class="creator-info">
                                     <span class="creator-name">${creatorName}</span>
-                                    <span class="verified-badge${data.verified ? ' is-verified' : ' hidden'}">
-                                        <i class="fas fa-check-circle"></i>
-                                    </span>
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="engagement-container">
-                            ${createEngagementButton('fas fa-heart', likes, 'like')}
-                            ${createEngagementButton('fas fa-comment-dots', comments, 'comment')}
-                            ${createEngagementButton('fas fa-share', shares, 'share')}
                         </div>
                     </div>
                     
                     <div class="video-details">
                         <p class="video-caption">${data.desc || 'No description'}</p>
                         
+                        <div class="engagement-stats">
+                            <div class="stat-item">
+                                <i class="fas fa-heart"></i>
+                                <span>${formatNumber(likes)}</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-comment-dots"></i>
+                                <span>${formatNumber(comments)}</span>
+                            </div>
+                            <div class="stat-item">
+                                <i class="fas fa-share"></i>
+                                <span>${formatNumber(shares)}</span>
+                            </div>
+                        </div>
+                        
                         <div class="video-actions">
                             <button class="tiktok-btn download-btn" onclick="window.triggerDownload('${data.video_url}', '${videoFileName}')">
                                 <i class="fas fa-download"></i> Download Again
-                            </button>
-                            <button class="tiktok-btn share-btn">
-                                <i class="fas fa-share-alt"></i> Share
                             </button>
                         </div>
                     </div>
                 </div>
             `;
-            
-            // Trigger immediate download
-            triggerDownload(data.video_url, videoFileName);
-            
-            // Show success notification
-            showSweetAlert(
-                'Download started!', 
-                `Video from ${creatorName} is being downloaded to your device.`
-            );
             
             // Scroll to result area again to show the video
             scrollToResult();
@@ -2410,15 +2390,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 clearInputBtn.style.display = 'none';
             }
             
-            // Add animation to engagement buttons
-            const engagementBtns = document.querySelectorAll('.engagement-btn');
-            engagementBtns.forEach((btn, index) => {
-                setTimeout(() => {
-                    btn.classList.add('animate-in');
-                }, index * 150);
-            });
-            
         } catch (error) {
+            console.error('Error details:', error);
+            
             let errorMessage = 'Download failed';
             let errorDetails = error.message || 'An unknown error occurred while trying to download the video.';
             
@@ -2463,7 +2437,6 @@ document.addEventListener('DOMContentLoaded', function() {
     window.downloadTikTok = downloadTikTok;
     window.triggerDownload = triggerDownload;
     window.scrollToResult = scrollToResult;
-    window.formatNumber = formatNumber;
 
     // Auto-detect and process URLs as they're pasted
     const downloadBtn = document.getElementById('downloadBtn');
@@ -2503,52 +2476,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Add event listener for page visibility changes
+    // This helps resume video playback if the user switches tabs and returns
     document.addEventListener('visibilitychange', function() {
         if (document.visibilityState === 'visible') {
             const videoPlayer = document.querySelector('.tiktok-video-player');
             if (videoPlayer) {
                 videoPlayer.play().catch(err => {
                     console.log('Auto-play prevented by browser:', err);
-                });
-            }
-        }
-    });
-    
-    // Handle engagement button clicks
-    document.addEventListener('click', function(e) {
-        if (e.target.closest('.like-btn')) {
-            const likeBtn = e.target.closest('.like-btn');
-            likeBtn.classList.toggle('active');
-            const countEl = likeBtn.querySelector('.engagement-count');
-            let count = parseInt(countEl.textContent.replace(/[KM]/g, '')) * (countEl.textContent.includes('K') ? 1000 : (countEl.textContent.includes('M') ? 1000000 : 1));
-            if (likeBtn.classList.contains('active')) {
-                count++;
-            } else {
-                count--;
-            }
-            countEl.textContent = formatNumber(count);
-            
-            // Add heart animation
-            if (likeBtn.classList.contains('active')) {
-                const heart = document.createElement('div');
-                heart.className = 'floating-heart';
-                heart.innerHTML = '<i class="fas fa-heart"></i>';
-                likeBtn.appendChild(heart);
-                setTimeout(() => {
-                    heart.remove();
-                }, 1000);
-            }
-        }
-        
-        if (e.target.closest('.share-btn')) {
-            const videoUrl = document.querySelector('.tiktok-video-player source')?.src;
-            if (videoUrl && navigator.share) {
-                navigator.share({
-                    title: 'Check out this TikTok!',
-                    text: 'I found this cool TikTok video',
-                    url: window.location.href
-                }).catch(err => {
-                    console.log('Share failed:', err);
                 });
             }
         }
