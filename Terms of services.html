@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service - Tokhaste</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --tiktok-black: #000000;
+            --tiktok-white: #FFFFFF;
+            --tiktok-red: #FE2C55;
+            --tiktok-blue: #25F4EE;
+            --tiktok-light-gray: #F1F1F2;
+            --tiktok-dark-gray: #161823;
+            --tiktok-darker-gray: #0f1016;
+            --tiktok-gradient: linear-gradient(90deg, var(--tiktok-blue), var(--tiktok-red));
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            --btn-shadow: 0 7px 14px rgba(254, 44, 85, 0.3);
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--tiktok-white);
+            color: var(--tiktok-dark-gray);
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+
+        body.dark-mode {
+            background-color: var(--tiktok-darker-gray);
+            color: var(--tiktok-light-gray);
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--tiktok-red);
+            transition: var(--transition);
+        }
+
+        a:hover {
+            color: var(--tiktok-blue);
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: var(--tiktok-white);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .dark-mode .navbar {
+            background-color: var(--tiktok-dark-gray);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--tiktok-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--tiktok-dark-gray);
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .dark-mode .nav-links a {
+            color: var(--tiktok-light-gray);
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: rgba(254, 44, 85, 0.1);
+            color: var(--tiktok-red);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--tiktok-dark-gray);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .dark-mode .theme-toggle {
+            color: var(--tiktok-light-gray);
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-sign-in {
+            background: var(--tiktok-gradient);
+            color: var(--tiktok-white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--btn-shadow);
+            transition: var(--transition);
+        }
+
+        .btn-sign-in:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(254, 44, 85, 0.4);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--tiktok-dark-gray);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .dark-mode .menu-toggle {
+            color: var(--tiktok-light-gray);
+        }
+
+        /* Main content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .terms-container {
+            background-color: var(--tiktok-white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 40px;
+            margin-bottom: 40px;
+            transition: var(--transition);
+        }
+
+        .dark-mode .terms-container {
+            background-color: var(--tiktok-dark-gray);
+        }
+
+        .terms-header {
+            border-bottom: 1px solid var(--tiktok-light-gray);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .terms-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: var(--tiktok-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .last-updated {
+            color: var(--tiktok-dark-gray);
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .dark-mode .last-updated {
+            color: var(--tiktok-light-gray);
+        }
+
+        .terms-section {
+            margin-bottom: 30px;
+        }
+
+        .terms-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--tiktok-red);
+        }
+
+        .terms-section p {
+            margin-bottom: 15px;
+        }
+
+        .terms-section ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .terms-section li {
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--tiktok-dark-gray);
+            color: var(--tiktok-white);
+            padding: 50px 0 20px;
+            transition: var(--transition);
+        }
+
+        .dark-mode .footer {
+            background-color: var(--tiktok-darker-gray);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--tiktok-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo i {
+            margin-right: 10px;
+            font-size: 1.8rem;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--tiktok-light-gray);
+        }
+
+        .footer-column a {
+            display: block;
+            color: var(--tiktok-light-gray);
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        .footer-column a:hover {
+            color: var(--tiktok-red);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--tiktok-light-gray);
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background-color: var(--tiktok-red);
+            color: var(--tiktok-white);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background-color: var(--tiktok-white);
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                z-index: 99;
+                transition: var(--transition);
+            }
+
+            .dark-mode .nav-links {
+                background-color: var(--tiktok-dark-gray);
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .nav-links a {
+                padding: 12px 15px;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+
+            .footer-top {
+                flex-direction: column;
+            }
+
+            .footer-links {
+                margin-top: 20px;
+                gap: 20px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .terms-container {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fab fa-tiktok"></i>
+                <span>TikDownloader</span>
+            </div>
+            <div class="nav-links">
+                <a href="#">Home</a>
+                <a href="privacy-policy.html">Privacy</a>
+                <a href="contact.html">Advertise with us</a>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="darkModeToggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="btn-sign-in">Sign In</button>
+                <button class="menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="terms-container">
+            <div class="terms-header">
+                <h1 class="terms-title">Terms of Service</h1>
+                <p>Welcome to Tokhaste, a free TikTok video downloader without watermark.</p>
+                <p class="last-updated">Last Updated: April 5, 2025</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>1. Acceptance of Terms</h2>
+                <p>By accessing or using Tokhaste, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.</p>
+                <p>These Terms of Service constitute a legally binding agreement between you and Tokhaste regarding your use of our website and service.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>2. Service Description</h2>
+                <p>Tokhaste provides a free online tool that enables users to download TikTok videos without watermarks. The service is available worldwide for personal, non-commercial use.</p>
+                <p>We do not host any TikTok videos on our servers. Our service simply provides a technical means to download publicly available content from TikTok.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>3. User Responsibilities</h2>
+                <p>When using Tokhaste, you agree to:</p>
+                <ul>
+                    <li>Use the service for lawful purposes only</li>
+                    <li>Respect copyright and intellectual property rights</li>
+                    <li>Not download videos for commercial purposes without proper authorization</li>
+                    <li>Not attempt to reverse engineer, hack, or interfere with our service</li>
+                    <li>Not use automated systems or bots to access our service</li>
+                    <li>Not redistribute or resell our service</li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <h2>4. Intellectual Property</h2>
+                <p>All content downloaded through our service belongs to their respective owners. Tokhaste does not claim ownership of any TikTok videos processed through our service.</p>
+                <p>The Tokhaste name, logo, website design, and any other trademarks, service marks, graphics, and logos used in connection with our service are trademarks or registered trademarks of Tokhaste. Other trademarks, service marks, graphics, and logos used in connection with the service may be the trademarks of their respective owners.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>5. Copyright Compliance</h2>
+                <p>Tokhaste respects copyright law and expects its users to do the same. We provide our service with the understanding that users will only download content they have the right to download and use.</p>
+                <p>If you are a copyright owner and believe your copyrighted work has been improperly used through our service, please contact us through our DMCA page to submit a takedown request.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>6. Limitation of Liability</h2>
+                <p>Tokhaste provides its service on an "as is" and "as available" basis. We make no warranties, expressed or implied, regarding the reliability, accuracy, or availability of our service.</p>
+                <p>In no event shall Tokhaste be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from:</p>
+                <ul>
+                    <li>Your access to or use of or inability to access or use the service</li>
+                    <li>Any conduct or content of any third party on the service</li>
+                    <li>Any content obtained from the service</li>
+                    <li>Unauthorized access, use, or alteration of your transmissions or content</li>
+                </ul>
+            </div>
+
+            <div class="terms-section">
+                <h2>7. Service Modifications</h2>
+                <p>We reserve the right to modify or discontinue, temporarily or permanently, the service (or any part thereof) with or without notice. We shall not be liable to you or to any third party for any modification, suspension, or discontinuance of the service.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>8. Privacy Policy</h2>
+                <p>Your privacy is important to us. Our Privacy Policy, which is incorporated into these Terms of Service, explains how we collect, use, and protect your information. By using our service, you agree to our Privacy Policy.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>9. Third-Party Links</h2>
+                <p>Our service may contain links to third-party websites or services that are not owned or controlled by Tokhaste. We have no control over, and assume no responsibility for, the content, privacy policies, or practices of any third-party websites or services.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>10. Termination</h2>
+                <p>We may terminate or suspend your access to our service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms of Service.</p>
+                <p>All provisions of the Terms of Service which by their nature should survive termination shall survive termination, including, without limitation, ownership provisions, warranty disclaimers, indemnity, and limitations of liability.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>11. Governing Law</h2>
+                <p>These Terms shall be governed and construed in accordance with the laws applicable in the jurisdiction where Tokhaste is registered, without regard to its conflict of law provisions.</p>
+                <p>Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights. If any provision of these Terms is held to be invalid or unenforceable by a court, the remaining provisions of these Terms will remain in effect.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>12. Changes to Terms</h2>
+                <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will try to provide at least 30 days' notice prior to any new terms taking effect.</p>
+                <p>By continuing to access or use our service after those revisions become effective, you agree to be bound by the revised terms. If you do not agree to the new terms, please stop using the service.</p>
+            </div>
+
+            <div class="terms-section">
+                <h2>13. Contact Us</h2>
+                <p>If you have any questions about these Terms, please contact us through our Contact page.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-logo">
+                    <i class="fab fa-tiktok"></i>
+                    <span>TikDownloader</span>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Pages</h3>
+                        <a href="#">Home</a>
+                        <a href="privacy-policy.html">Privacy Policy</a>
+                        <a href="contact.html">Advertise with us</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Support</h3>
+                        <a href="#">FAQ</a>
+                        <a href="#">Report an Issue</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Legal</h3>
+                        <a href="#">Terms of Service</a>
+                        <a href="#">DMCA</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 TikDownloader. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Dark mode toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        const icon = darkModeToggle.querySelector('i');
+        
+        // Check for saved dark mode preference
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            body.classList.add('dark-mode');
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        }
+        
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('darkMode', 'enabled');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                localStorage.setItem('darkMode', null);
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+        
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const navLinks = document.querySelector('.nav-links');
+        
+        mobileMenuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !mobileMenuToggle.contains(e.target) && navLinks.classList.contains('active')) {
+                navLinks.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
