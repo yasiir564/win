@@ -1256,8 +1256,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.querySelector('.contact-form form');
     
     if (contactForm) {
+        // Add loading state management
+        let isSubmitting = false;
+        
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // Prevent multiple submissions
+            if (isSubmitting) return;
+            
+            // Visual feedback that form is submitting
+            isSubmitting = true;
+            const submitButton = contactForm.querySelector('button[type="submit"], input[type="submit"]');
+            if (submitButton) {
+                const originalText = submitButton.textContent || submitButton.value;
+                submitButton.disabled = true;
+                submitButton.textContent = submitButton.value = 'Sending...';
+            }
             
             // Get form data
             const formData = new FormData(contactForm);
@@ -1281,7 +1296,11 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    return response.json().then(err => {
+                        throw new Error(err.message || 'Server error: ' + response.status);
+                    }).catch(e => {
+                        throw new Error('Network response was not ok: ' + response.status);
+                    });
                 }
                 return response.json();
             })
@@ -1292,7 +1311,15 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(error => {
                 console.error('Error:', error);
-                showMessage('There was a problem sending your message. Please try again later.', 'error');
+                showMessage('There was a problem sending your message: ' + error.message, 'error');
+            })
+            .finally(() => {
+                // Reset submission state
+                isSubmitting = false;
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.textContent = submitButton.value = originalText;
+                }
             });
         });
     }
@@ -1311,9 +1338,15 @@ document.addEventListener('DOMContentLoaded', function() {
         messageEl.textContent = message;
         messageEl.className = `form-message ${type}`;
         
+        // Scroll to message
+        messageEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        
         // Automatically remove the message after 5 seconds
         setTimeout(() => {
-            messageEl.remove();
+            messageEl.classList.add('form-message-fade');
+            setTimeout(() => {
+                messageEl.remove();
+            }, 500);
         }, 5000);
     }
 });
