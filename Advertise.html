@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advertise With Us - TikDownloader</title>
+    <title>Advertise With Us - Tokhaste</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
         <link rel="icon" href="cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3JtNTMzLW5lb24tMDA3LXguanBn [MConverter.eu].ico" type="image/x-icon">
@@ -1053,177 +1053,175 @@ button {
 
 
 
-      /* Footer */
-.footer {
-    background-color: var(--tiktok-dark-gray);
-    color: var(--tiktok-white);
-    padding: 80px 0 30px;
-    font-family: 'Inter', sans-serif; /* Modern font */
+    /* Footer Styles */
+        .footer {
+            background-color: var(--tiktok-white);
+            transition: var(--transition);
+            margin-top: auto;
+        }
+        
+        body.dark-mode .footer {
+            background-color: var(--tiktok-dark-gray);
+        }
+        
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 5%;
+        }
+        
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--tiktok-dark-gray);
+            margin-bottom: 15px;
+        }
+        
+        body.dark-mode .footer-logo {
+            color: var(--tiktok-white);
+        }
+        
+        .footer-logo i {
+            font-size: 1.5rem;
+            margin-right: 10px;
+            background: var(--tiktok-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 15px;
+            font-size: 1rem;
+            color: var(--tiktok-dark-gray);
+        }
+        
+        body.dark-mode .footer-column h3 {
+            color: var(--tiktok-white);
+        }
+        
+        .footer-column a {
+            display: block;
+            margin-bottom: 8px;
+            color: #777;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+        
+        body.dark-mode .footer-column a {
+            color: #aaa;
+        }
+        
+        .footer-column a:hover {
+            color: var(--tiktok-red);
+        }
+        
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+            color: #777;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        body.dark-mode .footer-bottom {
+            border-color: #333;
+            color: #aaa;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: #f5f5f5;
+            color: #555;
+            transition: var(--transition);
+        }
+        
+        body.dark-mode .social-links a {
+            background-color: #333;
+            color: #ddd;
+        }
+        
+        .social-links a:hover {
+            transform: translateY(-3px);
+            color: var(--tiktok-white);
+            background: var(--tiktok-gradient);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .login-container {
+                padding: 30px 20px;
+            }
+            
+            .footer-top {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .footer-links {
+                gap: 30px;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+        /* Hide mobile menu on desktop */
+#mobileNav {
+    display: none;
 }
 
-.footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.footer-top {
-    display: grid;
-    grid-template-columns: 1.5fr repeat(auto-fit, minmax(160px, 1fr));
-    gap: 40px;
-    margin-bottom: 60px;
-}
-
-.footer-logo {
-    display: flex;
-    align-items: center;
-    font-weight: 700;
-    font-size: 1.75rem;
-    margin-bottom: 24px;
-    letter-spacing: -0.5px;
-}
-
-.footer-logo i {
-    margin-right: 12px;
-    font-size: 2rem;
-    color: var(--tiktok-red);
-    transition: transform 0.3s ease;
-}
-
-.footer-logo:hover i {
-    transform: rotate(15deg);
-}
-
-.footer-column h3 {
-    margin-bottom: 20px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    color: var(--tiktok-red);
-}
-
-.footer-column a {
+/* Show mobile menu when "show" class is added */
+#mobileNav.show {
     display: block;
-    margin-bottom: 14px;
-    opacity: 0.8;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-    position: relative;
-    padding-left: 0;
 }
 
-.footer-column a:hover {
-    opacity: 1;
-    color: var(--tiktok-red);
-    padding-left: 8px;
-}
+/* Responsive rule: show toggle button and mobile menu only on mobile */
+@media (min-width: 768px) {
+    #mobileMenuToggle {
+        display: none; /* Hide toggle button on desktop */
+    }
 
-.footer-column a::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    width: 0;
-    height: 1px;
-    background-color: var(--tiktok-red);
-    transition: width 0.2s ease;
-    opacity: 0;
-}
-
-.footer-column a:hover::before {
-    width: 4px;
-    opacity: 1;
-}
-
-.footer-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 30px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    font-size: 0.9rem;
-}
-
-.copyright {
-    opacity: 0.7;
-}
-
-.social-links {
-    display: flex;
-    gap: 12px;
-}
-
-.social-links a {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    background-color: rgba(255, 255, 255, 0.08);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    color: var(--tiktok-white);
-}
-
-.social-links a:hover {
-    background-color: var(--tiktok-red);
-    transform: translateY(-4px);
-    box-shadow: 0 5px 15px rgba(var(--tiktok-red-rgb), 0.4);
-}
-
-.social-links a i {
-    font-size: 1.2rem;
-}
-
-/* Responsive Design */
-@media (max-width: 992px) {
-    .footer-top {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    #mobileNav {
+        display: none !important; /* Always hide mobile nav on desktop */
     }
 }
 
-@media (max-width: 768px) {
-    .footer {
-        padding: 60px 0 20px;
-    }
-    
-    .footer-top {
-        grid-template-columns: 1fr 1fr;
-        gap: 30px;
-    }
-    
-    .social-links a {
-        width: 36px;
-        height: 36px;
-    }
-}
-
-@media (max-width: 576px) {
-    .footer-top {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-    
-    .footer-logo {
-        justify-content: center;
-    }
-    
-    .footer-column a::before {
-        display: none;
-    }
-    
-    .footer-column a:hover {
-        padding-left: 0;
-    }
-    
-    .footer-bottom {
-        flex-direction: column;
-        gap: 20px;
-    }
-}
     </style>
 </head>
 <body>
