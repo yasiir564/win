@@ -1169,206 +1169,296 @@
     </footer>
 
     <script>
-        // Toggle Dark/Light Mode
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const body = document.body;
-        const icon = darkModeToggle.querySelector('i');
+       // Dark/Light Mode Toggle
+const darkModeToggle = document.getElementById('darkModeToggle');
+const body = document.body;
+const icon = darkModeToggle.querySelector('i');
+
+// Check for saved theme preference or use device preference
+const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+const savedTheme = localStorage.getItem('theme');
+
+if (savedTheme === 'light') {
+    body.classList.add('light-mode');
+    icon.classList.replace('fa-moon', 'fa-sun');
+} else if (savedTheme === 'dark' || (savedTheme === null && prefersDarkMode)) {
+    body.classList.remove('light-mode');
+    icon.classList.replace('fa-sun', 'fa-moon');
+}
+
+darkModeToggle.addEventListener('click', () => {
+    body.classList.toggle('light-mode');
+    
+    if (body.classList.contains('light-mode')) {
+        icon.classList.replace('fa-moon', 'fa-sun');
+        localStorage.setItem('theme', 'light');
+    } else {
+        icon.classList.replace('fa-sun', 'fa-moon');
+        localStorage.setItem('theme', 'dark');
+    }
+});
+
+// Mobile Menu Toggle
+const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+const closeMenu = document.getElementById('closeMenu');
+const mobileMenu = document.querySelector('.mobile-menu');
+const overlay = document.getElementById('overlay');
+
+mobileMenuToggle.addEventListener('click', () => {
+    mobileMenu.classList.add('active');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+});
+
+function closeMenuFunction() {
+    mobileMenu.classList.remove('active');
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+closeMenu.addEventListener('click', closeMenuFunction);
+overlay.addEventListener('click', closeMenuFunction);
+
+// Format Options
+const formatOptions = document.querySelectorAll('.format-option');
+const fileFormat = document.getElementById('fileFormat');
+
+formatOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        // Remove active class from all options
+        formatOptions.forEach(opt => opt.classList.remove('active'));
+        // Add active class to clicked option
+        option.classList.add('active');
         
-        // Check for saved theme preference or use device preference
-        const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const savedTheme = localStorage.getItem('theme');
+        // Get format text
+        const format = option.textContent.trim().substring(option.textContent.indexOf(' ') + 1);
+        fileFormat.textContent = format;
         
-        if (savedTheme === 'light') {
-            body.classList.add('light-mode');
-            icon.classList.replace('fa-moon', 'fa-sun');
-        } else if (savedTheme === 'dark' || (savedTheme === null && prefersDarkMode)) {
-            body.classList.remove('light-mode');
-            icon.classList.replace('fa-sun', 'fa-moon');
+        // Update download button text
+        const currentFormat = getSelectedFormat();
+        downloadBtn.innerHTML = `<i class="fas fa-download"></i> Download ${currentFormat.toUpperCase()}`;
+    });
+});
+
+// Quality Options
+const qualityOptions = document.querySelectorAll('.quality-option');
+const fileQuality = document.getElementById('fileQuality');
+
+qualityOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        // Remove active class from all options
+        qualityOptions.forEach(opt => opt.classList.remove('active'));
+        // Add active class to clicked option
+        option.classList.add('active');
+        
+        // Get quality text
+        const quality = option.textContent.trim();
+        fileQuality.textContent = quality;
+    });
+});
+
+// File Upload & Drag & Drop
+const dropArea = document.getElementById('dropArea');
+const fileInput = document.getElementById('fileInput');
+const tiktokLoader = document.getElementById('tiktokLoader');
+const progressContainer = document.getElementById('progressContainer');
+const progressFill = document.getElementById('progressFill');
+const progressPercentage = document.getElementById('progressPercentage');
+const progressStatus = document.getElementById('progressStatus');
+const resultContainer = document.getElementById('resultContainer');
+const fileName = document.getElementById('fileName');
+const fileSize = document.getElementById('fileSize');
+const downloadBtn = document.getElementById('downloadBtn');
+
+// Get the selected format
+function getSelectedFormat() {
+    const activeFormat = document.querySelector('.format-option.active');
+    if (activeFormat) {
+        return activeFormat.textContent.trim().substring(activeFormat.textContent.indexOf(' ') + 1).toLowerCase();
+    }
+    return 'mp3'; // Default format
+}
+
+// Get the selected quality
+function getSelectedQuality() {
+    const activeQuality = document.querySelector('.quality-option.active');
+    if (activeQuality) {
+        return activeQuality.textContent.trim();
+    }
+    return 'High'; // Default quality
+}
+
+// Prevent default drag behaviors
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, preventDefaults, false);
+    document.body.addEventListener(eventName, preventDefaults, false);
+});
+
+function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+}
+
+// Highlight drop area when item is dragged over it
+['dragenter', 'dragover'].forEach(eventName => {
+    dropArea.addEventListener(eventName, highlight, false);
+});
+
+['dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, unhighlight, false);
+});
+
+function highlight() {
+    dropArea.classList.add('highlight');
+}
+
+function unhighlight() {
+    dropArea.classList.remove('highlight');
+}
+
+// Handle dropped files
+dropArea.addEventListener('drop', handleDrop, false);
+
+function handleDrop(e) {
+    const dt = e.dataTransfer;
+    const files = dt.files;
+    
+    if (files.length) {
+        handleFiles(files);
+    }
+}
+
+fileInput.addEventListener('change', function() {
+    if (this.files.length) {
+        handleFiles(this.files);
+    }
+});
+
+// Handle file upload and conversion with backend API
+function handleFiles(files) {
+    if (!files.length) return;
+    
+    // Reset UI state
+    resultContainer.classList.remove('active');
+    
+    // Get the selected format and quality
+    const format = getSelectedFormat();
+    const quality = getSelectedQuality();
+    
+    // Show loader
+    dropArea.classList.add('processing');
+    tiktokLoader.classList.add('active');
+    
+    // Create FormData object for the API request
+    const formData = new FormData();
+    formData.append('video', files[0]);
+    formData.append('format', format);
+    formData.append('quality', quality);
+    
+    // Endpoint URL
+    const endpointUrl = 'https://denmara.com/wp-json/denmara/v1/convert/';
+    
+    // Track upload progress
+    let uploadProgress = 0;
+    const xhr = new XMLHttpRequest();
+    
+    xhr.upload.addEventListener('progress', function(e) {
+        if (e.lengthComputable) {
+            uploadProgress = Math.round((e.loaded / e.total) * 30); // Cap upload at 30% of total progress
+            updateProgress(uploadProgress, 'Uploading video...');
         }
-        
-        darkModeToggle.addEventListener('click', () => {
-            body.classList.toggle('light-mode');
+    });
+    
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            tiktokLoader.classList.remove('active');
+            progressContainer.classList.add('active');
             
-            if (body.classList.contains('light-mode')) {
-                icon.classList.replace('fa-moon', 'fa-sun');
-                localStorage.setItem('theme', 'light');
-            } else {
-                icon.classList.replace('fa-sun', 'fa-moon');
-                localStorage.setItem('theme', 'dark');
-            }
-        });
-        
-        // Mobile Menu Toggle
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const closeMenu = document.getElementById('closeMenu');
-        const mobileMenu = document.querySelector('.mobile-menu');
-        const overlay = document.getElementById('overlay');
-        
-        mobileMenuToggle.addEventListener('click', () => {
-            mobileMenu.classList.add('active');
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        });
-        
-        function closeMenuFunction() {
-            mobileMenu.classList.remove('active');
-            overlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        
-        closeMenu.addEventListener('click', closeMenuFunction);
-        overlay.addEventListener('click', closeMenuFunction);
-        
-        // Format Options
-        const formatOptions = document.querySelectorAll('.format-option');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const fileFormat = document.getElementById('fileFormat');
-        
-        formatOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                // Remove active class from all options
-                formatOptions.forEach(opt => opt.classList.remove('active'));
-                // Add active class to clicked option
-                option.classList.add('active');
-                
-                // Get format text
-                const format = option.textContent.trim().substring(option.textContent.indexOf(' ') + 1);
-                fileFormat.textContent = format;
-                downloadBtn.innerHTML = `<i class="fas fa-download"></i> Download ${format}`;
-            });
-        });
-        
-        // Quality Options
-        const qualityOptions = document.querySelectorAll('.quality-option');
-        const fileQuality = document.getElementById('fileQuality');
-        
-        qualityOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                // Remove active class from all options
-                qualityOptions.forEach(opt => opt.classList.remove('active'));
-                // Add active class to clicked option
-                option.classList.add('active');
-                
-                // Get quality text
-                const quality = option.textContent.trim();
-                fileQuality.textContent = quality;
-            });
-        });
-        
-        // File Upload & Drag & Drop
-        const dropArea = document.getElementById('dropArea');
-        const fileInput = document.getElementById('fileInput');
-        const tiktokLoader = document.getElementById('tiktokLoader');
-        const progressContainer = document.getElementById('progressContainer');
-        const progressFill = document.getElementById('progressFill');
-        const progressPercentage = document.getElementById('progressPercentage');
-        const progressStatus = document.getElementById('progressStatus');
-        const resultContainer = document.getElementById('resultContainer');
-        const fileName = document.getElementById('fileName');
-        const fileSize = document.getElementById('fileSize');
-        
-        // Prevent default drag behaviors
-        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropArea.addEventListener(eventName, preventDefaults, false);
-            document.body.addEventListener(eventName, preventDefaults, false);
-        });
-        
-        function preventDefaults(e) {
-            e.preventDefault();
-            e.stopPropagation();
-        }
-        
-        // Highlight drop area when item is dragged over it
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropArea.addEventListener(eventName, highlight, false);
-        });
-        
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropArea.addEventListener(eventName, unhighlight, false);
-        });
-        
-        function highlight() {
-            dropArea.classList.add('highlight');
-        }
-        
-        function unhighlight() {
-            dropArea.classList.remove('highlight');
-        }
-        
-        // Handle dropped files
-        dropArea.addEventListener('drop', handleDrop, false);
-        
-        function handleDrop(e) {
-            const dt = e.dataTransfer;
-            const files = dt.files;
-            
-            if (files.length) {
-                handleFiles(files);
-            }
-        }
-        
-        fileInput.addEventListener('change', function() {
-            if (this.files.length) {
-                handleFiles(this.files);
-            }
-        });
-        
-        function handleFiles(files) {
-            // Simulate conversion process
-            dropArea.classList.add('processing');
-            tiktokLoader.classList.add('active');
-            
-            // Show progress after 1.5 seconds
-            setTimeout(() => {
-                tiktokLoader.classList.remove('active');
-                progressContainer.classList.add('active');
-                
-                // Update progress
-                let progress = 0;
-                const interval = setInterval(() => {
-                    progress += 5;
-                    progressFill.style.width = `${progress}%`;
-                    progressPercentage.textContent = `${progress}%`;
+            if (xhr.status === 200) {
+                // Handle successful response
+                try {
+                    const response = JSON.parse(xhr.responseText);
                     
-                    if (progress < 30) {
-                        progressStatus.textContent = 'Analyzing video...';
-                    } else if (progress < 60) {
-                        progressStatus.textContent = 'Extracting audio...';
-                    } else if (progress < 90) {
-                        progressStatus.textContent = 'Converting...';
+                    if (response.success) {
+                        // Simulate conversion process (already done server-side)
+                        simulateConversion(response, format);
                     } else {
-                        progressStatus.textContent = 'Finalizing...';
+                        showError('Conversion failed: ' + response.message);
                     }
-                    
-                    if (progress >= 100) {
-                        clearInterval(interval);
-                        
-                        // Show result after completion
-                        setTimeout(() => {
-                            progressContainer.classList.remove('active');
-                            resultContainer.classList.add('active');
-                            dropArea.classList.remove('processing');
-                            
-                            // Update file info
-                            if (files[0]) {
-                                fileName.textContent = files[0].name.replace(/\.[^/.]+$/, "") + ".mp3";
-                                
-                                // Format file size
-                                const size = files[0].size / (1024 * 1024);
-                                fileSize.textContent = size.toFixed(1) + ' MB';
-                            }
-                        }, 500);
-                    }
-                }, 100);
-            }, 1500);
+                } catch (e) {
+                    showError('Error processing response');
+                }
+            } else {
+                showError('Error: ' + (xhr.status === 0 ? 'Network error' : xhr.status));
+            }
+        }
+    };
+    
+    xhr.open('POST', endpointUrl, true);
+    xhr.send(formData);
+}
+
+// Simulate conversion process with visual feedback
+function simulateConversion(response, format) {
+    let progress = 30; // Start from 30% (after upload)
+    const interval = setInterval(() => {
+        progress += 5;
+        
+        if (progress < 60) {
+            updateProgress(progress, 'Converting...');
+        } else if (progress < 90) {
+            updateProgress(progress, 'Processing audio...');
+        } else {
+            updateProgress(progress, 'Finalizing...');
         }
         
-        // Download Button
-        downloadBtn.addEventListener('click', () => {
-            // Here you would normally trigger the actual download
-            // For demo purposes, we'll just show an alert
-            alert('Download started! In a real implementation, this would download your converted file.');
-        });
+        if (progress >= 100) {
+            clearInterval(interval);
+            
+            // Show result after completion
+            setTimeout(() => {
+                progressContainer.classList.remove('active');
+                resultContainer.classList.add('active');
+                dropArea.classList.remove('processing');
+                
+                // Update file info
+                fileName.textContent = response.file_name;
+                
+                // Format file size
+                const size = response.file_size / (1024 * 1024);
+                fileSize.textContent = size.toFixed(1) + ' MB';
+                
+                // Update download button
+                downloadBtn.setAttribute('data-download-url', response.download_url);
+                downloadBtn.innerHTML = `<i class="fas fa-download"></i> Download ${format.toUpperCase()}`;
+            }, 500);
+        }
+    }, 100);
+}
+
+// Update progress display
+function updateProgress(progress, status) {
+    progressFill.style.width = `${progress}%`;
+    progressPercentage.textContent = `${progress}%`;
+    progressStatus.textContent = status;
+}
+
+// Show error message
+function showError(message) {
+    progressContainer.classList.remove('active');
+    dropArea.classList.remove('processing');
+    alert('Error: ' + message);
+}
+
+// Update download button click handler
+downloadBtn.addEventListener('click', () => {
+    const downloadUrl = downloadBtn.getAttribute('data-download-url');
+    if (downloadUrl) {
+        window.location.href = downloadUrl;
+    } else {
+        alert('Download URL not available. Please try converting again.');
+    }
+});
     </script>
 </body>
 </html>
