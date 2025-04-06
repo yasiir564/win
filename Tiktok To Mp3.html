@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TokHaste - TikTok MP3 Converter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/inter-ui/3.19.3/inter.min.css">
+    <style>
+        :root {
+            --tiktok-black: #000000;
+            --tiktok-white: #FFFFFF;
+            --tiktok-red: #FE2C55;
+            --tiktok-blue: #25F4EE;
+            --tiktok-light-gray: #F1F1F2;
+            --tiktok-dark-gray: #161823;
+            --tiktok-darker-gray: #0f1016;
+            --tiktok-gradient: linear-gradient(90deg, var(--tiktok-blue), var(--tiktok-red));
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            --btn-shadow: 0 7px 14px rgba(254, 44, 85, 0.3);
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--tiktok-black);
+            color: var(--tiktok-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+
+        body.light-mode {
+            background-color: var(--tiktok-light-gray);
+            color: var(--tiktok-dark-gray);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation Styles */
+        .navbar {
+            background-color: rgba(22, 24, 35, 0.9);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        .light-mode .navbar {
+            background-color: rgba(241, 241, 242, 0.9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--tiktok-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo i {
+            margin-right: 8px;
+            font-size: 1.8rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: var(--tiktok-white);
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            transition: var(--transition);
+        }
+
+        .light-mode .nav-links a {
+            color: var(--tiktok-dark-gray);
+        }
+
+        .nav-links a.active, 
+        .nav-links a:hover {
+            background: var(--tiktok-gradient);
+            color: var(--tiktok-white);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--tiktok-white);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .light-mode .theme-toggle {
+            color: var(--tiktok-dark-gray);
+        }
+
+        .btn-sign-in {
+            background: var(--tiktok-gradient);
+            color: var(--tiktok-white);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--btn-shadow);
+        }
+
+        .btn-sign-in:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(254, 44, 85, 0.4);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--tiktok-white);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .light-mode .menu-toggle {
+            color: var(--tiktok-dark-gray);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 150px 0 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 120%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(37, 244, 238, 0.1) 0%, rgba(254, 44, 85, 0.05) 50%, rgba(0, 0, 0, 0) 70%);
+            z-index: -1;
+            animation: pulse 15s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.3; }
+            100% { transform: scale(1.2); opacity: 0.1; }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: var(--tiktok-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            opacity: 0.8;
+        }
+
+        /* Converter Card */
+        .converter-card {
+            background-color: var(--tiktok-darker-gray);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            margin: 0 auto 80px;
+            max-width: 800px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+        }
+
+        .light-mode .converter-card {
+            background-color: var(--tiktok-white);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Drag & Drop Area */
+        .drop-area {
+            position: relative;
+            border: 2px dashed var(--tiktok-blue);
+            border-radius: var(--border-radius);
+            padding: 60px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background-color: rgba(37, 244, 238, 0.05);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .drop-area.highlight {
+            border-color: var(--tiktok-red);
+            background-color: rgba(254, 44, 85, 0.05);
+        }
+
+        .drop-area.processing {
+            pointer-events: none;
+        }
+
+        .drop-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--tiktok-blue);
+            transition: var(--transition);
+        }
+
+        .drop-area.highlight .drop-icon {
+            color: var(--tiktok-red);
+        }
+
+        .drop-text h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .drop-text p {
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* TikTok Loading Animation */
+        .tiktok-loader {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            margin: 40px 0;
+        }
+
+        .tiktok-loader.active {
+            display: flex;
+        }
+
+        .tiktok-loader .dot {
+            width: 15px;
+            height: 15px;
+            margin: 0 5px;
+            background-color: var(--tiktok-blue);
+            border-radius: 50%;
+            animation: loader-bounce 0.6s infinite alternate;
+        }
+
+        .tiktok-loader .dot:nth-child(2) {
+            animation-delay: 0.2s;
+            background-color: var(--tiktok-red);
+        }
+
+        .tiktok-loader .dot:nth-child(3) {
+            animation-delay: 0.4s;
+            background-color: var(--tiktok-blue);
+        }
+
+        @keyframes loader-bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-20px); }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            display: none;
+            margin: 30px 0;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .light-mode .progress-bar {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--tiktok-gradient);
+            border-radius: 4px;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Result Container */
+        .result-container {
+            display: none;
+            background-color: rgba(37, 244, 238, 0.05);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .result-container.active {
+            display: block;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .result-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .result-title i {
+            color: var(--tiktok-blue);
+            font-size: 1.5rem;
+        }
+
+        .file-info {
+            margin-bottom: 20px;
+        }
+
+        .file-info div {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .light-mode .file-info div {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .file-info div:last-child {
+            border-bottom: none;
+        }
+
+        .file-info span:last-child {
+            font-weight: 600;
+        }
+
+        .download-btn {
+            background: var(--tiktok-gradient);
+            color: var(--tiktok-white);
+            border: none;
+            padding: 12px 24px;
+            width: 100%;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--btn-shadow);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(254, 44, 85, 0.4);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: var(--tiktok-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .section-title p {
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.8;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            background-color: var(--tiktok-darker-gray);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .light-mode .feature-card {
+            background-color: var(--tiktok-white);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            background: var(--tiktok-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-desc {
+            opacity: 0.8;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: var(--tiktok-darker-gray);
+            padding: 60px 0 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .light-mode .footer {
+            background-color: var(--tiktok-dark-gray);
+            color: var(--tiktok-white);
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--tiktok-gradient);
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer-top {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 50px;
+            gap: 30px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--tiktok-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo i {
+            margin-right: 8px;
+            font-size: 1.8rem;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 50px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+
+        .footer-column a {
+            display: block;
+            color: var(--tiktok-white);
+            text-decoration: none;
+            margin-bottom: 12px;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .footer-column a:hover {
+            opacity: 1;
+            transform: translateX(5px);
+        }
+
+        .footer-bottom {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom p {
+            opacity: 0.7;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-links a {
+            color: var(--tiktok-white);
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            opacity: 1;
+            transform: translateY(-3px);
+        }
+
+        /* Pro Features */
+        .pro-features {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        .pro-badge {
+            background: var(--tiktok-gradient);
+            color: var(--tiktok-white);
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .format-options {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .format-option {
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--border-radius);
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            flex: 1;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        .light-mode .format-option {
+            background-color: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .format-option.active {
+            background: var(--tiktok-gradient);
+            border-color: transparent;
+        }
+
+        .format-option i {
+            margin-right: 5px;
+        }
+
+        .quality-selector {
+            margin: 20px 0;
+        }
+
+        .quality-selector label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .quality-options {
+            display: flex;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 3px;
+        }
+
+        .light-mode .quality-options {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .quality-option {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .quality-option.active {
+            background: var(--tiktok-gradient);
+        }
+
+        /* How It Works */
+        .how-it-works {
+            padding: 80px 0;
+        }
+
+        .steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 280px;
+            text-align: center;
+            position: relative;
+        }
+
+        .step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 30px;
+            right: -70px;
+            width: 70px;
+            height: 2px;
+            background: var(--tiktok-gradient);
+            display: none;
+        }
+
+        @media (min-width: 992px) {
+            .step:not(:last-child)::after {
+                display: block;
+            }
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--tiktok-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .step-desc {
+            opacity: 0.8;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+            
+            .steps {
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .btn-sign-in {
+                display: none;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .converter-card {
+                padding: 30px 20px;
+            }
+            
+            .footer-top {
+                flex-direction: column;
+                gap: 40px;
+            }
+            
+            .footer-links {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .nav-container {
+                padding: 15px;
+            }
+            
+            .logo span {
+                font-size: 1.2rem;
+            }
+            
+            .hero {
+                padding: 120px 0 80px;
+            }
+            
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 30px;
+            }
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 80%;
+            max-width: 300px;
+            height: 100vh;
+            background-color: var(--tiktok-darker-gray);
+            z-index: 2000;
+            padding: 80px 20px 20px;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .light-mode .mobile-menu {
+            background-color: var(--tiktok-white);
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu .nav-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .mobile-menu .nav-links a {
+            padding: 12px;
+            width: 100%;
+            display: block;
+        }
+
+        .mobile-menu .btn-sign-in {
+            width: 100%;
+            margin-top: 20px;
+            display: block;
+        }
+
+        .close-menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--tiktok-white);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .light-mode .close-menu {
+            color: var(--tiktok-dark-gray);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1500;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fab fa-tiktok"></i>
+                <span>TokHaste</span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="active">Home</a>
+                <a href="privacy-policy.html">Privacy</a>
+                <a href="contact.html">Advertise with us</a>
+            </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="darkModeToggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="btn-sign-in">Sign In</button>
+                <button class="menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <button class="close-menu" id="closeMenu" aria-label="Close menu">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="nav-links">
+            <a href="#" class="active">Home</a>
+            <a href="privacy-policy.html">Privacy</a>
+            <a href="contact.html">Advertise with us</a>
+        </div>
+        <button class="btn-sign-in">Sign In</button>
+    </div>
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Convert TikTok Videos to MP3</h1>
+            <p>Download and convert TikTok videos to high-quality MP3 audio files without watermark. Free, fast, and easy to use!</p>
+        </div>
+    </section>
+
+    <!-- Converter Section -->
+    <section class="converter">
+        <div class="container">
+            <div class="converter-card">
+                <div class="pro-features">
+                    <span class="pro-badge">PRO</span>
+                </div>
+                
+                <!-- Format Options -->
+                <div class="format-options">
+                    <div class="format-option active">
+                        <i class="fas fa-music"></i> MP3
+                    </div>
+                    <div class="format-option">
+                        <i class="fas fa-video"></i> MP4
+                    </div>
+                    <div class="format-option">
+                        <i class="fas fa-file-audio"></i> WAV
+                    </div>
+                    <div class="format-option">
+                        <i class="fas fa-file"></i> OGG
+                    </div>
+                </div>
+                
+                <!-- Quality Selector -->
+                <div class="quality-selector">
+                    <label>Quality</label>
+                    <div class="quality-options">
+                        <div class="quality-option">128 kbps</div>
+                        <div class="quality-option active">192 kbps</div>
+                        <div class="quality-option">320 kbps</div>
+                    </div>
+                </div>
+
+                <!-- Drag & Drop Area -->
+                <div class="drop-area" id="dropArea">
+                    <i class="fas fa-cloud-upload-alt drop-icon"></i>
+                    <div class="drop-text">
+                        <h3>Drag & Drop Your TikTok Video</h3>
+                        <p>Or click to browse your files</p>
+                    </div>
+                    <input type="file" class="file-input" id="fileInput" accept="video/*">
+                </div>
+
+                <!-- TikTok Loading Animation -->
+                <div class="tiktok-loader" id="tiktokLoader">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="progressStatus">Converting...</span>
+                        <span id="progressPercentage">0%</span>
+                    </div>
+                </div>
+
+                <!-- Result Container -->
+                <div class="result-container" id="resultContainer">
+                    <div class="result-header">
+                        <div class="result-title">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>Conversion Complete</h3>
+                        </div>
+                    </div>
+                    <div class="file-info">
+                        <div>
+                            <span>File name:</span>
+                            <span id="fileName">tiktok_audio.mp3</span>
+                        </div>
+                        <div>
+                            <span>File size:</span>
+                            <span id="fileSize">2.4 MB</span>
+                        </div>
+                        <div>
+                            <span>Format:</span>
+                            <span id="fileFormat">MP3</span>
+                        </div>
+                        <div>
+                            <span>Quality:</span>
+                            <span id="fileQuality">192 kbps</span>
+                        </div>
+                    </div>
+                    <button class="download-btn" id="downloadBtn">
+                        <i class="fas fa-download"></i> Download MP3
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why Choose TokHaste</h2>
+                <p>Our TikTok to MP3 converter provides the best experience with these amazing features</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="fas fa-bolt feature-icon"></i>
+                    <h3 class="feature-title">Lightning Fast</h3>
+                    <p class="feature-desc">Convert your TikTok videos to MP3 in seconds with our high-speed servers.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-shield-alt feature-icon"></i>
+                    <h3 class="feature-title">100% Secure</h3>
+                    <p class="feature-desc">Your files are automatically deleted after conversion. We respect your privacy.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-trophy feature-icon"></i>
+                    <h3 class="feature-title">High Quality</h3>
+                    <p class="feature-desc">Get crystal clear audio with our high-quality conversion technology.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-infinity feature-icon"></i>
+                    <h3 class="feature-title">Unlimited Conversions</h3>
+                    <p class="feature-desc">No limits on the number of TikTok videos you can convert.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-mobile-alt feature-icon"></i>
+                    <h3 class="feature-title">Mobile Friendly</h3>
+                    <p class="feature-desc">Works perfectly on all devices - smartphones, tablets, and computers.</p>
+                </div>
+                <div class="feature-card">
+                    <i class="fas fa-tag feature-icon"></i>
+                    <h3 class="feature-title">Completely Free</h3>
+                    <p class="feature-desc">No hidden charges or subscription fees. Convert TikTok videos for free.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-title">
+                <h2>How It Works</h2>
+                <p>Converting TikTok videos to MP3 has never been easier</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Upload Video</h3>
+                    <p class="step-desc">Drag and drop your TikTok video or click to browse your files.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Choose Settings</h3>
+                    <p class="step-desc">Select your preferred format and quality settings.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Convert</h3>
+                    <p class="step-desc">Our system will automatically convert your TikTok video to MP3.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3 class="step-title">Download</h3>
+                    <p class="step-desc">Download your high-quality MP3 file instantly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-about">
+                    <div class="footer-logo">
+                        <i class="fab fa-tiktok"></i>
+                        <span>TokHaste</span>
+                    </div>
+                    <p>The fastest and easiest way to convert TikTok videos to MP3. No registration required.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h3>Company</h3>
+                        <a href="about.html">About Us</a>
+                        <a href="contact.html">Contact</a>
+                        <a href="careers.html">Careers</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Legal</h3>
+                        <a href="terms.html">Terms of Service</a>
+                        <a href="privacy-policy.html">Privacy Policy</a>
+                        <a href="cookie-policy.html">Cookie Policy</a>
+                    </div>
+                    <div class="footer-column">
+                        <h3>Resources</h3>
+                        <a href="faq.html">FAQ</a>
+                        <a href="blog.html">Blog</a>
+                        <a href="support.html">Support</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 TokHaste. All rights reserved.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle Dark/Light Mode
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+        const icon = darkModeToggle.querySelector('i');
+        
+        // Check for saved theme preference or use device preference
+        const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const savedTheme = localStorage.getItem('theme');
+        
+        if (savedTheme === 'light') {
+            body.classList.add('light-mode');
+            icon.classList.replace('fa-moon', 'fa-sun');
+        } else if (savedTheme === 'dark' || (savedTheme === null && prefersDarkMode)) {
+            body.classList.remove('light-mode');
+            icon.classList.replace('fa-sun', 'fa-moon');
+        }
+        
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('light-mode');
+            
+            if (body.classList.contains('light-mode')) {
+                icon.classList.replace('fa-moon', 'fa-sun');
+                localStorage.setItem('theme', 'light');
+            } else {
+                icon.classList.replace('fa-sun', 'fa-moon');
+                localStorage.setItem('theme', 'dark');
+            }
+        });
+        
+        // Mobile Menu Toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const closeMenu = document.getElementById('closeMenu');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const overlay = document.getElementById('overlay');
+        
+        mobileMenuToggle.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        function closeMenuFunction() {
+            mobileMenu.classList.remove('active');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        closeMenu.addEventListener('click', closeMenuFunction);
+        overlay.addEventListener('click', closeMenuFunction);
+        
+        // Format Options
+        const formatOptions = document.querySelectorAll('.format-option');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const fileFormat = document.getElementById('fileFormat');
+        
+        formatOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove active class from all options
+                formatOptions.forEach(opt => opt.classList.remove('active'));
+                // Add active class to clicked option
+                option.classList.add('active');
+                
+                // Get format text
+                const format = option.textContent.trim().substring(option.textContent.indexOf(' ') + 1);
+                fileFormat.textContent = format;
+                downloadBtn.innerHTML = `<i class="fas fa-download"></i> Download ${format}`;
+            });
+        });
+        
+        // Quality Options
+        const qualityOptions = document.querySelectorAll('.quality-option');
+        const fileQuality = document.getElementById('fileQuality');
+        
+        qualityOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                // Remove active class from all options
+                qualityOptions.forEach(opt => opt.classList.remove('active'));
+                // Add active class to clicked option
+                option.classList.add('active');
+                
+                // Get quality text
+                const quality = option.textContent.trim();
+                fileQuality.textContent = quality;
+            });
+        });
+        
+        // File Upload & Drag & Drop
+        const dropArea = document.getElementById('dropArea');
+        const fileInput = document.getElementById('fileInput');
+        const tiktokLoader = document.getElementById('tiktokLoader');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressPercentage = document.getElementById('progressPercentage');
+        const progressStatus = document.getElementById('progressStatus');
+        const resultContainer = document.getElementById('resultContainer');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        // Highlight drop area when item is dragged over it
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropArea.classList.add('highlight');
+        }
+        
+        function unhighlight() {
+            dropArea.classList.remove('highlight');
+        }
+        
+        // Handle dropped files
+        dropArea.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length) {
+                handleFiles(files);
+            }
+        }
+        
+        fileInput.addEventListener('change', function() {
+            if (this.files.length) {
+                handleFiles(this.files);
+            }
+        });
+        
+        function handleFiles(files) {
+            // Simulate conversion process
+            dropArea.classList.add('processing');
+            tiktokLoader.classList.add('active');
+            
+            // Show progress after 1.5 seconds
+            setTimeout(() => {
+                tiktokLoader.classList.remove('active');
+                progressContainer.classList.add('active');
+                
+                // Update progress
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 5;
+                    progressFill.style.width = `${progress}%`;
+                    progressPercentage.textContent = `${progress}%`;
+                    
+                    if (progress < 30) {
+                        progressStatus.textContent = 'Analyzing video...';
+                    } else if (progress < 60) {
+                        progressStatus.textContent = 'Extracting audio...';
+                    } else if (progress < 90) {
+                        progressStatus.textContent = 'Converting...';
+                    } else {
+                        progressStatus.textContent = 'Finalizing...';
+                    }
+                    
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        
+                        // Show result after completion
+                        setTimeout(() => {
+                            progressContainer.classList.remove('active');
+                            resultContainer.classList.add('active');
+                            dropArea.classList.remove('processing');
+                            
+                            // Update file info
+                            if (files[0]) {
+                                fileName.textContent = files[0].name.replace(/\.[^/.]+$/, "") + ".mp3";
+                                
+                                // Format file size
+                                const size = files[0].size / (1024 * 1024);
+                                fileSize.textContent = size.toFixed(1) + ' MB';
+                            }
+                        }, 500);
+                    }
+                }, 100);
+            }, 1500);
+        }
+        
+        // Download Button
+        downloadBtn.addEventListener('click', () => {
+            // Here you would normally trigger the actual download
+            // For demo purposes, we'll just show an alert
+            alert('Download started! In a real implementation, this would download your converted file.');
+        });
+    </script>
+</body>
+</html>
