@@ -946,300 +946,99 @@
     <div class="overlay" id="overlay"></div>
 
     <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Convert TikTok Videos to MP3</h1>
-            <p>Download and convert TikTok videos to high-quality MP3 audio files without watermark. Free, fast, and easy to use!</p>
-        </div>
-    </section>
+<section class="hero">
+    <div class="container">
+        <h1>Convert Videos to MP3</h1>
+        <p>Download and convert videos to high-quality MP3 audio files. Free, fast, and easy to use!</p>
+    </div>
+</section>
 
-    <!-- Converter Section -->
-    <section class="converter">
-        <div class="container">
-            <div class="converter-card">
-                <div class="pro-features">
-                    <span class="pro-badge">PRO</span>
+<!-- Converter Section -->
+<section class="converter">
+    <div class="container">
+        <div class="converter-card">
+            <!-- Format Options -->
+            <div class="format-options">
+                <div class="format-option active">
+                    <i class="fas fa-music"></i> MP3
                 </div>
-                
-                <!-- Format Options -->
-                <div class="format-options">
-                    <div class="format-option active">
-                        <i class="fas fa-music"></i> MP3
-                    </div>
-                    <div class="format-option">
-                        <i class="fas fa-video"></i> MP4
-                    </div>
-                    <div class="format-option">
-                        <i class="fas fa-file-audio"></i> WAV
-                    </div>
-                    <div class="format-option">
-                        <i class="fas fa-file"></i> OGG
-                    </div>
+            </div>
+            
+            <!-- Quality Selector -->
+            <div class="quality-selector">
+                <label>Quality</label>
+                <div class="quality-options">
+                    <div class="quality-option">128 kbps</div>
+                    <div class="quality-option active">192 kbps</div>
+                    <div class="quality-option">320 kbps</div>
                 </div>
-                
-                <!-- Quality Selector -->
-                <div class="quality-selector">
-                    <label>Quality</label>
-                    <div class="quality-options">
-                        <div class="quality-option">128 kbps</div>
-                        <div class="quality-option active">192 kbps</div>
-                        <div class="quality-option">320 kbps</div>
-                    </div>
-                </div>
+            </div>
 
-                <!-- Drag & Drop Area -->
-                <div class="drop-area" id="dropArea">
-                    <i class="fas fa-cloud-upload-alt drop-icon"></i>
-                    <div class="drop-text">
-                        <h3>Drag & Drop Your TikTok Video</h3>
-                        <p>Or click to browse your files</p>
-                    </div>
-                    <input type="file" class="file-input" id="fileInput" accept="video/*">
+            <!-- Drag & Drop Area -->
+            <div class="drop-area" id="dropArea">
+                <i class="fas fa-cloud-upload-alt drop-icon"></i>
+                <div class="drop-text">
+                    <h3>Drag & Drop Your Video</h3>
+                    <p>Or click to browse your files</p>
                 </div>
+                <input type="file" class="file-input" id="fileInput" accept="video/*">
+            </div>
 
-                <!-- TikTok Loading Animation -->
-                <div class="tiktok-loader" id="tiktokLoader">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </div>
+            <!-- Loading Animation -->
+            <div class="tiktok-loader" id="tiktokLoader">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
 
-                <!-- Progress Bar -->
-                <div class="progress-container" id="progressContainer">
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
-                    </div>
-                    <div class="progress-text">
-                        <span id="progressStatus">Converting...</span>
-                        <span id="progressPercentage">0%</span>
-                    </div>
+            <!-- Progress Bar -->
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
                 </div>
+                <div class="progress-text">
+                    <span id="progressStatus">Converting...</span>
+                    <span id="progressPercentage">0%</span>
+                </div>
+            </div>
 
-                <!-- Result Container -->
-                <div class="result-container" id="resultContainer">
-                    <div class="result-header">
-                        <div class="result-title">
-                            <i class="fas fa-check-circle"></i>
-                            <h3>Conversion Complete</h3>
-                        </div>
+            <!-- Result Container -->
+            <div class="result-container" id="resultContainer">
+                <div class="result-header">
+                    <div class="result-title">
+                        <i class="fas fa-check-circle"></i>
+                        <h3>Conversion Complete</h3>
                     </div>
-                    <div class="file-info">
-                        <div>
-                            <span>File name:</span>
-                            <span id="fileName">tiktok_audio.mp3</span>
-                        </div>
-                        <div>
-                            <span>File size:</span>
-                            <span id="fileSize">2.4 MB</span>
-                        </div>
-                        <div>
-                            <span>Format:</span>
-                            <span id="fileFormat">MP3</span>
-                        </div>
-                        <div>
-                            <span>Quality:</span>
-                            <span id="fileQuality">192 kbps</span>
-                        </div>
-                    </div>
-                    <button class="download-btn" id="downloadBtn">
-                        <i class="fas fa-download"></i> Download MP3
-                    </button>
                 </div>
+                <div class="file-info">
+                    <div>
+                        <span>File name:</span>
+                        <span id="fileName">video_audio.mp3</span>
+                    </div>
+                    <div>
+                        <span>File size:</span>
+                        <span id="fileSize">2.4 MB</span>
+                    </div>
+                    <div>
+                        <span>Format:</span>
+                        <span id="fileFormat">MP3</span>
+                    </div>
+                    <div>
+                        <span>Quality:</span>
+                        <span id="fileQuality">192 kbps</span>
+                    </div>
+                </div>
+                <button class="download-btn" id="downloadBtn">
+                    <i class="fas fa-download"></i> Download MP3
+                </button>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Features Section -->
-    <section class="features">
-        <div class="container">
-            <div class="section-title">
-                <h2>Why Choose TokHaste</h2>
-                <p>Our TikTok to MP3 converter provides the best experience with these amazing features</p>
-            </div>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <i class="fas fa-bolt feature-icon"></i>
-                    <h3 class="feature-title">Lightning Fast</h3>
-                    <p class="feature-desc">Convert your TikTok videos to MP3 in seconds with our high-speed servers.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-shield-alt feature-icon"></i>
-                    <h3 class="feature-title">100% Secure</h3>
-                    <p class="feature-desc">Your files are automatically deleted after conversion. We respect your privacy.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-trophy feature-icon"></i>
-                    <h3 class="feature-title">High Quality</h3>
-                    <p class="feature-desc">Get crystal clear audio with our high-quality conversion technology.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-infinity feature-icon"></i>
-                    <h3 class="feature-title">Unlimited Conversions</h3>
-                    <p class="feature-desc">No limits on the number of TikTok videos you can convert.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-mobile-alt feature-icon"></i>
-                    <h3 class="feature-title">Mobile Friendly</h3>
-                    <p class="feature-desc">Works perfectly on all devices - smartphones, tablets, and computers.</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-tag feature-icon"></i>
-                    <h3 class="feature-title">Completely Free</h3>
-                    <p class="feature-desc">No hidden charges or subscription fees. Convert TikTok videos for free.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <!-- How It Works Section -->
-    <section class="how-it-works">
-        <div class="container">
-            <div class="section-title">
-                <h2>How It Works</h2>
-                <p>Converting TikTok videos to MP3 has never been easier</p>
-            </div>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3 class="step-title">Upload Video</h3>
-                    <p class="step-desc">Drag and drop your TikTok video or click to browse your files.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3 class="step-title">Choose Settings</h3>
-                    <p class="step-desc">Select your preferred format and quality settings.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3 class="step-title">Convert</h3>
-                    <p class="step-desc">Our system will automatically convert your TikTok video to MP3.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <h3 class="step-title">Download</h3>
-                    <p class="step-desc">Download your high-quality MP3 file instantly.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-top">
-                <div class="footer-about">
-                    <div class="footer-logo">
-                        <i class="fab fa-tiktok"></i>
-                        <span>TokHaste</span>
-                    </div>
-                    <p>The fastest and easiest way to convert TikTok videos to MP3. No registration required.</p>
-                </div>
-                <div class="footer-links">
-                    <div class="footer-column">
-                        <h3>Company</h3>
-                        <a href="about.html">About Us</a>
-                        <a href="contact.html">Contact</a>
-                        <a href="careers.html">Careers</a>
-                    </div>
-                    <div class="footer-column">
-                        <h3>Legal</h3>
-                        <a href="terms.html">Terms of Service</a>
-                        <a href="privacy-policy.html">Privacy Policy</a>
-                        <a href="cookie-policy.html">Cookie Policy</a>
-                    </div>
-                    <div class="footer-column">
-                        <h3>Resources</h3>
-                        <a href="faq.html">FAQ</a>
-                        <a href="blog.html">Blog</a>
-                        <a href="support.html">Support</a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 TokHaste. All rights reserved.</p>
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                    <a href="#"><i class="fab fa-tiktok"></i></a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <script>
-// Dark/Light Mode Toggle
-const darkModeToggle = document.getElementById('darkModeToggle');
-const body = document.body;
-const icon = darkModeToggle.querySelector('i');
-
-// Check for saved theme preference or use device preference
-const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-const savedTheme = localStorage.getItem('theme');
-
-if (savedTheme === 'light') {
-    body.classList.add('light-mode');
-    icon.classList.replace('fa-moon', 'fa-sun');
-} else if (savedTheme === 'dark' || (savedTheme === null && prefersDarkMode)) {
-    body.classList.remove('light-mode');
-    icon.classList.replace('fa-sun', 'fa-moon');
-}
-
-darkModeToggle.addEventListener('click', () => {
-    body.classList.toggle('light-mode');
-    
-    if (body.classList.contains('light-mode')) {
-        icon.classList.replace('fa-moon', 'fa-sun');
-        localStorage.setItem('theme', 'light');
-    } else {
-        icon.classList.replace('fa-sun', 'fa-moon');
-        localStorage.setItem('theme', 'dark');
-    }
-});
-
-// Mobile Menu Toggle
-const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-const closeMenu = document.getElementById('closeMenu');
-const mobileMenu = document.querySelector('.mobile-menu');
-const overlay = document.getElementById('overlay');
-
-mobileMenuToggle.addEventListener('click', () => {
-    mobileMenu.classList.add('active');
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-});
-
-function closeMenuFunction() {
-    mobileMenu.classList.remove('active');
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-}
-
-closeMenu.addEventListener('click', closeMenuFunction);
-overlay.addEventListener('click', closeMenuFunction);
-
-// Format Options
-const formatOptions = document.querySelectorAll('.format-option');
-const fileFormat = document.getElementById('fileFormat');
-
-formatOptions.forEach(option => {
-    option.addEventListener('click', () => {
-        // Remove active class from all options
-        formatOptions.forEach(opt => opt.classList.remove('active'));
-        // Add active class to clicked option
-        option.classList.add('active');
-        
-        // Get format text
-        const format = option.textContent.trim().substring(option.textContent.indexOf(' ') + 1);
-        fileFormat.textContent = format;
-        
-        // Update download button text
-        const currentFormat = getSelectedFormat();
-        downloadBtn.innerHTML = `<i class="fas fa-download"></i> Download ${currentFormat.toUpperCase()}`;
-    });
-});
-
+<script>
 // Quality Options
 const qualityOptions = document.querySelectorAll('.quality-option');
 const fileQuality = document.getElementById('fileQuality');
@@ -1274,34 +1073,13 @@ const downloadBtn = document.getElementById('downloadBtn');
 let convertedFile = null;
 let convertedFileName = '';
 
-// Get the selected format
-function getSelectedFormat() {
-    const activeFormat = document.querySelector('.format-option.active');
-    if (activeFormat) {
-        return activeFormat.textContent.trim().substring(activeFormat.textContent.indexOf(' ') + 1).toLowerCase();
-    }
-    return 'mp3'; // Default format
-}
-
 // Get the selected quality
 function getSelectedQuality() {
     const activeQuality = document.querySelector('.quality-option.active');
     if (activeQuality) {
-        const quality = activeQuality.textContent.trim().toLowerCase();
-        
-        // Convert quality text to bitrate values
-        switch (quality) {
-            case 'low':
-                return 96; // 96 kbps
-            case 'medium':
-                return 128; // 128 kbps
-            case 'high':
-                return 256; // 256 kbps
-            default:
-                return 128; // Default to medium quality
-        }
+        return activeQuality.textContent.trim().toLowerCase();
     }
-    return 128; // Default to medium quality (128 kbps)
+    return '192 kbps'; // Default quality
 }
 
 // Prevent default drag behaviors
@@ -1358,16 +1136,19 @@ function handleFiles(files) {
     
     // Check if file is a video
     if (!file.type.startsWith('video/')) {
-        alert('Please select a valid video file');
+        Swal.fire({
+            icon: 'error',
+            title: 'Invalid File',
+            text: 'Please select a valid video file'
+        });
         return;
     }
     
     // Reset UI state
     resultContainer.classList.remove('active');
     
-    // Get the selected format and quality
-    const format = getSelectedFormat();
-    const quality = getSelectedQuality(); // Returns bitrate
+    // Get the selected quality
+    const quality = getSelectedQuality(); 
     
     // Show loader
     dropArea.classList.add('processing');
@@ -1378,11 +1159,11 @@ function handleFiles(files) {
     updateProgress(10, 'Reading file...');
     
     // Load FFmpeg
-    loadAndRunFFmpeg(file, format, quality);
+    loadAndRunFFmpeg(file, quality);
 }
 
 // Load and run FFmpeg-wasm
-async function loadAndRunFFmpeg(file, format, quality) {
+async function loadAndRunFFmpeg(file, quality) {
     updateProgress(20, 'Loading conversion tools...');
     
     try {
@@ -1405,64 +1186,31 @@ async function loadAndRunFFmpeg(file, format, quality) {
         
         // Get the file extension and name
         const fileExtension = file.name.split('.').pop();
-        const fileName = file.name.replace(`.${fileExtension}`, '');
+        const fileBaseName = file.name.replace(`.${fileExtension}`, '');
         const inputFileName = `input.${fileExtension}`;
-        const outputFileName = `${fileName}.${format}`;
+        const outputFileName = `${fileBaseName}.mp3`;
         convertedFileName = outputFileName;
         
         // Write the file to memory
         ffmpeg.FS('writeFile', inputFileName, await fetchFile(file));
         
-        // Determine FFmpeg command based on format
-        let ffmpegCommand;
-        switch (format) {
-            case 'mp3':
-                ffmpegCommand = [
-                    '-i', inputFileName,
-                    '-vn', // No video
-                    '-ar', '44100', // Audio sample rate
-                    '-ac', '2', // Stereo audio
-                    '-b:a', `${quality}k`, // Audio bitrate
-                    outputFileName
-                ];
-                break;
-                
-            case 'wav':
-                ffmpegCommand = [
-                    '-i', inputFileName,
-                    '-vn', // No video
-                    '-ar', '44100', // Audio sample rate
-                    '-ac', '2', // Stereo audio
-                    outputFileName
-                ];
-                break;
-                
-            case 'mp4':
-                ffmpegCommand = [
-                    '-i', inputFileName,
-                    '-c:v', 'libx264', // Video codec
-                    '-crf', quality > 200 ? '18' : (quality > 100 ? '23' : '28'), // Quality (lower is better)
-                    '-preset', 'fast', // Encoding speed
-                    '-c:a', 'aac', // Audio codec
-                    '-b:a', `${quality}k`, // Audio bitrate
-                    outputFileName
-                ];
-                break;
-                
-            case 'gif':
-                ffmpegCommand = [
-                    '-i', inputFileName,
-                    '-vf', 'fps=10,scale=320:-1:flags=lanczos', // Reduce framerate and size
-                    outputFileName
-                ];
-                break;
-                
-            default:
-                ffmpegCommand = [
-                    '-i', inputFileName,
-                    outputFileName
-                ];
+        // Get quality in kbps
+        let bitrate = '192';
+        if (quality.includes('128')) {
+            bitrate = '128';
+        } else if (quality.includes('320')) {
+            bitrate = '320';
         }
+        
+        // FFmpeg command for MP3 conversion
+        const ffmpegCommand = [
+            '-i', inputFileName,
+            '-vn', // No video
+            '-ar', '44100', // Audio sample rate
+            '-ac', '2', // Stereo audio
+            '-b:a', `${bitrate}k`, // Audio bitrate
+            outputFileName
+        ];
         
         // Run the FFmpeg command
         await ffmpeg.run(...ffmpegCommand);
@@ -1472,14 +1220,7 @@ async function loadAndRunFFmpeg(file, format, quality) {
         const data = ffmpeg.FS('readFile', outputFileName);
         
         // Create a blob with the appropriate MIME type
-        const mimeTypes = {
-            'mp3': 'audio/mp3',
-            'wav': 'audio/wav',
-            'mp4': 'video/mp4',
-            'gif': 'image/gif'
-        };
-        
-        convertedFile = new Blob([data.buffer], { type: mimeTypes[format] || 'application/octet-stream' });
+        convertedFile = new Blob([data.buffer], { type: 'audio/mp3' });
         
         // Calculate file size in MB
         const fileSizeMB = (convertedFile.size / (1024 * 1024)).toFixed(1);
@@ -1498,17 +1239,28 @@ async function loadAndRunFFmpeg(file, format, quality) {
             fileSize.textContent = fileSizeMB + ' MB';
             
             // Update download button
-            downloadBtn.innerHTML = `<i class="fas fa-download"></i> Download ${format.toUpperCase()}`;
+            downloadBtn.innerHTML = `<i class="fas fa-download"></i> Download MP3`;
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Conversion Complete',
+                text: 'Your video has been successfully converted to MP3'
+            });
         }, 500);
         
     } catch (error) {
         console.error('Error during conversion:', error);
         
-        // Show error in UI
+        // Show error using SweetAlert
         tiktokLoader.classList.remove('active');
         progressContainer.classList.remove('active');
         dropArea.classList.remove('processing');
-        alert('Error during conversion. Please try again or use a different file format.');
+        
+        Swal.fire({
+            icon: 'error',
+            title: 'Conversion Failed',
+            text: 'Error during conversion. Please try again with a different file.'
+        });
     }
 }
 
@@ -1531,18 +1283,30 @@ downloadBtn.addEventListener('click', () => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(downloadUrl);
+        
+        Swal.fire({
+            icon: 'success',
+            title: 'Download Started',
+            text: 'Your MP3 file is downloading',
+            timer: 2000,
+            showConfirmButton: false
+        });
     } else {
-        alert('No converted file available. Please try converting again.');
+        Swal.fire({
+            icon: 'error',
+            title: 'No File Available',
+            text: 'No converted file available. Please try converting again.'
+        });
     }
 });
 
-// Add this script tag to your HTML to load FFmpeg-wasm
+// Load FFmpeg-wasm
 document.addEventListener('DOMContentLoaded', function() {
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/@ffmpeg/ffmpeg@0.11.6/dist/ffmpeg.min.js';
     script.async = true;
     document.body.appendChild(script);
 });
-    </script>
+</script>
 </body>
 </html>
