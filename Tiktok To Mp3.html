@@ -3,116 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MP4 to MP3 Converter</title>
+    <title>Video to MP3 Converter</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Arial', sans-serif;
-        }
-        
         body {
-            background-color: #f5f5f5;
-            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-        
-        .container {
+            color: #333;
             max-width: 800px;
-            width: 100%;
-            background-color: white;
-            border-radius: 10px;
-            padding: 30px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            margin-top: 40px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f7f9fc;
         }
         
         h1 {
             text-align: center;
+            color: #2c3e50;
             margin-bottom: 30px;
-            color: #4a69bd;
         }
         
-        .upload-area {
-            border: 2px dashed #4a69bd;
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .upload-container {
+            border: 2px dashed #3498db;
             border-radius: 8px;
             padding: 40px 20px;
             text-align: center;
+            cursor: pointer;
             margin-bottom: 20px;
-            cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
         }
         
-        .upload-area:hover {
-            background-color: #f0f7ff;
+        .upload-container:hover {
+            background-color: #f0f7fd;
+            border-color: #2980b9;
         }
         
-        .upload-area.highlight {
-            background-color: #e6f0ff;
-            border-color: #1e3799;
+        .upload-container.drag-over {
+            background-color: #e1f0fa;
+            border-color: #2980b9;
         }
         
-        .upload-icon {
-            font-size: 50px;
-            color: #4a69bd;
-            margin-bottom: 10px;
-        }
-        
-        .file-input {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-        
-        .btn {
-            background-color: #4a69bd;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-            display: block;
-            width: 100%;
-            margin-top: 20px;
-        }
-        
-        .btn:hover {
-            background-color: #1e3799;
-        }
-        
-        .btn:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        
-        .file-details {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            background-color: #f8f9fa;
+        #fileInput {
             display: none;
         }
         
-        .file-name {
-            font-weight: bold;
-            margin-bottom: 5px;
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
         }
         
-        .file-size {
-            color: #666;
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
         }
         
         .progress-container {
@@ -121,308 +79,372 @@
         }
         
         .progress-bar {
-            height: 10px;
-            background-color: #e6e6e6;
-            border-radius: 5px;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
             margin-bottom: 10px;
             overflow: hidden;
         }
         
-        .progress {
+        .progress-bar-fill {
             height: 100%;
-            background-color: #4a69bd;
+            background-color: #2ecc71;
+            border-radius: 4px;
             width: 0%;
             transition: width 0.3s ease;
         }
         
-        .status {
-            text-align: center;
-            font-size: 14px;
-            color: #666;
-        }
-        
         .result-container {
-            margin-top: 30px;
+            margin-top: 20px;
             padding: 20px;
             border-radius: 8px;
-            background-color: #f0f7ff;
+            background-color: #f1f8e9;
             display: none;
         }
         
-        .result-title {
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #4a69bd;
+        .error-container {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #ffebee;
+            color: #c62828;
+            display: none;
         }
         
-        .download-btn {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        
-        .download-btn:hover {
-            background-color: #27ae60;
-        }
-        
-        .error-message {
-            color: #e74c3c;
-            text-align: center;
+        .file-info {
             margin-top: 15px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .debug-info {
+            margin-top: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            font-family: monospace;
+            font-size: 12px;
             display: none;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .upload-container {
+                padding: 20px 10px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
+    <h1>Video to MP3 Converter</h1>
+    
     <div class="container">
-        <h1>MP4 to MP3 Converter</h1>
-        
-        <div class="upload-area" id="uploadArea">
-            <div class="upload-icon">📁</div>
-            <p>Drag & Drop your MP4 file here</p>
+        <div id="uploadContainer" class="upload-container">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#3498db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <h3>Drag & Drop your video file here</h3>
             <p>or</p>
-            <p>Click to browse</p>
-            <input type="file" class="file-input" id="fileInput" accept=".mp4">
-        </div>
-        
-        <div class="file-details" id="fileDetails">
-            <div class="file-name" id="fileName"></div>
-            <div class="file-size" id="fileSize"></div>
+            <button class="btn" id="selectFileBtn">Select File</button>
+            <input type="file" id="fileInput" accept="video/mp4">
+            <div class="file-info" id="fileInfo"></div>
         </div>
         
         <button class="btn" id="convertBtn" disabled>Convert to MP3</button>
         
         <div class="progress-container" id="progressContainer">
             <div class="progress-bar">
-                <div class="progress" id="progressBar"></div>
+                <div class="progress-bar-fill" id="progressBarFill"></div>
             </div>
-            <div class="status" id="status">Processing...</div>
+            <div id="progressText">Uploading: 0%</div>
         </div>
         
-        <div class="error-message" id="errorMessage"></div>
+        <div class="error-container" id="errorContainer">
+            <h3>Error</h3>
+            <p id="errorMessage"></p>
+        </div>
         
         <div class="result-container" id="resultContainer">
-            <div class="result-title">Conversion Complete!</div>
-            <p>Your MP3 file is ready for download.</p>
-            <a href="#" class="download-btn" id="downloadBtn">Download MP3</a>
+            <h3>Conversion Successful!</h3>
+            <p>Your MP3 file is ready to download.</p>
+            <button class="btn" id="downloadBtn">Download MP3</button>
         </div>
+        
+        <div class="debug-info" id="debugInfo"></div>
     </div>
     
+    <div class="footer">
+        <p>This tool converts MP4 videos to MP3 audio files. Maximum file size: 500MB.</p>
+        <p>© 2025 Video to MP3 Converter</p>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Configuration
-            const API_URL = 'https://yassir12.byethost7.com/convert.php';
-            
-            const uploadArea = document.getElementById('uploadArea');
+            // Elements
+            const uploadContainer = document.getElementById('uploadContainer');
             const fileInput = document.getElementById('fileInput');
-            const fileDetails = document.getElementById('fileDetails');
-            const fileName = document.getElementById('fileName');
-            const fileSize = document.getElementById('fileSize');
+            const selectFileBtn = document.getElementById('selectFileBtn');
             const convertBtn = document.getElementById('convertBtn');
+            const fileInfo = document.getElementById('fileInfo');
             const progressContainer = document.getElementById('progressContainer');
-            const progressBar = document.getElementById('progressBar');
-            const status = document.getElementById('status');
+            const progressBarFill = document.getElementById('progressBarFill');
+            const progressText = document.getElementById('progressText');
             const resultContainer = document.getElementById('resultContainer');
             const downloadBtn = document.getElementById('downloadBtn');
+            const errorContainer = document.getElementById('errorContainer');
             const errorMessage = document.getElementById('errorMessage');
+            const debugInfo = document.getElementById('debugInfo');
+            
+            // API endpoints
+            const API_BASE = 'https://koko-7d1z.onrender.com';
+            const API_CONVERT = `${API_BASE}/convert`;
+            const API_DOWNLOAD = `${API_BASE}/download`;
             
             let selectedFile = null;
+            let convertedFileName = null;
             
-            // Format file size
-            function formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            }
-            
-            // Handle drag and drop events
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, preventDefaults, false);
+            // Event for file selection button
+            selectFileBtn.addEventListener('click', () => {
+                fileInput.click();
             });
             
-            function preventDefaults(e) {
+            // File input change handler
+            fileInput.addEventListener('change', (e) => {
+                handleFileSelection(e.target.files[0]);
+            });
+            
+            // Drag and drop handlers
+            uploadContainer.addEventListener('dragover', (e) => {
                 e.preventDefault();
-                e.stopPropagation();
-            }
-            
-            ['dragenter', 'dragover'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, highlight, false);
+                uploadContainer.classList.add('drag-over');
             });
             
-            ['dragleave', 'drop'].forEach(eventName => {
-                uploadArea.addEventListener(eventName, unhighlight, false);
+            uploadContainer.addEventListener('dragleave', () => {
+                uploadContainer.classList.remove('drag-over');
             });
             
-            function highlight() {
-                uploadArea.classList.add('highlight');
-            }
-            
-            function unhighlight() {
-                uploadArea.classList.remove('highlight');
-            }
-            
-            // Handle file drop
-            uploadArea.addEventListener('drop', handleDrop, false);
-            
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
+            uploadContainer.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadContainer.classList.remove('drag-over');
                 
-                if (files.length > 0) {
-                    handleFiles(files);
+                if (e.dataTransfer.files.length) {
+                    handleFileSelection(e.dataTransfer.files[0]);
                 }
-            }
+            });
+            
+            // Convert button handler
+            convertBtn.addEventListener('click', () => {
+                if (selectedFile) {
+                    convertVideo(selectedFile);
+                }
+            });
+            
+            // Download button handler - using direct download approach
+            downloadBtn.addEventListener('click', () => {
+                if (convertedFileName) {
+                    // Create a direct download link
+                    const downloadUrl = `${API_DOWNLOAD}/${convertedFileName}`;
+                    
+                    // Log for debugging
+                    logDebug(`Starting download: ${downloadUrl}`);
+                    
+                    // Fetch the file as a blob and trigger download
+                    fetch(downloadUrl)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                            }
+                            return response.blob();
+                        })
+                        .then(blob => {
+                            // Create a local URL for the blob
+                            const url = window.URL.createObjectURL(blob);
+                            
+                            // Create a temporary link and click it
+                            const a = document.createElement('a');
+                            a.style.display = 'none';
+                            a.href = url;
+                            a.download = convertedFileName;
+                            document.body.appendChild(a);
+                            a.click();
+                            
+                            // Clean up
+                            setTimeout(() => {
+                                document.body.removeChild(a);
+                                window.URL.revokeObjectURL(url);
+                            }, 100);
+                            
+                            logDebug("Download initiated via Blob");
+                        })
+                        .catch(error => {
+                            showError(`Download failed: ${error.message}`);
+                            logDebug(`Download error: ${error.message}`);
+                        });
+                }
+            });
             
             // Handle file selection
-            fileInput.addEventListener('change', function() {
-                if (this.files.length > 0) {
-                    handleFiles(this.files);
-                }
-            });
-            
-            function handleFiles(files) {
-                selectedFile = files[0];
+            function handleFileSelection(file) {
+                if (!file) return;
                 
-                // Check if file is an MP4
-                if (!selectedFile.type.includes('video/mp4')) {
-                    showError('Please select an MP4 file.');
-                    resetForm();
+                // Check if the file is an MP4 video
+                if (file.type !== 'video/mp4') {
+                    showError('Please select an MP4 video file.');
                     return;
                 }
                 
-                // Show file details
-                fileName.textContent = selectedFile.name;
-                fileSize.textContent = formatFileSize(selectedFile.size);
-                fileDetails.style.display = 'block';
+                // Check file size (500MB max)
+                const maxSize = 500 * 1024 * 1024; // 500MB in bytes
+                if (file.size > maxSize) {
+                    showError('File size exceeds the 500MB limit.');
+                    return;
+                }
+                
+                // Update UI with file info
+                selectedFile = file;
+                const fileSize = formatFileSize(file.size);
+                fileInfo.textContent = `Selected file: ${file.name} (${fileSize})`;
                 convertBtn.disabled = false;
                 hideError();
+                
+                // Hide result container when selecting a new file
+                resultContainer.style.display = 'none';
+                
+                logDebug(`File selected: ${file.name}, ${file.size} bytes, type: ${file.type}`);
             }
             
-            // Handle convert button click
-            convertBtn.addEventListener('click', function() {
-                if (!selectedFile) return;
-                
+            // Convert video to MP3
+            function convertVideo(file) {
+                // Create FormData for the API request
                 const formData = new FormData();
-                formData.append('video', selectedFile);
+                formData.append('video', file);
                 
-                // Show progress
+                // Show progress container
                 progressContainer.style.display = 'block';
                 convertBtn.disabled = true;
                 
-                // Start upload with actual progress tracking
-                uploadWithProgress(formData);
-            });
-            
-            // Upload with progress tracking
-            function uploadWithProgress(formData) {
-                // Create XMLHttpRequest object
+                logDebug(`Starting conversion of file: ${file.name}`);
+                
+                // Create XMLHttpRequest for progress tracking
                 const xhr = new XMLHttpRequest();
                 
-                // Setup progress event
-                xhr.upload.addEventListener('progress', (event) => {
-                    if (event.lengthComputable) {
-                        // Calculate upload percentage
-                        const percentComplete = Math.round((event.loaded / event.total) * 100);
-                        progressBar.style.width = percentComplete + '%';
-                        status.textContent = 'Uploading: ' + percentComplete + '%';
+                // Upload progress event
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const percentComplete = Math.round((e.loaded / e.total) * 100);
+                        updateProgress(percentComplete);
                     }
                 });
                 
-                // Setup load event
+                // Request completed
                 xhr.addEventListener('load', () => {
+                    logDebug(`Server response received. Status: ${xhr.status}`);
+                    logDebug(`Response text: ${xhr.responseText}`);
+                    
                     if (xhr.status >= 200 && xhr.status < 300) {
                         try {
                             const response = JSON.parse(xhr.responseText);
-                            
                             if (response.success) {
-                                // Show conversion progress (simulated)
-                                simulateConversionProgress();
-                                
-                                // Show result
-                                setTimeout(() => {
-                                    progressContainer.style.display = 'none';
-                                    resultContainer.style.display = 'block';
-                                    downloadBtn.href = response.downloadUrl;
-                                    downloadBtn.download = response.filename;
-                                }, 2000);
+                                // Store the filename for download
+                                convertedFileName = response.filename;
+                                showResult();
+                                logDebug(`Conversion successful. Filename: ${convertedFileName}`);
                             } else {
-                                throw new Error(response.error || 'Conversion failed');
+                                showError(response.error || 'Conversion failed.');
+                                logDebug(`Server reported error: ${response.error}`);
                             }
-                        } catch (error) {
-                            console.error('Error parsing response:', error);
-                            showError('Server returned an invalid response. Please try again.');
-                            progressContainer.style.display = 'none';
-                            convertBtn.disabled = false;
+                        } catch (e) {
+                            showError('Invalid response from server.');
+                            logDebug(`JSON parse error: ${e.message}`);
                         }
                     } else {
-                        console.error('Server error:', xhr.status);
-                        showError('Server error: ' + xhr.status);
-                        progressContainer.style.display = 'none';
-                        convertBtn.disabled = false;
+                        showError(`Server error: ${xhr.status}`);
+                        logDebug(`Server error with status ${xhr.status}`);
                     }
-                });
-                
-                // Setup error event
-                xhr.addEventListener('error', () => {
-                    console.error('Network error occurred');
-                    showError('Network error. Please check your connection and try again.');
-                    progressContainer.style.display = 'none';
                     convertBtn.disabled = false;
                 });
                 
-                // Setup abort event
-                xhr.addEventListener('abort', () => {
-                    console.error('Upload aborted');
-                    showError('Upload aborted.');
-                    progressContainer.style.display = 'none';
+                // Request error
+                xhr.addEventListener('error', () => {
+                    showError('Network error. Please check your connection.');
+                    logDebug('Network error during request');
                     convertBtn.disabled = false;
                 });
                 
                 // Open and send the request
-                xhr.open('POST', API_URL, true);
+                xhr.open('POST', API_CONVERT, true);
                 xhr.send(formData);
             }
             
-            function simulateConversionProgress() {
-                let progress = 0;
-                progressBar.style.width = '0%';
-                status.textContent = 'Converting...';
+            // Update progress bar
+            function updateProgress(percent) {
+                progressBarFill.style.width = `${percent}%`;
+                progressText.textContent = `Uploading: ${percent}%`;
                 
-                const interval = setInterval(() => {
-                    progress += 5;
-                    if (progress > 100) {
-                        clearInterval(interval);
-                        status.textContent = 'Finalizing...';
-                        return;
-                    }
-                    progressBar.style.width = progress + '%';
-                }, 200);
+                if (percent === 100) {
+                    progressText.textContent = 'Processing... Please wait.';
+                }
+                
+                logDebug(`Upload progress: ${percent}%`);
             }
             
+            // Show result container
+            function showResult() {
+                progressContainer.style.display = 'none';
+                resultContainer.style.display = 'block';
+                logDebug('Showing result container, ready for download');
+            }
+            
+            // Show error message
             function showError(message) {
+                errorContainer.style.display = 'block';
                 errorMessage.textContent = message;
-                errorMessage.style.display = 'block';
+                progressContainer.style.display = 'none';
+                logDebug(`Error shown to user: ${message}`);
             }
             
+            // Hide error message
             function hideError() {
-                errorMessage.style.display = 'none';
+                errorContainer.style.display = 'none';
             }
             
-            function resetForm() {
-                selectedFile = null;
-                fileInput.value = '';
-                fileDetails.style.display = 'none';
-                convertBtn.disabled = true;
+            // Log debug information
+            function logDebug(message) {
+                const timestamp = new Date().toLocaleTimeString();
+                const logMessage = `[${timestamp}] ${message}`;
+                console.log(logMessage);
+                
+                // For development troubleshooting, uncommenting this will show debug info on the page
+                // debugInfo.style.display = 'block';
+                // debugInfo.innerHTML += logMessage + '<br>';
+            }
+            
+            // Format file size to human-readable format
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
             }
         });
     </script>
