@@ -1,10 +1,8 @@
-{
+ {
   "rewrites": [
     { "source": "/:path", "destination": "/:path.html" }
   ],
   "redirects": [
-    { "source": "/index.html", "destination": "/", "permanent": true },
-    { "source": "/", "destination": "/?title=Tiktok%20Video%20Downloader", "permanent": false },
     { "source": "/:path.html", "destination": "/:path", "permanent": true }
   ]
 }
