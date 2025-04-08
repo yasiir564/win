@@ -780,6 +780,285 @@
         .toast-close:hover {
             opacity: 1;
         }
+        /* Common Section Styles */
+    .how-to-use-section,
+    .faq-section {
+        padding: 3rem 1rem;
+    }
+    
+    .section-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+    
+    .section-header h2 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        background: var(--tiktok-gradient);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        position: relative;
+        display: inline-block;
+    }
+    
+    .section-header h2::after {
+        content: '';
+        position: absolute;
+        width: 50%;
+        height: 4px;
+        background: var(--tiktok-gradient);
+        bottom: -10px;
+        left: 25%;
+        border-radius: 10px;
+    }
+    
+    .section-header .subtitle {
+        color: var(--text-primary);
+        opacity: 0.7;
+        font-size: 1.1rem;
+        margin-top: 1rem;
+    }
+    
+    /* How to Use Section Styles */
+    .steps-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+    
+    .step-card {
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--card-shadow);
+        border: 1px solid var(--card-border);
+        flex: 1;
+        min-width: 250px;
+        max-width: 350px;
+        text-align: center;
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease forwards;
+        opacity: 0;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .step-card:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+    
+    .step-card:nth-child(2) {
+        animation-delay: 0.3s;
+    }
+    
+    .step-card:nth-child(3) {
+        animation-delay: 0.5s;
+    }
+    
+    .step-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .step-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: var(--tiktok-gradient);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+        transform-origin: left;
+    }
+    
+    .step-card:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .step-icon {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        background: var(--tiktok-light-gray);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto 1.5rem;
+        color: var(--tiktok-red);
+        font-size: 1.8rem;
+        transition: var(--transition);
+    }
+    
+    .step-card:hover .step-icon {
+        background: var(--tiktok-gradient);
+        color: white;
+        transform: rotate(360deg);
+    }
+    
+    .step-number {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 28px;
+        height: 28px;
+        background: var(--tiktok-red);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 0.9rem;
+        border: 2px solid var(--card-bg);
+    }
+    
+    .step-card h3 {
+        margin-bottom: 1rem;
+        color: var(--text-primary);
+        font-size: 1.3rem;
+    }
+    
+    .step-card p {
+        color: var(--text-primary);
+        opacity: 0.8;
+        line-height: 1.6;
+    }
+    
+    /* FAQ Section Styles */
+    .faq-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .faq-item {
+        background-color: var(--card-bg);
+        border-radius: var(--border-radius);
+        margin-bottom: 1rem;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--card-border);
+        overflow: hidden;
+        animation: fadeIn 0.6s ease forwards;
+        opacity: 0;
+    }
+    
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    
+    .faq-item:nth-child(1) { animation-delay: 0.1s; }
+    .faq-item:nth-child(2) { animation-delay: 0.2s; }
+    .faq-item:nth-child(3) { animation-delay: 0.3s; }
+    .faq-item:nth-child(4) { animation-delay: 0.4s; }
+    .faq-item:nth-child(5) { animation-delay: 0.5s; }
+    .faq-item:nth-child(6) { animation-delay: 0.6s; }
+    
+    .faq-question {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.2rem 1.5rem;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+    
+    .faq-question:hover {
+        background-color: rgba(254, 44, 85, 0.05);
+    }
+    
+    .faq-question h3 {
+        font-size: 1.1rem;
+        color: var(--text-primary);
+        font-weight: 500;
+        margin: 0;
+        padding-right: 1rem;
+    }
+    
+    .faq-icon {
+        color: var(--tiktok-red);
+        transition: var(--transition);
+    }
+    
+    .faq-item.active .faq-icon {
+        transform: rotate(180deg);
+    }
+    
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+        padding: 0 1.5rem;
+        border-top: 0px solid var(--card-border);
+    }
+    
+    .faq-item.active .faq-answer {
+        max-height: 300px;
+        padding: 0 1.5rem 1.5rem;
+        border-top: 1px solid var(--card-border);
+    }
+    
+    .faq-answer p {
+        color: var(--text-primary);
+        opacity: 0.8;
+        line-height: 1.6;
+        margin-top: 1rem;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .steps-container {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .step-card {
+            width: 100%;
+            max-width: 100%;
+        }
+        
+        .section-header h2 {
+            font-size: 1.8rem;
+        }
+        
+        .faq-question h3 {
+            font-size: 1rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .section-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        .step-card {
+            padding: 1.5rem;
+        }
+        
+        .faq-question {
+            padding: 1rem;
+        }
+    }
     </style>
 </head>
 <body>
@@ -891,6 +1170,118 @@
         </div>
     </main>
 
+    <!-- How to Use Section -->
+<section class="how-to-use-section">
+    <div class="container">
+        <header class="section-header">
+            <h2>How to Use TokHaste MP3 Converter</h2>
+            <p class="subtitle">Extract audio from TikTok videos in just 3 simple steps</p>
+        </header>
+        
+        <div class="steps-container">
+            <div class="step-card">
+                <div class="step-icon">
+                    <i class="fas fa-link"></i>
+                    <div class="step-number">1</div>
+                </div>
+                <h3>Copy TikTok URL</h3>
+                <p>Find your favorite TikTok video and copy the share link from the app or website.</p>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-icon">
+                    <i class="fas fa-paste"></i>
+                    <div class="step-number">2</div>
+                </div>
+                <h3>Paste & Convert</h3>
+                <p>Paste the URL into the input field above and click the "Convert to MP3" button.</p>
+            </div>
+            
+            <div class="step-card">
+                <div class="step-icon">
+                    <i class="fas fa-download"></i>
+                    <div class="step-number">3</div>
+                </div>
+                <h3>Download MP3</h3>
+                <p>Once conversion is complete, click "Download MP3" to save high-quality audio to your device.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <div class="container">
+        <header class="section-header">
+            <h2>Frequently Asked Questions</h2>
+            <p class="subtitle">Everything you need to know about TokHaste TikTok to MP3 converter</p>
+        </header>
+        
+        <div class="faq-container">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Is TokHaste completely free to use?</h3>
+                    <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, TokHaste TikTok to MP3 converter is 100% free to use with no hidden charges. Convert as many TikTok videos to MP3 audio as you want without any limitations.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>What audio quality does TokHaste provide?</h3>
+                    <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="faq-answer">
+                    <p>TokHaste extracts audio at the highest possible quality from TikTok videos. Our converter maintains the original audio quality to deliver crystal-clear sound in MP3 format.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Is it legal to convert TikTok videos to MP3?</h3>
+                    <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="faq-answer">
+                    <p>TokHaste is designed for personal use only. We encourage users to respect copyright laws and the intellectual property of content creators. Always obtain permission before using audio for commercial purposes.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Which TikTok videos can I convert to MP3?</h3>
+                    <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="faq-answer">
+                    <p>TokHaste supports conversion of public TikTok videos. Private videos or those with restricted access cannot be processed. Simply ensure the video URL is from a public account and accessible to everyone.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>How long does the conversion process take?</h3>
+                    <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="faq-answer">
+                    <p>The TikTok to MP3 conversion typically takes just a few seconds. However, processing time may vary depending on the video length, your internet connection speed, and our server load.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <h3>Can I use TokHaste on mobile devices?</h3>
+                    <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="faq-answer">
+                    <p>Absolutely! TokHaste is fully responsive and works seamlessly on smartphones, tablets, and desktop computers. Our mobile-friendly interface makes it easy to convert TikTok videos to MP3 on any device.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-container">
@@ -932,6 +1323,71 @@
 
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // Get all FAQ items
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    // Add click event to each FAQ question
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        
+        question.addEventListener('click', () => {
+            // Toggle active class on the clicked item
+            const isActive = item.classList.contains('active');
+            
+            // Close all FAQ items first
+            faqItems.forEach(faq => {
+                faq.classList.remove('active');
+            });
+            
+            // If the clicked item wasn't already active, open it
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        });
+    });
+    
+    // Initialize - open first FAQ item
+    if (faqItems.length > 0) {
+        faqItems[0].classList.add('active');
+    }
+    
+    // Animation for steps on scroll
+    const stepCards = document.querySelectorAll('.step-card');
+    const faqElements = document.querySelectorAll('.faq-item');
+    
+    // Check if element is in viewport
+    function isInViewport(element) {
+        const rect = element.getBoundingClientRect();
+        return (
+            rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.8
+        );
+    }
+    
+    // Function to handle the scroll animation
+    function handleScrollAnimation() {
+        // For step cards
+        stepCards.forEach(card => {
+            if (isInViewport(card)) {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }
+        });
+        
+        // For FAQ items
+        faqElements.forEach(item => {
+            if (isInViewport(item)) {
+                item.style.opacity = '1';
+            }
+        });
+    }
+    
+    // Initial check
+    handleScrollAnimation();
+    
+    // Listen for scroll events
+    window.addEventListener('scroll', handleScrollAnimation);
+});
        document.addEventListener('DOMContentLoaded', function() {
     // Cache DOM elements
     const elements = {
