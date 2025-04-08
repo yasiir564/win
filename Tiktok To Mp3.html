@@ -1849,195 +1849,237 @@ body {
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Elements
-        const uploadContainer = document.getElementById('uploadContainer');
-        const fileInput = document.getElementById('fileInput');
-        const selectFileBtn = document.getElementById('selectFileBtn');
-        const convertBtn = document.getElementById('convertBtn');
-        const fileInfo = document.getElementById('fileInfo');
-        const fileName = document.getElementById('fileName');
-        const fileSize = document.getElementById('fileSize');
-        const progressContainer = document.getElementById('progressContainer');
-        const progressBarFill = document.getElementById('progressBarFill');
-        const progressText = document.getElementById('progressText');
-        const progressPercentage = document.getElementById('progressPercentage');
-        const progressTime = document.getElementById('progressTime');
-        const resultContainer = document.getElementById('resultContainer');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const convertAnother = document.getElementById('convertAnother');
-        const errorContainer = document.getElementById('errorContainer');
-        const errorMessage = document.getElementById('errorMessage');
-        const tryAgainBtn = document.getElementById('tryAgainBtn');
-        const debugInfo = document.getElementById('debugInfo');
-        const formatOptions = document.querySelectorAll('.format-option');
-        const qualityOptions = document.querySelectorAll('.quality-option');
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const mobileMenuClose = document.getElementById('mobileMenuClose');
-        const overlay = document.getElementById('overlay');
-        const toast = document.getElementById('toast');
-        const toastClose = document.getElementById('toastClose');
-        
-        // API endpoints
-        const API_BASE = 'https://koko-7d1z.onrender.com';
-        const API_CONVERT = `${API_BASE}/convert`;
-        const API_DOWNLOAD = `${API_BASE}/download`;
-        
-        let selectedFile = null;
-        let convertedFileName = null;
-        let selectedFormat = 'mp3';
-        let selectedBitrate = '192k';
-        let conversionStartTime = null;
-        let progressTimer = null;
-        
-        // Format options click handler
-        formatOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                formatOptions.forEach(opt => opt.classList.remove('active'));
-                option.classList.add('active');
-                selectedFormat = option.getAttribute('data-format');
-                showToast('Format changed', `Output format set to ${selectedFormat.toUpperCase()}`);
-                logDebug(`Format changed to ${selectedFormat}`);
-            });
+    // Elements
+    const uploadContainer = document.getElementById('uploadContainer');
+    const fileInput = document.getElementById('fileInput');
+    const selectFileBtn = document.getElementById('selectFileBtn');
+    const convertBtn = document.getElementById('convertBtn');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const progressContainer = document.getElementById('progressContainer');
+    const progressBarFill = document.getElementById('progressBarFill');
+    const progressText = document.getElementById('progressText');
+    const progressPercentage = document.getElementById('progressPercentage');
+    const progressTime = document.getElementById('progressTime');
+    const resultContainer = document.getElementById('resultContainer');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const convertAnother = document.getElementById('convertAnother');
+    const errorContainer = document.getElementById('errorContainer');
+    const errorMessage = document.getElementById('errorMessage');
+    const tryAgainBtn = document.getElementById('tryAgainBtn');
+    const debugInfo = document.getElementById('debugInfo');
+    const formatOptions = document.querySelectorAll('.format-option');
+    const qualityOptions = document.querySelectorAll('.quality-option');
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileMenuClose = document.getElementById('mobileMenuClose');
+    const overlay = document.getElementById('overlay');
+    const toast = document.getElementById('toast');
+    const toastClose = document.getElementById('toastClose');
+    
+    // API endpoints
+    const API_BASE = 'https://koko-7d1z.onrender.com';
+    const API_CONVERT = `${API_BASE}/convert`;
+    const API_DOWNLOAD = `${API_BASE}/download`;
+    const API_CHECK_LIMIT = `${API_BASE}/checkLimit`; // New endpoint for rate limiting
+    
+    let selectedFile = null;
+    let convertedFileName = null;
+    let selectedFormat = 'mp3';
+    let selectedBitrate = '192k';
+    let conversionStartTime = null;
+    let progressTimer = null;
+    let conversionPhase = 'idle';
+    
+    // Conversion status messages
+    const conversionMessages = {
+        uploading: [
+            'Uploading your file...',
+            'Sending file to server...',
+            'Upload in progress...',
+            'Preparing for conversion...'
+        ],
+        converting: [
+            'Starting conversion process...',
+            'Converting your video...',
+            'Processing audio streams...',
+            'Extracting audio data...',
+            'Encoding to your selected format...',
+            'Almost there! Finalizing conversion...',
+            'Optimizing audio quality...',
+            'Applying bitrate settings...'
+        ],
+        finalizing: [
+            'Wrapping up...',
+            'Preparing your download...',
+            'Finalizing your file...',
+            'Just a moment longer...'
+        ]
+    };
+    
+    // Format options click handler
+    formatOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            formatOptions.forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+            selectedFormat = option.getAttribute('data-format');
+            showToast('Format changed', `Output format set to ${selectedFormat.toUpperCase()}`);
+            logDebug(`Format changed to ${selectedFormat}`);
         });
-        
-        // Quality options click handler
-        qualityOptions.forEach(option => {
-            option.addEventListener('click', () => {
-                qualityOptions.forEach(opt => opt.classList.remove('active'));
-                option.classList.add('active');
-                selectedBitrate = option.getAttribute('data-bitrate');
-                showToast('Quality changed', `Bitrate set to ${selectedBitrate}`);
-                logDebug(`Bitrate changed to ${selectedBitrate}`);
-            });
+    });
+    
+    // Quality options click handler
+    qualityOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            qualityOptions.forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+            selectedBitrate = option.getAttribute('data-bitrate');
+            showToast('Quality changed', `Bitrate set to ${selectedBitrate}`);
+            logDebug(`Bitrate changed to ${selectedBitrate}`);
         });
+    });
+    
+    // Event for file selection button
+    selectFileBtn.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    // File input change handler
+    fileInput.addEventListener('change', (e) => {
+        handleFileSelection(e.target.files[0]);
+    });
+    
+    // Drag and drop handlers
+    uploadContainer.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadContainer.classList.add('drag-over');
+    });
+    
+    uploadContainer.addEventListener('dragleave', () => {
+        uploadContainer.classList.remove('drag-over');
+    });
+    
+    uploadContainer.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadContainer.classList.remove('drag-over');
         
-        // Event for file selection button
-        selectFileBtn.addEventListener('click', () => {
-            fileInput.click();
-        });
-        
-        // File input change handler
-        fileInput.addEventListener('change', (e) => {
-            handleFileSelection(e.target.files[0]);
-        });
-        
-        // Drag and drop handlers
-        uploadContainer.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadContainer.classList.add('drag-over');
-        });
-        
-        uploadContainer.addEventListener('dragleave', () => {
-            uploadContainer.classList.remove('drag-over');
-        });
-        
-        uploadContainer.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadContainer.classList.remove('drag-over');
+        if (e.dataTransfer.files.length) {
+            handleFileSelection(e.dataTransfer.files[0]);
+        }
+    });
+    
+    // Convert button handler
+    convertBtn.addEventListener('click', () => {
+        if (selectedFile) {
+            // Check rate limit before starting conversion
+            checkRateLimit()
+                .then(response => {
+                    if (response.allowed) {
+                        convertVideo(selectedFile);
+                    } else {
+                        showError(`Rate limit exceeded. Please try again in ${response.timeRemaining} minutes.`);
+                        showToast('Rate Limit', `You've reached your conversion limit. Please try again later.`, 'error');
+                    }
+                })
+                .catch(error => {
+                    logDebug(`Rate limit check error: ${error.message}`);
+                    // If rate limit check fails, proceed with conversion anyway
+                    convertVideo(selectedFile);
+                });
+        }
+    });
+    
+    // Download button handler
+    downloadBtn.addEventListener('click', () => {
+        if (convertedFileName) {
+            // Create a direct download link
+            const downloadUrl = `${API_DOWNLOAD}/${convertedFileName}`;
             
-            if (e.dataTransfer.files.length) {
-                handleFileSelection(e.dataTransfer.files[0]);
-            }
-        });
-        
-        // Convert button handler
-        convertBtn.addEventListener('click', () => {
-            if (selectedFile) {
-                convertVideo(selectedFile);
-            }
-        });
-        
-        // Download button handler
-        downloadBtn.addEventListener('click', () => {
-            if (convertedFileName) {
-                // Create a direct download link
-                const downloadUrl = `${API_DOWNLOAD}/${convertedFileName}`;
-                
-                // Log for debugging
-                logDebug(`Starting download: ${downloadUrl}`);
-                
-                // Fetch the file as a blob and trigger download
-                fetch(downloadUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-                        }
-                        return response.blob();
-                    })
-                    .then(blob => {
-                        // Create a local URL for the blob
-                        const url = window.URL.createObjectURL(blob);
-                        
-                        // Create a temporary link and click it
-                        const a = document.createElement('a');
-                        a.style.display = 'none';
-                        a.href = url;
-                        a.download = convertedFileName;
-                        document.body.appendChild(a);
-                        a.click();
-                        
-                        // Clean up
-                        setTimeout(() => {
-                            document.body.removeChild(a);
-                            window.URL.revokeObjectURL(url);
-                        }, 100);
-                        
-                        showToast('Download Started', 'Your file is downloading now');
-                        logDebug("Download initiated via Blob");
-                    })
-                    .catch(error => {
-                        showError(`Download failed: ${error.message}`);
-                        logDebug(`Download error: ${error.message}`);
-                    });
-            }
-        });
-        
-        // Convert another file link handler
-        convertAnother.addEventListener('click', (e) => {
-            e.preventDefault();
-            resetConverter();
-        });
-        
-        // Try again button handler
-        tryAgainBtn.addEventListener('click', () => {
-            hideError();
-            resetConverter();
-        });
-        
-        // Dark mode toggle
-        darkModeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
+            // Log for debugging
+            logDebug(`Starting download: ${downloadUrl}`);
             
-            if (document.body.classList.contains('dark-mode')) {
-                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                localStorage.setItem('theme', 'light');
-            }
-            
-            logDebug(`Theme toggled to ${document.body.classList.contains('dark-mode') ? 'dark' : 'light'} mode`);
-        });
+            // Fetch the file as a blob and trigger download
+            fetch(downloadUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    // Create a local URL for the blob
+                    const url = window.URL.createObjectURL(blob);
+                    
+                    // Create a temporary link and click it
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = convertedFileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    // Clean up
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        window.URL.revokeObjectURL(url);
+                    }, 100);
+                    
+                    showToast('Download Started', 'Your file is downloading now');
+                    logDebug("Download initiated via Blob");
+                })
+                .catch(error => {
+                    showError(`Download failed: ${error.message}`);
+                    logDebug(`Download error: ${error.message}`);
+                });
+        }
+    });
+    
+    // Convert another file link handler
+    convertAnother.addEventListener('click', (e) => {
+        e.preventDefault();
+        resetConverter();
+    });
+    
+    // Try again button handler
+    tryAgainBtn.addEventListener('click', () => {
+        hideError();
+        resetConverter();
+    });
+    
+    // Dark mode toggle
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
         
-        // Mobile menu toggle
-        mobileMenuToggle.addEventListener('click', () => {
-            mobileMenu.classList.add('active');
-            overlay.classList.add('active');
-        });
+        if (document.body.classList.contains('dark-mode')) {
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            localStorage.setItem('theme', 'dark');
+        } else {
+            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', 'light');
+        }
         
-        mobileMenuClose.addEventListener('click', () => {
-            mobileMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        });
-        
-        overlay.addEventListener('click', () => {
-            mobileMenu.classList.remove('active');
-            overlay.classList.remove('active');
-        });
+        logDebug(`Theme toggled to ${document.body.classList.contains('dark-mode') ? 'dark' : 'light'} mode`);
+    });
+    
+    // Mobile menu toggle
+    mobileMenuToggle.addEventListener('click', () => {
+        mobileMenu.classList.add('active');
+        overlay.classList.add('active');
+    });
+    
+    mobileMenuClose.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+    
+    overlay.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+        overlay.classList.remove('active');
+    });
 
-        // Sign In Button Functionality
+    // Sign In Button Functionality
     const signInButton = document.querySelector('.btn-sign-in');
     if (signInButton) {
         signInButton.addEventListener('click', () => {
@@ -2045,257 +2087,377 @@ body {
             window.location.href = 'login.html';
         });
     }
+    
+    // Toast close button
+    toastClose.addEventListener('click', () => {
+        toast.classList.remove('show');
+    });
+    
+    // Check rate limit before allowing conversion
+    async function checkRateLimit() {
+        try {
+            const response = await fetch(API_CHECK_LIMIT, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include' // Include cookies for session-based rate limiting
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Server returned ${response.status}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            logDebug(`Rate limit check failed: ${error.message}`);
+            throw error;
+        }
+    }
+    
+    // Handle file selection
+    function handleFileSelection(file) {
+        if (!file) return;
         
-        // Toast close button
-        toastClose.addEventListener('click', () => {
-            toast.classList.remove('show');
+        // Check if the file is a video
+        if (!file.type.startsWith('video/')) {
+            showError('Please select a video file.');
+            return;
+        }
+        
+        // Check file size (500MB max)
+        const maxSize = 500 * 1024 * 1024; // 500MB in bytes
+        if (file.size > maxSize) {
+            showError('File size exceeds the 500MB limit.');
+            return;
+        }
+        
+        // Update UI with file info
+        selectedFile = file;
+        const fileSizeFormatted = formatFileSize(file.size);
+        fileName.textContent = file.name;
+        fileSize.textContent = fileSizeFormatted;
+        fileInfo.style.display = 'flex';
+        convertBtn.disabled = false;
+        hideError();
+        
+        // Hide result container when selecting a new file
+        resultContainer.style.display = 'none';
+        
+        logDebug(`File selected: ${file.name}, ${file.size} bytes, type: ${file.type}`);
+        showToast('File Selected', `${file.name} (${fileSizeFormatted}) ready for conversion`);
+    }
+    
+    // Convert video to audio
+    function convertVideo(file) {
+        // Create FormData for the API request
+        const formData = new FormData();
+        formData.append('video', file);
+        formData.append('format', selectedFormat);
+        formData.append('bitrate', selectedBitrate);
+        
+        // Show progress container
+        progressContainer.style.display = 'block';
+        convertBtn.disabled = true;
+        conversionStartTime = Date.now();
+        conversionPhase = 'uploading';
+        
+        // Update progress message initially
+        updateProgressMessage();
+        
+        // Start timer for conversion and progress messages
+        progressTimer = setInterval(() => {
+            updateElapsedTime();
+            
+            // Occasionally update the progress message for better UX
+            if (Math.random() < 0.1) { // 10% chance each second to update message
+                updateProgressMessage();
+            }
+            
+            // Move to next phase based on elapsed time and current progress
+            const elapsedSeconds = Math.floor((Date.now() - conversionStartTime) / 1000);
+            if (conversionPhase === 'uploading' && elapsedSeconds > 5) {
+                conversionPhase = 'converting';
+                updateProgressMessage();
+            } else if (conversionPhase === 'converting' && elapsedSeconds > 15) {
+                conversionPhase = 'finalizing';
+                updateProgressMessage();
+            }
+        }, 1000);
+        
+        logDebug(`Starting conversion of file: ${file.name} to ${selectedFormat} at ${selectedBitrate}`);
+        
+        // Create XMLHttpRequest for progress tracking
+        const xhr = new XMLHttpRequest();
+        
+        // Upload progress event
+        xhr.upload.addEventListener('progress', (e) => {
+            if (e.lengthComputable) {
+                const percentComplete = Math.round((e.loaded / e.total) * 100);
+                updateProgress(percentComplete);
+                
+                // When upload is complete, move to converting phase
+                if (percentComplete >= 99) {
+                    conversionPhase = 'converting';
+                    updateProgressMessage();
+                }
+            }
         });
         
-        // Handle file selection
-        function handleFileSelection(file) {
-            if (!file) return;
+        // Request completed
+        xhr.addEventListener('load', () => {
+            clearInterval(progressTimer);
             
-            // Check if the file is a video
-            if (!file.type.startsWith('video/')) {
-                showError('Please select a video file.');
-                return;
-            }
+            logDebug(`Server response received. Status: ${xhr.status}`);
             
-            // Check file size (500MB max)
-            const maxSize = 500 * 1024 * 1024; // 500MB in bytes
-            if (file.size > maxSize) {
-                showError('File size exceeds the 500MB limit.');
-                return;
-            }
-            
-            // Update UI with file info
-            selectedFile = file;
-            const fileSizeFormatted = formatFileSize(file.size);
-            fileName.textContent = file.name;
-            fileSize.textContent = fileSizeFormatted;
-            fileInfo.style.display = 'flex';
-            convertBtn.disabled = false;
-            hideError();
-            
-            // Hide result container when selecting a new file
-            resultContainer.style.display = 'none';
-            
-            logDebug(`File selected: ${file.name}, ${file.size} bytes, type: ${file.type}`);
-            showToast('File Selected', `${file.name} (${fileSizeFormatted}) ready for conversion`);
-        }
-        
-        // Convert video to audio
-        function convertVideo(file) {
-            // Create FormData for the API request
-            const formData = new FormData();
-            formData.append('video', file);
-            formData.append('format', selectedFormat);
-            formData.append('bitrate', selectedBitrate);
-            
-            // Show progress container
-            progressContainer.style.display = 'block';
-            convertBtn.disabled = true;
-            conversionStartTime = Date.now();
-            
-            // Start timer for conversion
-            progressTimer = setInterval(updateElapsedTime, 1000);
-            
-            logDebug(`Starting conversion of file: ${file.name} to ${selectedFormat} at ${selectedBitrate}`);
-            
-            // Create XMLHttpRequest for progress tracking
-            const xhr = new XMLHttpRequest();
-            
-            // Upload progress event
-            xhr.upload.addEventListener('progress', (e) => {
-                if (e.lengthComputable) {
-                    const percentComplete = Math.round((e.loaded / e.total) * 100);
-                    updateProgress(percentComplete);
-                }
-            });
-            
-            // Request completed
-            xhr.addEventListener('load', () => {
-                clearInterval(progressTimer);
-                
-                logDebug(`Server response received. Status: ${xhr.status}`);
-                logDebug(`Response text: ${xhr.responseText}`);
-                
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    try {
-                        const response = JSON.parse(xhr.responseText);
-                        if (response.success) {
-                            // Store the filename for download
-                            convertedFileName = response.filename;
-                            showResult();
-                            logDebug(`Conversion successful. Filename: ${convertedFileName}`);
-                            showToast('Success', 'Your file has been converted successfully!', 'success');
-                        } else {
-                            showError(response.error || 'Conversion failed.');
-                            logDebug(`Server reported error: ${response.error}`);
-                        }
-                    } catch (e) {
-                        showError('Invalid response from server.');
-                        logDebug(`JSON parse error: ${e.message}`);
+            if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                    const response = JSON.parse(xhr.responseText);
+                    logDebug(`Response data: ${JSON.stringify(response)}`);
+                    
+                    if (response.success) {
+                        // Store the filename for download
+                        convertedFileName = response.filename;
+                        showResult();
+                        logDebug(`Conversion successful. Filename: ${convertedFileName}`);
+                        showToast('Success', 'Your file has been converted successfully!', 'success');
+                    } else {
+                        handleConversionError(response.error || 'Conversion failed.');
                     }
-                } else {
-                    showError(`Server error: ${xhr.status}`);
-                    logDebug(`Server error with status ${xhr.status}`);
+                } catch (e) {
+                    handleConversionError('Invalid response from server.');
+                    logDebug(`JSON parse error: ${e.message}`);
                 }
-                convertBtn.disabled = false;
-            });
-            
-            // Request error
-            xhr.addEventListener('error', () => {
-                clearInterval(progressTimer);
-                showError('Network error. Please check your connection.');
-                logDebug('Network error during request');
-                convertBtn.disabled = false;
-                showToast('Connection Error', 'Please check your internet connection', 'error');
-            });
-            
-            // Open and send the request
-            xhr.open('POST', API_CONVERT, true);
-            xhr.send(formData);
-        }
-        
-        // Update progress bar
-        function updateProgress(percent) {
-            progressBarFill.style.width = `${percent}%`;
-            progressPercentage.textContent = `${percent}%`;
-            
-            if (percent < 100) {
-                progressText.textContent = 'Uploading your file...';
             } else {
-                progressText.textContent = 'Processing... Please wait.';
+                handleServerError(xhr.status, xhr.responseText);
             }
-            
-            logDebug(`Upload progress: ${percent}%`);
-        }
+            convertBtn.disabled = false;
+        });
         
-        // Update elapsed time
-        function updateElapsedTime() {
-            if (!conversionStartTime) return;
-            
-            const elapsedSeconds = Math.floor((Date.now() - conversionStartTime) / 1000);
-            const minutes = Math.floor(elapsedSeconds / 60);
-            const seconds = elapsedSeconds % 60;
-            
-            progressTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
+        // Request error
+        xhr.addEventListener('error', () => {
+            clearInterval(progressTimer);
+            handleConversionError('Network error. Please check your connection.');
+            logDebug('Network error during request');
+            convertBtn.disabled = false;
+            showToast('Connection Error', 'Please check your internet connection', 'error');
+        });
         
-        // Show result container
-        function showResult() {
-            progressContainer.style.display = 'none';
-            resultContainer.style.display = 'block';
-            logDebug('Showing result container, ready for download');
-        }
+        // Request timeout
+        xhr.addEventListener('timeout', () => {
+            clearInterval(progressTimer);
+            handleConversionError('Request timed out. The server may be overloaded, please try again later.');
+            logDebug('Request timed out');
+            convertBtn.disabled = false;
+        });
         
-        // Show error message
-        function showError(message) {
-            errorContainer.style.display = 'block';
-            errorMessage.textContent = message;
-            progressContainer.style.display = 'none';
-            logDebug(`Error shown to user: ${message}`);
-            showToast('Error', message, 'error');
-        }
+        // Set timeout to 5 minutes for large files
+        xhr.timeout = 300000; // 5 minutes
         
-        // Hide error message
-        function hideError() {
-            errorContainer.style.display = 'none';
-        }
+        // Open and send the request
+        xhr.open('POST', API_CONVERT, true);
+        xhr.send(formData);
+    }
+    
+    // Update progress bar
+    function updateProgress(percent) {
+        progressBarFill.style.width = `${percent}%`;
+        progressPercentage.textContent = `${percent}%`;
         
-        // Reset converter to initial state
-        function resetConverter() {
-            selectedFile = null;
-            convertedFileName = null;
-            fileInfo.style.display = 'none';
-            progressContainer.style.display = 'none';
-            resultContainer.style.display = 'none';
-            errorContainer.style.display = 'none';
-            convertBtn.disabled = true;
-            fileInput.value = '';
-            progressBarFill.style.width = '0%';
-            progressPercentage.textContent = '0%';
-            progressTime.textContent = '00:00';
-            
-            if (progressTimer) {
-                clearInterval(progressTimer);
-                progressTimer = null;
+        // Don't update phase text here as it's handled by updateProgressMessage
+        
+        logDebug(`Upload progress: ${percent}%`);
+    }
+    
+    // Update progress message based on current phase
+    function updateProgressMessage() {
+        const messages = conversionMessages[conversionPhase];
+        if (messages && messages.length > 0) {
+            const randomIndex = Math.floor(Math.random() * messages.length);
+            progressText.textContent = messages[randomIndex];
+            logDebug(`Progress message updated: ${messages[randomIndex]} (${conversionPhase} phase)`);
+        }
+    }
+    
+    // Update elapsed time
+    function updateElapsedTime() {
+        if (!conversionStartTime) return;
+        
+        const elapsedSeconds = Math.floor((Date.now() - conversionStartTime) / 1000);
+        const minutes = Math.floor(elapsedSeconds / 60);
+        const seconds = elapsedSeconds % 60;
+        
+        progressTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    
+    // Show result container
+    function showResult() {
+        progressContainer.style.display = 'none';
+        resultContainer.style.display = 'block';
+        logDebug('Showing result container, ready for download');
+    }
+    
+    // Handle conversion errors with specific messages
+    function handleConversionError(message) {
+        showError(message);
+        logDebug(`Conversion error: ${message}`);
+    }
+    
+    // Handle server errors with more detail
+    function handleServerError(status, responseText) {
+        let errorMsg = `Server error: ${status}`;
+        
+        // Try to parse response for more details
+        try {
+            const response = JSON.parse(responseText);
+            if (response.error) {
+                errorMsg = response.error;
             }
-            
-            logDebug('Converter reset to initial state');
-        }
-        
-        // Show toast notification
-        function showToast(title, message, type = 'success') {
-            const toastIcon = toast.querySelector('.toast-icon i');
-            const toastTitle = toast.querySelector('.toast-title');
-            const toastMessage = toast.querySelector('.toast-message');
-            
-            // Remove existing classes
-            toast.classList.remove('toast-success', 'toast-error');
-            
-            // Set content
-            toastTitle.textContent = title;
-            toastMessage.textContent = message;
-            
-            // Set type
-            if (type === 'success') {
-                toast.classList.add('toast-success');
-                toastIcon.className = 'fas fa-check-circle';
-            } else {
-                toast.classList.add('toast-error');
-                toastIcon.className = 'fas fa-exclamation-circle';
-            }
-            
-            // Show toast
-            toast.classList.add('show');
-            
-            // Auto hide after 5 seconds
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 5000);
-        }
-        
-        // Log debug information
-        function logDebug(message) {
-            const timestamp = new Date().toLocaleTimeString();
-            const logMessage = `[${timestamp}] ${message}`;
-            console.log(logMessage);
-            
-            // For development troubleshooting, uncommenting this will show debug info on the page
-            // debugInfo.style.display = 'block';
-            // debugInfo.innerHTML += logMessage + '<br>';
-        }
-        
-        // Format file size to human-readable format
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-        }
-        
-        // Check saved theme preference
-        function checkThemePreference() {
-            const savedTheme = localStorage.getItem('theme');
-            
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            } else {
-                document.body.classList.remove('dark-mode');
-                darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        } catch (e) {
+            // If parsing fails, provide status-based messages
+            if (status === 413) {
+                errorMsg = 'File too large for the server to process.';
+            } else if (status === 429) {
+                errorMsg = 'Too many requests. Please try again later.';
+            } else if (status >= 500) {
+                errorMsg = 'Server is experiencing issues. Please try again later.';
             }
         }
         
-        // Initialize
-        checkThemePreference();
-        logDebug('TokHaste converter initialized');
-    });
+        showError(errorMsg);
+        logDebug(`Server error: ${status}, Message: ${errorMsg}`);
+        showToast('Server Error', errorMsg, 'error');
+    }
+    
+    // Show error message
+    function showError(message) {
+        errorContainer.style.display = 'block';
+        errorMessage.textContent = message;
+        progressContainer.style.display = 'none';
+        logDebug(`Error shown to user: ${message}`);
+        showToast('Error', message, 'error');
+    }
+    
+    // Hide error message
+    function hideError() {
+        errorContainer.style.display = 'none';
+    }
+    
+    // Reset converter to initial state
+    function resetConverter() {
+        selectedFile = null;
+        convertedFileName = null;
+        fileInfo.style.display = 'none';
+        progressContainer.style.display = 'none';
+        resultContainer.style.display = 'none';
+        errorContainer.style.display = 'none';
+        convertBtn.disabled = true;
+        fileInput.value = '';
+        progressBarFill.style.width = '0%';
+        progressPercentage.textContent = '0%';
+        progressTime.textContent = '00:00';
+        conversionPhase = 'idle';
+        
+        if (progressTimer) {
+            clearInterval(progressTimer);
+            progressTimer = null;
+        }
+        
+        logDebug('Converter reset to initial state');
+    }
+    
+    // Show toast notification
+    function showToast(title, message, type = 'success') {
+        const toastIcon = toast.querySelector('.toast-icon i');
+        const toastTitle = toast.querySelector('.toast-title');
+        const toastMessage = toast.querySelector('.toast-message');
+        
+        // Remove existing classes
+        toast.classList.remove('toast-success', 'toast-error');
+        
+        // Set content
+        toastTitle.textContent = title;
+        toastMessage.textContent = message;
+        
+        // Set type
+        if (type === 'success') {
+            toast.classList.add('toast-success');
+            toastIcon.className = 'fas fa-check-circle';
+        } else {
+            toast.classList.add('toast-error');
+            toastIcon.className = 'fas fa-exclamation-circle';
+        }
+        
+        // Show toast
+        toast.classList.add('show');
+        
+        // Auto hide after 5 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 5000);
+    }
+    
+    // Log debug information
+    function logDebug(message) {
+        const timestamp = new Date().toLocaleTimeString();
+        const logMessage = `[${timestamp}] ${message}`;
+        console.log(logMessage);
+        
+        // For development troubleshooting, uncommenting this will show debug info on the page
+        // debugInfo.style.display = 'block';
+        // debugInfo.innerHTML += logMessage + '<br>';
+    }
+    
+    // Format file size to human-readable format
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+    // Check saved theme preference
+    function checkThemePreference() {
+        const savedTheme = localStorage.getItem('theme');
+        
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            document.body.classList.remove('dark-mode');
+            darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        }
+    }
+    
+    // Report error to analytics (can be implemented with actual analytics service)
+    function reportError(errorType, errorDetails) {
+        // In a real implementation, you would send this to your analytics service
+        logDebug(`Error report: Type: ${errorType}, Details: ${errorDetails}`);
+        
+        // Example implementation with fetch:
+        /*
+        fetch(`${API_BASE}/reportError`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                errorType,
+                errorDetails,
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent
+            })
+        }).catch(e => console.error('Failed to report error:', e));
+        */
+    }
+    
+    // Initialize
+    checkThemePreference();
+    logDebug('TokHaste converter initialized');
+});
 </script>
 </body>
 </html>
