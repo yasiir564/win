@@ -1300,6 +1300,304 @@ body {
                 font-size: 2rem;
             }
         }
+        /* General Responsive Styles */
+@media (max-width: 1200px) {
+  .main-container {
+    max-width: 95%;
+    padding: 0 20px;
+  }
+  
+  .converter-card {
+    padding: 40px 25px;
+  }
+}
+
+/* Tablet and Smaller Desktops */
+@media (max-width: 992px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .upload-container {
+    padding: 40px 20px;
+  }
+  
+  .format-options, .quality-options {
+    gap: 10px;
+  }
+  
+  .format-option, .quality-option {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Tablets and Large Mobile */
+@media (max-width: 768px) {
+  .converter-card {
+    padding: 30px 20px;
+    margin-bottom: 40px;
+  }
+  
+  .format-options, .quality-options {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .format-option {
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    flex: 0 0 calc(50% - 10px);
+    text-align: center;
+  }
+  
+  .quality-options {
+    margin-bottom: 30px;
+  }
+  
+  .quality-option {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+  
+  .upload-container {
+    padding: 35px 15px;
+  }
+  
+  .upload-icon {
+    font-size: 2.5rem;
+  }
+  
+  .upload-title {
+    font-size: 1.2rem;
+  }
+  
+  .upload-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .converter-controls {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .btn {
+    width: 100%;
+    padding: 12px 30px;
+  }
+  
+  .file-info {
+    padding: 15px;
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .file-info-icon {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+  
+  .result-container, .error-container {
+    padding: 30px 20px;
+  }
+  
+  .result-icon, .error-icon {
+    font-size: 2.5rem;
+  }
+  
+  .result-title {
+    font-size: 1.5rem;
+  }
+}
+
+/* Mobile Devices */
+@media (max-width: 576px) {
+  .hero-title {
+    font-size: 1.8rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+  
+  .converter-card {
+    padding: 25px 15px;
+  }
+  
+  .format-options {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .format-option {
+    width: 100%;
+    flex: 0 0 100%;
+  }
+  
+  .quality-options {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .quality-option {
+    flex: 0 0 calc(50% - 5px);
+    padding: 8px 5px;
+    font-size: 0.8rem;
+    text-align: center;
+  }
+  
+  .upload-container {
+    padding: 25px 15px;
+  }
+  
+  .upload-icon {
+    font-size: 2rem;
+    margin-bottom: 15px;
+  }
+  
+  .upload-title {
+    font-size: 1.1rem;
+  }
+  
+  .upload-subtitle {
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+  }
+  
+  .progress-info {
+    font-size: 0.85rem;
+  }
+  
+  .progress-bar {
+    height: 8px;
+  }
+  
+  .progress-status {
+    font-size: 0.85rem;
+  }
+  
+  .file-details h4 {
+    font-size: 1rem;
+  }
+  
+  .file-details p {
+    font-size: 0.8rem;
+  }
+  
+  .result-container {
+    padding: 25px 15px;
+  }
+  
+  .result-icon {
+    font-size: 2rem;
+    margin-bottom: 15px;
+  }
+  
+  .result-title {
+    font-size: 1.3rem;
+  }
+  
+  .result-message {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+  
+  .error-container {
+    padding: 20px 15px;
+  }
+  
+  .error-title {
+    font-size: 1.2rem;
+  }
+  
+  .error-message {
+    font-size: 0.9rem;
+  }
+}
+
+/* Very Small Mobile Devices */
+@media (max-width: 375px) {
+  .converter-card {
+    padding: 20px 12px;
+  }
+  
+  .format-option, .quality-option {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+  
+  .btn {
+    font-size: 0.95rem;
+    padding: 10px 20px;
+  }
+  
+  .upload-title {
+    font-size: 1rem;
+  }
+  
+  .upload-subtitle {
+    font-size: 0.8rem;
+  }
+  
+  .result-title, .error-title {
+    font-size: 1.1rem;
+  }
+  
+  .result-message, .error-message {
+    font-size: 0.85rem;
+  }
+}
+
+/* Fix for Toast Notifications on Mobile */
+@media (max-width: 576px) {
+  .toast {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) translateY(30px);
+    min-width: 90%;
+    max-width: 90%;
+    bottom: 20px;
+  }
+  
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Adjust main layout for smaller screens */
+@media (max-width: 480px) {
+  .main-container {
+    margin: 30px auto;
+  }
+  
+  .hero-section {
+    margin-bottom: 40px;
+  }
+}
+
+/* Handle orientation change for better mobile experience */
+@media (max-height: 600px) and (orientation: landscape) {
+  .upload-container {
+    padding: 20px 15px;
+  }
+  
+  .upload-icon {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
+  
+  .upload-title {
+    margin-bottom: 8px;
+  }
+  
+  .progress-container, .result-container, .error-container {
+    margin-top: 20px;
+  }
+}
     </style>
 </head>
 <body>
