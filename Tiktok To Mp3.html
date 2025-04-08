@@ -568,80 +568,107 @@
             font-size: 0.95rem;
         }
 
-        /* Footer Styles */
+         /* Footer Styles */
         .footer {
-            background-color: var(--tiktok-darker-gray);
-            color: var(--tiktok-white);
-            padding: 60px 0 30px;
+            background-color: var(--tiktok-white);
+            transition: var(--transition);
+            margin-top: auto;
         }
-
+        
+        body.dark-mode .footer {
+            background-color: var(--tiktok-dark-gray);
+        }
+        
         .footer-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 40px 5%;
         }
-
+        
         .footer-top {
             display: flex;
-            flex-wrap: wrap;
             justify-content: space-between;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 30px;
         }
-
+        
         .footer-logo {
             display: flex;
             align-items: center;
             font-weight: 700;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
+            font-size: 1.3rem;
+            color: var(--tiktok-dark-gray);
+            margin-bottom: 15px;
         }
-
+        
+        body.dark-mode .footer-logo {
+            color: var(--tiktok-white);
+        }
+        
         .footer-logo i {
-            font-size: 1.8rem;
-            margin-right: 8px;
+            font-size: 1.5rem;
+            margin-right: 10px;
             background: var(--tiktok-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-
+        
         .footer-links {
             display: flex;
-            flex-wrap: wrap;
             gap: 50px;
+            flex-wrap: wrap;
         }
-
+        
         .footer-column h3 {
-            font-size: 1.1rem;
-            margin-bottom: 20px;
-            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            color: var(--tiktok-dark-gray);
+        }
+        
+        body.dark-mode .footer-column h3 {
             color: var(--tiktok-white);
         }
-
+        
         .footer-column a {
             display: block;
-            color: var(--tiktok-light-gray);
+            margin-bottom: 8px;
+            color: #777;
             text-decoration: none;
-            margin-bottom: 10px;
             transition: var(--transition);
+            font-size: 0.9rem;
         }
-
+        
+        body.dark-mode .footer-column a {
+            color: #aaa;
+        }
+        
         .footer-column a:hover {
             color: var(--tiktok-red);
         }
-
+        
         .footer-bottom {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 30px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 0.9rem;
+            color: #777;
+            flex-wrap: wrap;
+            gap: 15px;
         }
-
+        
+        body.dark-mode .footer-bottom {
+            border-color: #333;
+            color: #aaa;
+        }
+        
         .social-links {
             display: flex;
             gap: 15px;
         }
-
+        
         .social-links a {
             display: flex;
             align-items: center;
@@ -649,17 +676,46 @@
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--tiktok-white);
-            text-decoration: none;
+            background-color: #f5f5f5;
+            color: #555;
             transition: var(--transition);
         }
-
-        .social-links a:hover {
-            background-color: var(--tiktok-red);
-            transform: translateY(-3px);
+        
+        body.dark-mode .social-links a {
+            background-color: #333;
+            color: #ddd;
         }
-
+        
+        .social-links a:hover {
+            transform: translateY(-3px);
+            color: var(--tiktok-white);
+            background: var(--tiktok-gradient);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .login-container {
+                padding: 30px 20px;
+            }
+            
+            .footer-top {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .footer-links {
+                gap: 30px;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
         /* Toast Notification */
         .toast {
             position: fixed;
