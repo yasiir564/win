@@ -928,7 +928,7 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+       document.addEventListener('DOMContentLoaded', function() {
     // Cache DOM elements
     const elements = {
         urlInput: document.getElementById('tiktok-url'),
@@ -959,9 +959,6 @@
     // Constants
     const API_URL = 'https://mainpy-v09m.onrender.com/api/tiktok-to-mp3';
     const TOAST_DURATION = 3000;
-    
-    // Track the object URL for proper cleanup
-    let currentObjectUrl = null;
 
     // Initialize dark mode
     initDarkMode();
@@ -1005,16 +1002,6 @@
             if (e.key === 'Enter' && !elements.convertBtn.disabled) {
                 elements.convertBtn.click();
             }
-        });
-        
-        // Clean up object URL when download completes
-        elements.downloadLink.addEventListener('click', function() {
-            // Schedule cleanup for after download has started
-            setTimeout(() => {
-                if (currentObjectUrl) {
-                    URL.revokeObjectURL(currentObjectUrl);
-                }
-            }, 1000);
         });
     }
 
@@ -1089,12 +1076,6 @@
         elements.progressContainer.classList.remove('visible');
         elements.statusDiv.style.display = 'none';
         elements.downloadSection.classList.remove('visible');
-        
-        // Clean up any existing object URL
-        if (currentObjectUrl) {
-            URL.revokeObjectURL(currentObjectUrl);
-            currentObjectUrl = null;
-        }
     }
 
     // Update progress animation
@@ -1127,72 +1108,32 @@
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
-    // Fetch MP3 file as blob and create download link
-    async function fetchAudioFileAsBlob(url) {
-        elements.progressStatus.textContent = 'Downloading audio file...';
-        
-        try {
-            const response = await fetch(url);
-            
-            if (!response.ok) {
-                throw new Error(`Failed to download audio: ${response.status} ${response.statusText}`);
-            }
-            
-            const blob = await response.blob();
-            return blob;
-        } catch (error) {
-            console.error('Error downloading audio file:', error);
-            throw error;
-        }
-    }
-
     // Display completion and download section
-    async function displayCompletionUI(data) {
-        try {
-            // Complete progress animation
-            elements.progressBarInner.style.width = '95%';
-            elements.progressPercentage.textContent = '95%';
-            
-            // Show metadata
-            elements.audioTitleEl.querySelector('span').textContent = data.title || 'Unknown';
-            elements.audioAuthorEl.querySelector('span').textContent = data.author || 'Unknown';
-            elements.audioDurationEl.querySelector('span').textContent = formatDuration(data.duration) || 'Unknown';
-            
-            // Get the full URL to the audio file
-            const baseUrl = API_URL.split('/api/')[0];
-            const audioUrl = baseUrl + data.mp3_url;
-            
-            // Fetch the audio file as blob
-            const audioBlob = await fetchAudioFileAsBlob(audioUrl);
-            
-            // Create object URL for the blob
-            if (currentObjectUrl) {
-                URL.revokeObjectURL(currentObjectUrl);
-            }
-            currentObjectUrl = URL.createObjectURL(audioBlob);
-            
-            // Set up download link
-            const filename = `${data.author} - ${data.title || 'tiktok'}.mp3`.replace(/[<>:"/\\|?*]/g, '_');
-            elements.downloadLink.href = currentObjectUrl;
-            elements.downloadLink.download = filename;
-            
-            // Complete progress
-            elements.progressBarInner.style.width = '100%';
-            elements.progressPercentage.textContent = '100%';
-            elements.progressStatus.textContent = 'Conversion complete!';
-            
-            // Show download section
-            elements.downloadSection.classList.add('visible');
-            
-        } catch (error) {
-            console.error('Error preparing download:', error);
-            elements.statusDiv.textContent = `Error: ${error.message || 'Failed to prepare download. Please try again.'}`;
-            elements.statusDiv.className = 'status error';
-            elements.statusDiv.style.display = 'block';
-            
-            // Show toast
-            showToast('Error preparing download. Please try again.', 'error');
-        }
+    function displayCompletionUI(data) {
+        // Complete progress
+        elements.progressBarInner.style.width = '100%';
+        elements.progressPercentage.textContent = '100%';
+        elements.progressStatus.textContent = 'Conversion complete!';
+        
+        // Show metadata in download section
+        elements.audioTitleEl.querySelector('span').textContent = data.title || 'Unknown';
+        elements.audioAuthorEl.querySelector('span').textContent = data.author || 'Unknown';
+        elements.audioDurationEl.querySelector('span').textContent = formatDuration(data.duration) || 'Unknown';
+        
+        // Get the full URL to the audio file
+        const baseUrl = API_URL.split('/api/')[0];
+        const audioUrl = baseUrl + data.mp3_url;
+        
+        // Set up download link - use direct URL from API
+        elements.downloadLink.href = audioUrl;
+        
+        // Set a meaningful filename
+        const sanitizedTitle = (data.title || 'tiktok').replace(/[<>:"/\\|?*]/g, '_');
+        const sanitizedAuthor = (data.author || 'unknown').replace(/[<>:"/\\|?*]/g, '_');
+        elements.downloadLink.download = `${sanitizedAuthor} - ${sanitizedTitle}.mp3`;
+        
+        // Show download section
+        elements.downloadSection.classList.add('visible');
     }
 
     // Main conversion function
@@ -1247,7 +1188,7 @@
             }
             
             // Show download section
-            await displayCompletionUI(data);
+            displayCompletionUI(data);
             
             showToast('Conversion successful! Your download is ready.', 'success');
             
@@ -1275,13 +1216,6 @@
             // Ignore clipboard errors on load
         }
     }
-    
-    // Clean up object URLs when page unloads
-    window.addEventListener('beforeunload', function() {
-        if (currentObjectUrl) {
-            URL.revokeObjectURL(currentObjectUrl);
-        }
-    });
 });
 </script>
 </body>
