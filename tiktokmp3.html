@@ -1003,6 +1003,9 @@
                 elements.convertBtn.click();
             }
         });
+        
+        // Add download click event handler
+        elements.downloadLink.addEventListener('click', handleDownload);
     }
 
     // Dark mode toggle function
@@ -1108,6 +1111,10 @@
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
+    // Storage for the audio URL
+    let currentAudioUrl = '';
+    let currentFileName = '';
+
     // Display completion and download section
     function displayCompletionUI(data) {
         // Complete progress
@@ -1120,9 +1127,53 @@
         elements.audioAuthorEl.querySelector('span').textContent = data.author || 'Unknown';
         elements.audioDurationEl.querySelector('span').textContent = formatDuration(data.duration) || 'Unknown';
         
-        elements.downloadLink.href = data.audioUrl;
-        elements.downloadLink.download = `${data.title || 'tiktok'}.mp3`;
+        // Store the audio URL and filename
+        currentAudioUrl = data.audioUrl;
+        currentFileName = `${data.title || 'tiktok'}.mp3`;
+        
+        // Set the download link
+        elements.downloadLink.href = currentAudioUrl;
+        elements.downloadLink.setAttribute('download', currentFileName);
         elements.downloadSection.classList.add('visible');
+    }
+
+    // Handle download click
+    async function handleDownload(e) {
+        e.preventDefault();
+        
+        try {
+            showToast('Starting download...', 'info');
+            
+            // Fetch the file as blob
+            const response = await fetch(currentAudioUrl);
+            
+            if (!response.ok) {
+                throw new Error(`Failed to download: ${response.status} ${response.statusText}`);
+            }
+            
+            const blob = await response.blob();
+            
+            // Create a blob URL and trigger download
+            const blobUrl = URL.createObjectURL(blob);
+            const tempLink = document.createElement('a');
+            tempLink.href = blobUrl;
+            tempLink.download = currentFileName;
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+            
+            // Clean up blob URL
+            setTimeout(() => URL.revokeObjectURL(blobUrl), 100);
+            
+            showToast('Download started successfully!', 'success');
+        } catch (error) {
+            console.error('Download failed:', error);
+            showToast('Download failed. Please try again.', 'error');
+            
+            // Fallback: open the audio URL in a new tab
+            window.open(currentAudioUrl, '_blank');
+            showToast('Opened audio in new tab as fallback', 'info');
+        }
     }
 
     // Main conversion function
