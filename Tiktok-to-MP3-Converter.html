@@ -1152,153 +1152,155 @@ button#convert-btn:disabled::before {
                 <p class="subtitle">Extract high-quality audio from TikTok videos in seconds</p>
             </header>
             
-            <div class="form-group">
-                <label for="tiktok-url">Paste TikTok Video URL</label>
-                <div class="input-wrapper">
-                    <input type="text" id="tiktok-url" placeholder="https://www.tiktok.com/@username/video/1234567890" autocomplete="off">
-                    <button id="paste-btn" class="paste-btn" title="Paste from clipboard">
-                        <i class="fas fa-paste"></i>
-                    </button>
+            <div class="converter-wrapper">
+                <div class="form-group">
+                    <label for="tiktok-url">Paste TikTok Video URL</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="tiktok-url" placeholder="https://www.tiktok.com/@username/video/1234567890" autocomplete="off">
+                        <button id="paste-btn" class="paste-btn" title="Paste from clipboard">
+                            <i class="fas fa-paste"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
-            
-            <button id="convert-btn">Convert to MP3</button>
-            
-            <div id="progress-container" class="progress-container">
-                <div class="progress-text">
-                    <span id="progress-status">Preparing...</span>
-                    <span id="progress-percentage">0%</span>
+                
+                <button id="convert-btn" class="convert-btn">Convert to MP3</button>
+                
+                <div id="progress-container" class="progress-container hidden">
+                    <div class="progress-text">
+                        <span id="progress-status">Preparing...</span>
+                        <span id="progress-percentage">0%</span>
+                    </div>
+                    <div class="progress-bar-outer">
+                        <div id="progress-bar-inner" class="progress-bar-inner"></div>
+                    </div>
                 </div>
-                <div class="progress-bar-outer">
-                    <div id="progress-bar-inner" class="progress-bar-inner"></div>
+                
+                <div id="status" class="status"></div>
+                
+                <div id="download-section" class="download-section hidden">
+                    <div class="audio-info">
+                        <p id="audio-title"><strong>Title:</strong> <span>Unknown</span></p>
+                        <p id="audio-author"><strong>Creator:</strong> <span>Unknown</span></p>
+                        <p id="audio-duration"><strong>Duration:</strong> <span>Unknown</span></p>
+                    </div>
+                    <a id="download-link" class="download-link" href="#" download>
+                        <i class="fas fa-download"></i> Download MP3
+                    </a>
                 </div>
-            </div>
-            
-            <div id="status" class="status"></div>
-            
-            <div id="download-section" class="download-section">
-                <div class="audio-info">
-                    <p id="audio-title"><strong>Title:</strong> <span>Unknown</span></p>
-                    <p id="audio-author"><strong>Creator:</strong> <span>Unknown</span></p>
-                    <p id="audio-duration"><strong>Duration:</strong> <span>Unknown</span></p>
-                </div>
-                <a id="download-link" class="download-link" href="#" download>
-                    <i class="fas fa-download"></i> Download MP3
-                </a>
             </div>
         </div>
     </main>
 
     <!-- How to Use Section -->
-<section class="how-to-use-section">
-    <div class="container">
-        <header class="section-header">
-            <h2>How to Use TokHaste MP3 Converter</h2>
-            <p class="subtitle">Extract audio from TikTok videos in just 3 simple steps</p>
-        </header>
-        
-        <div class="steps-container">
-            <div class="step-card">
-                <div class="step-icon">
-                    <i class="fas fa-link"></i>
-                    <div class="step-number">1</div>
-                </div>
-                <h3>Copy TikTok URL</h3>
-                <p>Find your favorite TikTok video and copy the share link from the app or website.</p>
-            </div>
+    <section class="how-to-use-section">
+        <div class="container">
+            <header class="section-header">
+                <h2>How to Use TokHaste MP3 Converter</h2>
+                <p class="subtitle">Extract audio from TikTok videos in just 3 simple steps</p>
+            </header>
             
-            <div class="step-card">
-                <div class="step-icon">
-                    <i class="fas fa-paste"></i>
-                    <div class="step-number">2</div>
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-icon">
+                        <i class="fas fa-link"></i>
+                        <div class="step-number">1</div>
+                    </div>
+                    <h3>Copy TikTok URL</h3>
+                    <p>Find your favorite TikTok video and copy the share link from the app or website.</p>
                 </div>
-                <h3>Paste & Convert</h3>
-                <p>Paste the URL into the input field above and click the "Convert to MP3" button.</p>
-            </div>
-            
-            <div class="step-card">
-                <div class="step-icon">
-                    <i class="fas fa-download"></i>
-                    <div class="step-number">3</div>
+                
+                <div class="step-card">
+                    <div class="step-icon">
+                        <i class="fas fa-paste"></i>
+                        <div class="step-number">2</div>
+                    </div>
+                    <h3>Paste & Convert</h3>
+                    <p>Paste the URL into the input field above and click the "Convert to MP3" button.</p>
                 </div>
-                <h3>Download MP3</h3>
-                <p>Once conversion is complete, click "Download MP3" to save high-quality audio to your device.</p>
+                
+                <div class="step-card">
+                    <div class="step-icon">
+                        <i class="fas fa-download"></i>
+                        <div class="step-number">3</div>
+                    </div>
+                    <h3>Download MP3</h3>
+                    <p>Once conversion is complete, click "Download MP3" to save high-quality audio to your device.</p>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- FAQ Section -->
-<section class="faq-section">
-    <div class="container">
-        <header class="section-header">
-            <h2>Frequently Asked Questions</h2>
-            <p class="subtitle">Everything you need to know about TokHaste TikTok to MP3 converter</p>
-        </header>
-        
-        <div class="faq-container">
-            <div class="faq-item">
-                <div class="faq-question">
-                    <h3>Is TokHaste completely free to use?</h3>
-                    <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
-                </div>
-                <div class="faq-answer">
-                    <p>Yes, TokHaste TikTok to MP3 converter is 100% free to use with no hidden charges. Convert as many TikTok videos to MP3 audio as you want without any limitations.</p>
-                </div>
-            </div>
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <div class="container">
+            <header class="section-header">
+                <h2>Frequently Asked Questions</h2>
+                <p class="subtitle">Everything you need to know about TokHaste TikTok to MP3 converter</p>
+            </header>
             
-            <div class="faq-item">
-                <div class="faq-question">
-                    <h3>What audio quality does TokHaste provide?</h3>
-                    <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
-                </div>
-                <div class="faq-answer">
-                    <p>TokHaste extracts audio at the highest possible quality from TikTok videos. Our converter maintains the original audio quality to deliver crystal-clear sound in MP3 format.</p>
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">
-                    <h3>Is it legal to convert TikTok videos to MP3?</h3>
-                    <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
-                </div>
-                <div class="faq-answer">
-                    <p>TokHaste is designed for personal use only. We encourage users to respect copyright laws and the intellectual property of content creators. Always obtain permission before using audio for commercial purposes.</p>
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">
-                    <h3>Which TikTok videos can I convert to MP3?</h3>
-                    <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
-                </div>
-                <div class="faq-answer">
-                    <p>TokHaste supports conversion of public TikTok videos. Private videos or those with restricted access cannot be processed. Simply ensure the video URL is from a public account and accessible to everyone.</p>
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">
-                    <h3>How long does the conversion process take?</h3>
-                    <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
-                </div>
-                <div class="faq-answer">
-                    <p>The TikTok to MP3 conversion typically takes just a few seconds. However, processing time may vary depending on the video length, your internet connection speed, and our server load.</p>
-                </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">
-                    <h3>Can I use TokHaste on mobile devices?</h3>
-                    <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
-                </div>
-                <div class="faq-answer">
-                    <p>Absolutely! TokHaste is fully responsive and works seamlessly on smartphones, tablets, and desktop computers. Our mobile-friendly interface makes it easy to convert TikTok videos to MP3 on any device.</p>
-                </div>
+            <div class="faq-container">
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        <h3>Is TokHaste completely free to use?</h3>
+                        <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>Yes, TokHaste TikTok to MP3 converter is 100% free to use with no hidden charges. Convert as many TikTok videos to MP3 audio as you want without any limitations.</p>
+                    </div>
+                </details>
+                
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        <h3>What audio quality does TokHaste provide?</h3>
+                        <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>TokHaste extracts audio at the highest possible quality from TikTok videos. Our converter maintains the original audio quality to deliver crystal-clear sound in MP3 format.</p>
+                    </div>
+                </details>
+                
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        <h3>Is it legal to convert TikTok videos to MP3?</h3>
+                        <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>TokHaste is designed for personal use only. We encourage users to respect copyright laws and the intellectual property of content creators. Always obtain permission before using audio for commercial purposes.</p>
+                    </div>
+                </details>
+                
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        <h3>Which TikTok videos can I convert to MP3?</h3>
+                        <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>TokHaste supports conversion of public TikTok videos. Private videos or those with restricted access cannot be processed. Simply ensure the video URL is from a public account and accessible to everyone.</p>
+                    </div>
+                </details>
+                
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        <h3>How long does the conversion process take?</h3>
+                        <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>The TikTok to MP3 conversion typically takes just a few seconds. However, processing time may vary depending on the video length, your internet connection speed, and our server load.</p>
+                    </div>
+                </details>
+                
+                <details class="faq-item">
+                    <summary class="faq-question">
+                        <h3>Can I use TokHaste on mobile devices?</h3>
+                        <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
+                    </summary>
+                    <div class="faq-answer">
+                        <p>Absolutely! TokHaste is fully responsive and works seamlessly on smartphones, tablets, and desktop computers. Our mobile-friendly interface makes it easy to convert TikTok videos to MP3 on any device.</p>
+                    </div>
+                </details>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
 
     <!-- Footer -->
