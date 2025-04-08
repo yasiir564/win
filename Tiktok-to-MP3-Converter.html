@@ -781,284 +781,326 @@
             opacity: 1;
         }
         /* Common Section Styles */
-    .how-to-use-section,
-    .faq-section {
-        padding: 3rem 1rem;
+.how-to-use-section,
+.faq-section {
+    padding: 3rem clamp(1rem, 5vw, 2rem);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: clamp(1.5rem, 5vw, 2.5rem);
+}
+
+.section-header h2 {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+    margin-bottom: 0.5rem;
+    background: var(--tiktok-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    display: inline-block;
+}
+
+.section-header h2::after {
+    content: '';
+    position: absolute;
+    width: clamp(30%, 50%, 70%);
+    height: 4px;
+    background: var(--tiktok-gradient);
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 10px;
+}
+
+.section-header .subtitle {
+    color: var(--text-primary);
+    opacity: 0.7;
+    font-size: clamp(0.9rem, 3vw, 1.1rem);
+    margin-top: 1rem;
+    padding: 0 clamp(0.5rem, 3vw, 2rem);
+}
+
+/* How to Use Section Styles */
+.steps-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: clamp(1rem, 4vw, 2rem);
+    margin-top: 2rem;
+    width: 100%;
+}
+
+.step-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: clamp(1.25rem, 4vw, 2rem);
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--card-border);
+    flex: 1 1 300px;
+    min-width: 250px;
+    max-width: 350px;
+    text-align: center;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
     }
-    
-    .section-header {
-        text-align: center;
-        margin-bottom: 2.5rem;
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
-    
-    .section-header h2 {
-        font-size: 2rem;
-        margin-bottom: 0.5rem;
-        background: var(--tiktok-gradient);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        position: relative;
-        display: inline-block;
+}
+
+.step-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.step-card:nth-child(2) {
+    animation-delay: 0.3s;
+}
+
+.step-card:nth-child(3) {
+    animation-delay: 0.5s;
+}
+
+.step-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+.step-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: var(--tiktok-gradient);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+    transform-origin: left;
+}
+
+.step-card:hover::before {
+    transform: scaleX(1);
+}
+
+.step-icon {
+    position: relative;
+    width: clamp(60px, 15vw, 80px);
+    height: clamp(60px, 15vw, 80px);
+    background: var(--tiktok-light-gray);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 1.5rem;
+    color: var(--tiktok-red);
+    font-size: clamp(1.4rem, 4vw, 1.8rem);
+    transition: var(--transition);
+}
+
+.step-card:hover .step-icon {
+    background: var(--tiktok-gradient);
+    color: white;
+    transform: rotate(360deg);
+}
+
+.step-number {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: clamp(24px, 6vw, 28px);
+    height: clamp(24px, 6vw, 28px);
+    background: var(--tiktok-red);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: clamp(0.8rem, 2vw, 0.9rem);
+    border: 2px solid var(--card-bg);
+}
+
+.step-card h3 {
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    font-size: clamp(1.1rem, 3vw, 1.3rem);
+}
+
+.step-card p {
+    color: var(--text-primary);
+    opacity: 0.8;
+    line-height: 1.6;
+    font-size: clamp(0.9rem, 2vw, 1rem);
+}
+
+/* FAQ Section Styles */
+.faq-container {
+    max-width: clamp(300px, 90%, 800px);
+    margin: 0 auto;
+    width: 100%;
+}
+
+.faq-item {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--card-border);
+    overflow: hidden;
+    animation: fadeIn 0.6s ease forwards;
+    opacity: 0;
+    width: 100%;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
     }
-    
-    .section-header h2::after {
-        content: '';
-        position: absolute;
-        width: 50%;
-        height: 4px;
-        background: var(--tiktok-gradient);
-        bottom: -10px;
-        left: 25%;
-        border-radius: 10px;
+    to {
+        opacity: 1;
     }
-    
-    .section-header .subtitle {
-        color: var(--text-primary);
-        opacity: 0.7;
-        font-size: 1.1rem;
-        margin-top: 1rem;
-    }
-    
-    /* How to Use Section Styles */
+}
+
+.faq-item:nth-child(1) { animation-delay: 0.1s; }
+.faq-item:nth-child(2) { animation-delay: 0.2s; }
+.faq-item:nth-child(3) { animation-delay: 0.3s; }
+.faq-item:nth-child(4) { animation-delay: 0.4s; }
+.faq-item:nth-child(5) { animation-delay: 0.5s; }
+.faq-item:nth-child(6) { animation-delay: 0.6s; }
+
+.faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: clamp(0.8rem, 3vw, 1.2rem) clamp(1rem, 3vw, 1.5rem);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.faq-question:hover {
+    background-color: rgba(254, 44, 85, 0.05);
+}
+
+.faq-question h3 {
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+    color: var(--text-primary);
+    font-weight: 500;
+    margin: 0;
+    padding-right: clamp(0.5rem, 2vw, 1rem);
+    flex: 1;
+}
+
+.faq-icon {
+    color: var(--tiktok-red);
+    transition: var(--transition);
+    flex-shrink: 0;
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+}
+
+.faq-item.active .faq-icon {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    padding: 0 clamp(1rem, 3vw, 1.5rem);
+    border-top: 0px solid var(--card-border);
+}
+
+.faq-item.active .faq-answer {
+    max-height: 500px; /* Increased for more content */
+    padding: 0 clamp(1rem, 3vw, 1.5rem) clamp(1rem, 3vw, 1.5rem);
+    border-top: 1px solid var(--card-border);
+}
+
+.faq-answer p {
+    color: var(--text-primary);
+    opacity: 0.8;
+    line-height: 1.6;
+    margin-top: 1rem;
+    font-size: clamp(0.85rem, 2vw, 1rem);
+}
+
+/* Enhanced Responsive adjustments */
+@media (max-width: 992px) {
     .steps-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 2rem;
-        margin-top: 2rem;
+        gap: 1.5rem;
     }
     
     .step-card {
-        background-color: var(--card-bg);
-        border-radius: var(--border-radius);
-        padding: 2rem;
-        box-shadow: var(--card-shadow);
-        border: 1px solid var(--card-border);
-        flex: 1;
-        min-width: 250px;
-        max-width: 350px;
-        text-align: center;
-        transition: var(--transition);
-        position: relative;
-        overflow: hidden;
-        animation: fadeInUp 0.6s ease forwards;
-        opacity: 0;
+        flex: 1 1 calc(50% - 1.5rem);
+        min-width: unset;
+    }
+}
+
+@media (max-width: 768px) {
+    .steps-container {
+        flex-direction: column;
+        align-items: center;
     }
     
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .step-card:nth-child(1) {
-        animation-delay: 0.1s;
-    }
-    
-    .step-card:nth-child(2) {
-        animation-delay: 0.3s;
-    }
-    
-    .step-card:nth-child(3) {
-        animation-delay: 0.5s;
-    }
-    
-    .step-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-    }
-    
-    .step-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
+    .step-card {
         width: 100%;
-        height: 5px;
-        background: var(--tiktok-gradient);
-        transform: scaleX(0);
-        transition: transform 0.4s ease;
-        transform-origin: left;
-    }
-    
-    .step-card:hover::before {
-        transform: scaleX(1);
-    }
-    
-    .step-icon {
-        position: relative;
-        width: 80px;
-        height: 80px;
-        background: var(--tiktok-light-gray);
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 0 auto 1.5rem;
-        color: var(--tiktok-red);
-        font-size: 1.8rem;
-        transition: var(--transition);
-    }
-    
-    .step-card:hover .step-icon {
-        background: var(--tiktok-gradient);
-        color: white;
-        transform: rotate(360deg);
-    }
-    
-    .step-number {
-        position: absolute;
-        top: -5px;
-        right: -5px;
-        width: 28px;
-        height: 28px;
-        background: var(--tiktok-red);
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-weight: bold;
-        font-size: 0.9rem;
-        border: 2px solid var(--card-bg);
-    }
-    
-    .step-card h3 {
+        max-width: 450px;
         margin-bottom: 1rem;
-        color: var(--text-primary);
-        font-size: 1.3rem;
-    }
-    
-    .step-card p {
-        color: var(--text-primary);
-        opacity: 0.8;
-        line-height: 1.6;
-    }
-    
-    /* FAQ Section Styles */
-    .faq-container {
-        max-width: 800px;
-        margin: 0 auto;
-    }
-    
-    .faq-item {
-        background-color: var(--card-bg);
-        border-radius: var(--border-radius);
-        margin-bottom: 1rem;
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        border: 1px solid var(--card-border);
-        overflow: hidden;
-        animation: fadeIn 0.6s ease forwards;
-        opacity: 0;
-    }
-    
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-        }
-        to {
-            opacity: 1;
-        }
-    }
-    
-    .faq-item:nth-child(1) { animation-delay: 0.1s; }
-    .faq-item:nth-child(2) { animation-delay: 0.2s; }
-    .faq-item:nth-child(3) { animation-delay: 0.3s; }
-    .faq-item:nth-child(4) { animation-delay: 0.4s; }
-    .faq-item:nth-child(5) { animation-delay: 0.5s; }
-    .faq-item:nth-child(6) { animation-delay: 0.6s; }
-    
-    .faq-question {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1.2rem 1.5rem;
-        cursor: pointer;
-        transition: var(--transition);
-    }
-    
-    .faq-question:hover {
-        background-color: rgba(254, 44, 85, 0.05);
     }
     
     .faq-question h3 {
-        font-size: 1.1rem;
-        color: var(--text-primary);
-        font-weight: 500;
-        margin: 0;
-        padding-right: 1rem;
+        line-height: 1.4;
+    }
+}
+
+@media (max-width: 480px) {
+    .how-to-use-section,
+    .faq-section {
+        padding: 2rem 0.75rem;
     }
     
-    .faq-icon {
-        color: var(--tiktok-red);
-        transition: var(--transition);
+    .step-card {
+        padding: 1.25rem;
     }
     
-    .faq-item.active .faq-icon {
-        transform: rotate(180deg);
+    .step-icon {
+        margin-bottom: 1rem;
     }
     
     .faq-answer {
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.3s ease, padding 0.3s ease;
-        padding: 0 1.5rem;
-        border-top: 0px solid var(--card-border);
+        padding: 0 0.75rem;
     }
     
     .faq-item.active .faq-answer {
-        max-height: 300px;
-        padding: 0 1.5rem 1.5rem;
-        border-top: 1px solid var(--card-border);
+        padding: 0 0.75rem 1rem;
+    }
+}
+
+/* Touch device enhancements */
+@media (hover: none) {
+    .step-card:hover {
+        transform: none;
+        box-shadow: var(--card-shadow);
     }
     
-    .faq-answer p {
-        color: var(--text-primary);
-        opacity: 0.8;
-        line-height: 1.6;
-        margin-top: 1rem;
+    .step-card::before {
+        transform: scaleX(1);
+        opacity: 0.7;
     }
-    
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .steps-container {
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .step-card {
-            width: 100%;
-            max-width: 100%;
-        }
-        
-        .section-header h2 {
-            font-size: 1.8rem;
-        }
-        
-        .faq-question h3 {
-            font-size: 1rem;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        .section-header h2 {
-            font-size: 1.5rem;
-        }
-        
-        .step-card {
-            padding: 1.5rem;
-        }
-        
-        .faq-question {
-            padding: 1rem;
-        }
-    }
+}
     </style>
 </head>
 <body>
