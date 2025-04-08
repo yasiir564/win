@@ -929,233 +929,275 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // API configuration
-            const API_URL = 'https://mainpy-v09m.onrender.com/api/tiktok-to-mp3';
-            
-            // DOM elements
-            const urlInput = document.getElementById('tiktok-url');
-            const pasteBtn = document.getElementById('paste-btn');
-            const convertBtn = document.getElementById('convert-btn');
-            const statusDiv = document.getElementById('status');
-            const progressContainer = document.getElementById('progress-container');
-            const progressStatus = document.getElementById('progress-status');
-            const progressPercentage = document.getElementById('progress-percentage');
-            const progressBarInner = document.getElementById('progress-bar-inner');
-            const downloadSection = document.getElementById('download-section');
-            const downloadLink = document.getElementById('download-link');
-            const audioTitleEl = document.getElementById('audio-title');
-            const audioAuthorEl = document.getElementById('audio-author');
-            const audioDurationEl = document.getElementById('audio-duration');
-            
-            // Dark mode toggle
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            const body = document.body;
-            
-            // Mobile menu elements
-            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-            const mobileMenu = document.getElementById('mobileMenu');
-            const mobileMenuClose = document.getElementById('mobileMenuClose');
-            const overlay = document.getElementById('overlay');
+    // Cache DOM elements
+    const elements = {
+        urlInput: document.getElementById('tiktok-url'),
+        pasteBtn: document.getElementById('paste-btn'),
+        convertBtn: document.getElementById('convert-btn'),
+        statusDiv: document.getElementById('status'),
+        progressContainer: document.getElementById('progress-container'),
+        progressStatus: document.getElementById('progress-status'),
+        progressPercentage: document.getElementById('progress-percentage'),
+        progressBarInner: document.getElementById('progress-bar-inner'),
+        downloadSection: document.getElementById('download-section'),
+        downloadLink: document.getElementById('download-link'),
+        audioTitleEl: document.getElementById('audio-title'),
+        audioAuthorEl: document.getElementById('audio-author'),
+        audioDurationEl: document.getElementById('audio-duration'),
+        darkModeToggle: document.getElementById('darkModeToggle'),
+        body: document.body,
+        mobileMenuToggle: document.getElementById('mobileMenuToggle'),
+        mobileMenu: document.getElementById('mobileMenu'),
+        mobileMenuClose: document.getElementById('mobileMenuClose'),
+        overlay: document.getElementById('overlay'),
+        toast: document.getElementById('toast'),
+        toastText: document.getElementById('toastText'),
+        toastIcon: document.getElementById('toastIcon'),
+        toastClose: document.getElementById('toastClose')
+    };
 
-// Toast elements
-const toast = document.getElementById('toast');
-const toastText = document.getElementById('toastText');
-const toastIcon = document.getElementById('toastIcon');
-const toastClose = document.getElementById('toastClose');
+    // Constants
+    const API_URL = 'https://mainpy-v09m.onrender.com/api/tiktok-to-mp3';
+    const TOAST_DURATION = 3000;
 
-// Dark mode functionality
-const isDarkMode = localStorage.getItem('darkMode') === 'true';
-if (isDarkMode) {
-    body.setAttribute('data-theme', 'dark');
-    darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-}
+    // Initialize dark mode
+    initDarkMode();
+    
+    // Initialize event listeners
+    initEventListeners();
+    
+    // Check for TikTok URL in clipboard on load
+    detectClipboardUrl();
 
-darkModeToggle.addEventListener('click', function() {
-    if (body.getAttribute('data-theme') === 'dark') {
-        body.removeAttribute('data-theme');
-        darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-        localStorage.setItem('darkMode', 'false');
-    } else {
-        body.setAttribute('data-theme', 'dark');
-        darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-        localStorage.setItem('darkMode', 'true');
+    // Dark mode functionality
+    function initDarkMode() {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        if (isDarkMode) {
+            elements.body.setAttribute('data-theme', 'dark');
+            elements.darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
     }
-});
 
-// Mobile menu functionality
-mobileMenuToggle.addEventListener('click', function() {
-    mobileMenu.classList.add('open');
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-});
+    // Set up all event listeners
+    function initEventListeners() {
+        // Dark mode toggle
+        elements.darkModeToggle.addEventListener('click', toggleDarkMode);
 
-mobileMenuClose.addEventListener('click', closeMenu);
-overlay.addEventListener('click', closeMenu);
+        // Mobile menu
+        elements.mobileMenuToggle.addEventListener('click', openMobileMenu);
+        elements.mobileMenuClose.addEventListener('click', closeMobileMenu);
+        elements.overlay.addEventListener('click', closeMobileMenu);
 
-function closeMenu() {
-    mobileMenu.classList.remove('open');
-    overlay.classList.remove('open');
-    document.body.style.overflow = '';
-}
+        // Toast
+        elements.toastClose.addEventListener('click', hideToast);
 
-// Toast notification functionality
-function showToast(message, type = 'success') {
-    let iconClass = 'fa-check-circle';
-    toastIcon.className = 'toast-icon ' + type;
-    
-    if (type === 'error') {
-        iconClass = 'fa-exclamation-circle';
-    } else if (type === 'info') {
-        iconClass = 'fa-info-circle';
+        // Paste button
+        elements.pasteBtn.addEventListener('click', pasteFromClipboard);
+
+        // Convert button
+        elements.convertBtn.addEventListener('click', convertTikTokToMp3);
+
+        // Enter key to submit
+        elements.urlInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !elements.convertBtn.disabled) {
+                elements.convertBtn.click();
+            }
+        });
     }
-    
-    toastIcon.innerHTML = `<i class="fas ${iconClass}"></i>`;
-    toastText.textContent = message;
-    
-    toast.classList.add('show');
-    
-    setTimeout(() => {
-        toast.classList.remove('show');
-    }, 3000);
-}
 
-toastClose.addEventListener('click', function() {
-    toast.classList.remove('show');
-});
-
-// Paste functionality
-pasteBtn.addEventListener('click', async function() {
-    try {
-        const text = await navigator.clipboard.readText();
-        urlInput.value = text;
-        showToast('URL pasted from clipboard', 'info');
-    } catch (err) {
-        showToast('Failed to read clipboard. Please paste manually.', 'error');
+    // Dark mode toggle function
+    function toggleDarkMode() {
+        const isDarkMode = elements.body.getAttribute('data-theme') === 'dark';
+        
+        if (isDarkMode) {
+            elements.body.removeAttribute('data-theme');
+            elements.darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            localStorage.setItem('darkMode', 'false');
+        } else {
+            elements.body.setAttribute('data-theme', 'dark');
+            elements.darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            localStorage.setItem('darkMode', 'true');
+        }
     }
-});
 
-// URL validation
-function isValidTikTokUrl(url) {
-    const regex = /^(https?:\/\/)?(www\.)?(tiktok\.com|vm\.tiktok\.com)\/(@\w+\/video\/\d+|[A-Za-z0-9]+)/;
-    return regex.test(url);
-}
+    // Mobile menu functions
+    function openMobileMenu() {
+        elements.mobileMenu.classList.add('open');
+        elements.overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
 
-// Conversion functionality
-convertBtn.addEventListener('click', async function() {
-    const url = urlInput.value.trim();
-    
-    // Reset UI
-    progressContainer.classList.remove('visible');
-    statusDiv.style.display = 'none';
-    downloadSection.classList.remove('visible');
-    
-    // Validate URL
-    if (!url) {
-        showToast('Please enter a TikTok URL', 'error');
-        return;
+    function closeMobileMenu() {
+        elements.mobileMenu.classList.remove('open');
+        elements.overlay.classList.remove('open');
+        document.body.style.overflow = '';
     }
-    
-    if (!isValidTikTokUrl(url)) {
-        showToast('Please enter a valid TikTok URL', 'error');
-        return;
+
+    // Toast notification function
+    function showToast(message, type = 'success') {
+        const iconMap = {
+            success: 'fa-check-circle',
+            error: 'fa-exclamation-circle',
+            info: 'fa-info-circle'
+        };
+        
+        elements.toastIcon.className = 'toast-icon ' + type;
+        elements.toastIcon.innerHTML = `<i class="fas ${iconMap[type] || iconMap.success}"></i>`;
+        elements.toastText.textContent = message;
+        
+        elements.toast.classList.add('show');
+        
+        setTimeout(hideToast, TOAST_DURATION);
     }
-    
-    // Show progress
-    progressContainer.classList.add('visible');
-    progressStatus.textContent = 'Connecting to TikTok...';
-    progressPercentage.textContent = '0%';
-    progressBarInner.style.width = '0%';
-    convertBtn.disabled = true;
-    
-    try {
-        // Update progress animation for better UX
+
+    function hideToast() {
+        elements.toast.classList.remove('show');
+    }
+
+    // Paste functionality
+    async function pasteFromClipboard() {
+        try {
+            const text = await navigator.clipboard.readText();
+            elements.urlInput.value = text;
+            showToast('URL pasted from clipboard', 'info');
+        } catch (err) {
+            showToast('Failed to read clipboard. Please paste manually.', 'error');
+        }
+    }
+
+    // URL validation
+    function isValidTikTokUrl(url) {
+        const regex = /^(https?:\/\/)?(www\.)?(tiktok\.com|vm\.tiktok\.com)\/(@\w+\/video\/\d+|[A-Za-z0-9]+)/;
+        return regex.test(url);
+    }
+
+    // Reset UI elements before conversion
+    function resetUI() {
+        elements.progressContainer.classList.remove('visible');
+        elements.statusDiv.style.display = 'none';
+        elements.downloadSection.classList.remove('visible');
+    }
+
+    // Update progress animation
+    function startProgressAnimation() {
         let progress = 0;
-        const progressInterval = setInterval(() => {
+        return setInterval(() => {
             if (progress < 90) {
                 progress += Math.random() * 5;
-                progressBarInner.style.width = `${progress}%`;
-                progressPercentage.textContent = `${Math.round(progress)}%`;
+                elements.progressBarInner.style.width = `${progress}%`;
+                elements.progressPercentage.textContent = `${Math.round(progress)}%`;
                 
                 if (progress < 30) {
-                    progressStatus.textContent = 'Fetching video information...';
+                    elements.progressStatus.textContent = 'Fetching video information...';
                 } else if (progress < 60) {
-                    progressStatus.textContent = 'Extracting audio...';
+                    elements.progressStatus.textContent = 'Extracting audio...';
                 } else {
-                    progressStatus.textContent = 'Processing audio file...';
+                    elements.progressStatus.textContent = 'Processing audio file...';
                 }
             }
         }, 500);
+    }
+
+    // Format duration in seconds to MM:SS
+    function formatDuration(seconds) {
+        if (!seconds || isNaN(seconds)) return 'Unknown';
         
-        // Make API request
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ url })
-        });
-        
-        clearInterval(progressInterval);
-        
-        if (!response.ok) {
-            throw new Error(`Server responded with ${response.status}: ${await response.text()}`);
-        }
-        
-        const data = await response.json();
-        
+        seconds = Math.round(parseFloat(seconds));
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    // Display completion and download section
+    function displayCompletionUI(data) {
         // Complete progress
-        progressBarInner.style.width = '100%';
-        progressPercentage.textContent = '100%';
-        progressStatus.textContent = 'Conversion complete!';
+        elements.progressBarInner.style.width = '100%';
+        elements.progressPercentage.textContent = '100%';
+        elements.progressStatus.textContent = 'Conversion complete!';
         
         // Show download section
-        audioTitleEl.querySelector('span').textContent = data.title || 'Unknown';
-        audioAuthorEl.querySelector('span').textContent = data.author || 'Unknown';
-        audioDurationEl.querySelector('span').textContent = formatDuration(data.duration) || 'Unknown';
+        elements.audioTitleEl.querySelector('span').textContent = data.title || 'Unknown';
+        elements.audioAuthorEl.querySelector('span').textContent = data.author || 'Unknown';
+        elements.audioDurationEl.querySelector('span').textContent = formatDuration(data.duration) || 'Unknown';
         
-        downloadLink.href = data.audioUrl;
-        downloadLink.download = `${data.title || 'tiktok'}.mp3`;
-        downloadSection.classList.add('visible');
-        
-        showToast('Conversion successful! Your download is ready.', 'success');
-        
-    } catch (error) {
-        console.error('Conversion failed:', error);
-        statusDiv.textContent = `Error: ${error.message || 'Failed to convert TikTok to MP3. Please try again.'}`;
-        statusDiv.className = 'status error';
-        statusDiv.style.display = 'block';
-        showToast('Conversion failed. Please try again.', 'error');
-    } finally {
-        convertBtn.disabled = false;
+        elements.downloadLink.href = data.audioUrl;
+        elements.downloadLink.download = `${data.title || 'tiktok'}.mp3`;
+        elements.downloadSection.classList.add('visible');
     }
-});
 
-// Format duration in seconds to MM:SS
-function formatDuration(seconds) {
-    if (!seconds || isNaN(seconds)) return 'Unknown';
-    seconds = Math.round(parseFloat(seconds));
-    const minutes = Math.floor(seconds / 60);
-    seconds = seconds % 60;
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-}
-
-// Enter key to submit
-urlInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter' && !convertBtn.disabled) {
-        convertBtn.click();
-    }
-});
-
-// Auto-detect TikTok links in clipboard when page loads
-window.addEventListener('load', async function() {
-    try {
-        const clipboardText = await navigator.clipboard.readText();
-        if (isValidTikTokUrl(clipboardText) && urlInput.value === '') {
-            urlInput.value = clipboardText;
-            showToast('TikTok URL detected in clipboard', 'info');
+    // Main conversion function
+    async function convertTikTokToMp3() {
+        const url = elements.urlInput.value.trim();
+        
+        // Reset UI
+        resetUI();
+        
+        // Validate URL
+        if (!url) {
+            showToast('Please enter a TikTok URL', 'error');
+            return;
         }
-    } catch (err) {
-        // Ignore clipboard errors on load
+        
+        if (!isValidTikTokUrl(url)) {
+            showToast('Please enter a valid TikTok URL', 'error');
+            return;
+        }
+        
+        // Show progress
+        elements.progressContainer.classList.add('visible');
+        elements.progressStatus.textContent = 'Connecting to TikTok...';
+        elements.progressPercentage.textContent = '0%';
+        elements.progressBarInner.style.width = '0%';
+        elements.convertBtn.disabled = true;
+        
+        try {
+            // Start progress animation
+            const progressInterval = startProgressAnimation();
+            
+            // Make API request
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url })
+            });
+            
+            clearInterval(progressInterval);
+            
+            if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}: ${await response.text()}`);
+            }
+            
+            const data = await response.json();
+            
+            // Show download section
+            displayCompletionUI(data);
+            
+            showToast('Conversion successful! Your download is ready.', 'success');
+            
+        } catch (error) {
+            console.error('Conversion failed:', error);
+            elements.statusDiv.textContent = `Error: ${error.message || 'Failed to convert TikTok to MP3. Please try again.'}`;
+            elements.statusDiv.className = 'status error';
+            elements.statusDiv.style.display = 'block';
+            showToast('Conversion failed. Please try again.', 'error');
+        } finally {
+            elements.convertBtn.disabled = false;
+        }
+    }
+
+    // Auto-detect TikTok links in clipboard when page loads
+    async function detectClipboardUrl() {
+        try {
+            const clipboardText = await navigator.clipboard.readText();
+            if (isValidTikTokUrl(clipboardText) && elements.urlInput.value === '') {
+                elements.urlInput.value = clipboardText;
+                showToast('TikTok URL detected in clipboard', 'info');
+            }
+        } catch (err) {
+            // Ignore clipboard errors on load
+        }
     }
 });
 </script>
