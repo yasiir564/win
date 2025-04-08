@@ -1889,7 +1889,7 @@ body {
     const API_BASE = 'https://koko-7d1z.onrender.com';
     const API_CONVERT = `${API_BASE}/convert`;
     const API_DOWNLOAD = `${API_BASE}/download`;
-    const API_CHECK_LIMIT = `${API_BASE}/checkLimit`; // New endpoint for rate limiting
+    const API_CHECK_LIMIT = `${API_BASE}/checkLimit`;
     
     let selectedFile = null;
     let convertedFileName = null;
@@ -1924,6 +1924,17 @@ body {
             'Just a moment longer...'
         ]
     };
+
+    // Smooth scroll function for better UX
+    function smoothScrollTo(element) {
+        if (!element) return;
+        
+        const y = element.getBoundingClientRect().top + window.pageYOffset - 20;
+        window.scrollTo({
+            top: y,
+            behavior: 'smooth'
+        });
+    }
     
     // Format options click handler
     formatOptions.forEach(option => {
@@ -2000,6 +2011,9 @@ body {
     // Download button handler
     downloadBtn.addEventListener('click', () => {
         if (convertedFileName) {
+            // Scroll to the download section for better UX
+            smoothScrollTo(resultContainer);
+            
             // Create a direct download link
             const downloadUrl = `${API_DOWNLOAD}/${convertedFileName}`;
             
@@ -2046,12 +2060,18 @@ body {
     convertAnother.addEventListener('click', (e) => {
         e.preventDefault();
         resetConverter();
+        // Scroll back to the upload section
+        setTimeout(() => {
+            smoothScrollTo(uploadContainer);
+        }, 100);
     });
     
     // Try again button handler
     tryAgainBtn.addEventListener('click', () => {
         hideError();
         resetConverter();
+        // Scroll back to the upload section
+        smoothScrollTo(uploadContainer);
     });
     
     // Dark mode toggle
@@ -2150,6 +2170,9 @@ body {
         // Hide result container when selecting a new file
         resultContainer.style.display = 'none';
         
+        // Scroll to the file info section
+        smoothScrollTo(fileInfo);
+        
         logDebug(`File selected: ${file.name}, ${file.size} bytes, type: ${file.type}`);
         showToast('File Selected', `${file.name} (${fileSizeFormatted}) ready for conversion`);
     }
@@ -2167,6 +2190,9 @@ body {
         convertBtn.disabled = true;
         conversionStartTime = Date.now();
         conversionPhase = 'uploading';
+        
+        // Scroll to progress container
+        smoothScrollTo(progressContainer);
         
         // Update progress message initially
         updateProgressMessage();
@@ -2300,6 +2326,10 @@ body {
     function showResult() {
         progressContainer.style.display = 'none';
         resultContainer.style.display = 'block';
+        
+        // Scroll to result container
+        smoothScrollTo(resultContainer);
+        
         logDebug('Showing result container, ready for download');
     }
     
@@ -2307,6 +2337,9 @@ body {
     function handleConversionError(message) {
         showError(message);
         logDebug(`Conversion error: ${message}`);
+        
+        // Scroll to error container
+        smoothScrollTo(errorContainer);
     }
     
     // Handle server errors with more detail
@@ -2333,6 +2366,9 @@ body {
         showError(errorMsg);
         logDebug(`Server error: ${status}, Message: ${errorMsg}`);
         showToast('Server Error', errorMsg, 'error');
+        
+        // Scroll to error container
+        smoothScrollTo(errorContainer);
     }
     
     // Show error message
@@ -2436,28 +2472,6 @@ body {
             document.body.classList.remove('dark-mode');
             darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
         }
-    }
-    
-    // Report error to analytics (can be implemented with actual analytics service)
-    function reportError(errorType, errorDetails) {
-        // In a real implementation, you would send this to your analytics service
-        logDebug(`Error report: Type: ${errorType}, Details: ${errorDetails}`);
-        
-        // Example implementation with fetch:
-        /*
-        fetch(`${API_BASE}/reportError`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                errorType,
-                errorDetails,
-                timestamp: new Date().toISOString(),
-                userAgent: navigator.userAgent
-            })
-        }).catch(e => console.error('Failed to report error:', e));
-        */
     }
     
     // Initialize
