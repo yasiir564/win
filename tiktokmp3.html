@@ -960,6 +960,9 @@
     const API_URL = 'https://mainpy-v09m.onrender.com/api/tiktok-to-mp3';
     const TOAST_DURATION = 3000;
 
+    // Storage for the audio data
+    let currentAudioData = null;
+
     // Initialize dark mode
     initDarkMode();
     
@@ -1079,6 +1082,7 @@
         elements.progressContainer.classList.remove('visible');
         elements.statusDiv.style.display = 'none';
         elements.downloadSection.classList.remove('visible');
+        currentAudioData = null;
     }
 
     // Update progress animation
@@ -1111,12 +1115,23 @@
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
-    // Storage for the audio URL
-    let currentAudioUrl = '';
-    let currentFileName = '';
+    // Sanitize filename
+    function sanitizeFilename(name) {
+        return (name || 'tiktok-audio')
+            .replace(/[^\w\s-]/g, '')  // Remove special chars
+            .replace(/\s+/g, '-')      // Replace spaces with hyphens
+            .substring(0, 100)         // Limit length
+            + '.mp3';
+    }
 
     // Display completion and download section
     function displayCompletionUI(data) {
+        // Store the audio data
+        currentAudioData = data;
+        
+        // Log the data for debugging
+        console.log('Audio data:', data);
+        
         // Complete progress
         elements.progressBarInner.style.width = '100%';
         elements.progressPercentage.textContent = '100%';
@@ -1127,13 +1142,26 @@
         elements.audioAuthorEl.querySelector('span').textContent = data.author || 'Unknown';
         elements.audioDurationEl.querySelector('span').textContent = formatDuration(data.duration) || 'Unknown';
         
-        // Store the audio URL and filename
-        currentAudioUrl = data.audioUrl;
-        currentFileName = `${data.title || 'tiktok'}.mp3`;
+        // Sanitize filename
+        const filename = sanitizeFilename(data.title);
         
         // Set the download link
-        elements.downloadLink.href = currentAudioUrl;
-        elements.downloadLink.setAttribute('download', currentFileName);
+        if (data.audioUrl) {
+            elements.downloadLink.setAttribute('data-url', data.audioUrl);
+            elements.downloadLink.setAttribute('data-filename', filename);
+        } else if (data.download_url) {
+            // Alternative property name
+            elements.downloadLink.setAttribute('data-url', data.download_url);
+            elements.downloadLink.setAttribute('data-filename', filename);
+        } else {
+            console.error('No download URL found in response:', data);
+            elements.statusDiv.textContent = 'Error: No download URL found in response.';
+            elements.statusDiv.className = 'status error';
+            elements.statusDiv.style.display = 'block';
+            showToast('Download URL not found in response', 'error');
+            return;
+        }
+        
         elements.downloadSection.classList.add('visible');
     }
 
@@ -1141,11 +1169,23 @@
     async function handleDownload(e) {
         e.preventDefault();
         
+        // Get the download URL from data attribute
+        const audioUrl = elements.downloadLink.getAttribute('data-url');
+        const filename = elements.downloadLink.getAttribute('data-filename');
+        
+        // Debug
+        console.log('Download requested:', { audioUrl, filename });
+        
+        if (!audioUrl) {
+            showToast('Download URL not available', 'error');
+            return;
+        }
+        
         try {
             showToast('Starting download...', 'info');
             
             // Fetch the file as blob
-            const response = await fetch(currentAudioUrl);
+            const response = await fetch(audioUrl);
             
             if (!response.ok) {
                 throw new Error(`Failed to download: ${response.status} ${response.statusText}`);
@@ -1157,7 +1197,7 @@
             const blobUrl = URL.createObjectURL(blob);
             const tempLink = document.createElement('a');
             tempLink.href = blobUrl;
-            tempLink.download = currentFileName;
+            tempLink.download = filename;
             document.body.appendChild(tempLink);
             tempLink.click();
             document.body.removeChild(tempLink);
@@ -1170,9 +1210,22 @@
             console.error('Download failed:', error);
             showToast('Download failed. Please try again.', 'error');
             
-            // Fallback: open the audio URL in a new tab
-            window.open(currentAudioUrl, '_blank');
-            showToast('Opened audio in new tab as fallback', 'info');
+            // Log the full error for debugging
+            console.error('Full error details:', error);
+            
+            // Show error message
+            elements.statusDiv.textContent = `Error: ${error.message || 'Download failed'}`;
+            elements.statusDiv.className = 'status error';
+            elements.statusDiv.style.display = 'block';
+            
+            // Fallback: try direct link
+            try {
+                window.open(audioUrl, '_blank');
+                showToast('Opened audio in new tab as fallback', 'info');
+            } catch (err) {
+                console.error('Fallback failed:', err);
+                showToast('All download attempts failed', 'error');
+            }
         }
     }
 
@@ -1221,6 +1274,13 @@
             }
             
             const data = await response.json();
+            
+            // Debug log
+            console.log('API response:', data);
+            
+            if (!data || (!data.audioUrl && !data.download_url)) {
+                throw new Error('Invalid API response: No audio URL found');
+            }
             
             // Show download section
             displayCompletionUI(data);
