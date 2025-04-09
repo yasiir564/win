@@ -1355,19 +1355,15 @@
     // Constants
     const API_URL = 'https://mainpy-v09m.onrender.com/api/tiktok-to-mp3';
     const TOAST_DURATION = 3000;
-    const CONVERSION_TIMEOUT = 120000; // 2 minutes timeout
-    const PROGRESS_STAGES = [
-        { threshold: 0, message: 'Initializing request...' },
-        { threshold: 10, message: 'Connecting to TikTok servers...' },
-        { threshold: 20, message: 'Fetching video metadata...' },
-        { threshold: 35, message: 'Analyzing video content...' },
-        { threshold: 45, message: 'Starting audio extraction...' },
-        { threshold: 55, message: 'Extracting audio stream...' },
-        { threshold: 65, message: 'Processing audio file...' },
-        { threshold: 75, message: 'Optimizing audio quality...' },
-        { threshold: 85, message: 'Preparing download...' },
-        { threshold: 95, message: 'Finalizing conversion...' },
-        { threshold: 100, message: 'Conversion complete!' }
+    const CONVERSION_STAGES = [
+        { threshold: 10, message: 'Initializing download process...' },
+        { threshold: 20, message: 'Connecting to TikTok servers...' },
+        { threshold: 30, message: 'Fetching video information...' },
+        { threshold: 45, message: 'Retrieving audio stream...' },
+        { threshold: 60, message: 'Extracting audio content...' },
+        { threshold: 75, message: 'Processing audio file...' },
+        { threshold: 85, message: 'Optimizing audio quality...' },
+        { threshold: 95, message: 'Preparing download...' }
     ];
 
     // Initialize dark mode
@@ -1413,21 +1409,6 @@
                 elements.convertBtn.click();
             }
         });
-
-        // Input validation on change
-        elements.urlInput.addEventListener('input', function() {
-            validateInput();
-        });
-    }
-
-    // Validate input field and update UI accordingly
-    function validateInput() {
-        const url = elements.urlInput.value.trim();
-        if (url && isValidTikTokUrl(url)) {
-            elements.convertBtn.classList.add('ready');
-        } else {
-            elements.convertBtn.classList.remove('ready');
-        }
     }
 
     // Dark mode toggle function
@@ -1442,384 +1423,6 @@
             elements.body.setAttribute('data-theme', 'dark');
             elements.darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
             localStorage.setItem('darkMode', 'true');
-        }
-    }
-
-    // Mobile menu functions
-    function openMobileMenu() {
-        elements.mobileMenu.classList.add('open');
-        elements.overlay.classList.add('open');
-        document.body.style.overflow = 'hidden';
-    }
-
-    function closeMobileMenu() {
-        elements.mobileMenu.classList.remove('open');
-        elements.overlay.classList.remove('open');
-        document.body.style.overflow = '';
-    }
-
-    // Toast notification function
-    function showToast(message, type = 'success') {
-        const iconMap = {
-            success: 'fa-check-circle',
-            error: 'fa-exclamation-circle',
-            info: 'fa-info-circle',
-            warning: 'fa-exclamation-triangle'
-        };
-        
-        elements.toastIcon.className = 'toast-icon ' + type;
-        elements.toastIcon.innerHTML = `<i class="fas ${iconMap[type] || iconMap.success}"></i>`;
-        elements.toastText.textContent = message;
-        
-        // Remove existing show class first to reset animation
-        elements.toast.classList.remove('show');
-        
-        // Trigger reflow to ensure animation restarts
-        void elements.toast.offsetWidth;
-        
-        // Show toast
-        elements.toast.classList.add('show');
-        
-        // Clear any existing timeout
-        if (window.toastTimeout) {
-            clearTimeout(window.toastTimeout);
-        }
-        
-        // Set new timeout
-        window.toastTimeout = setTimeout(hideToast, TOAST_DURATION);
-    }
-
-    function hideToast() {
-        elements.toast.classList.remove('show');
-    }
-
-    // Paste functionality
-    async function pasteFromClipboard() {
-        try {
-            const text = await navigator.clipboard.readText();
-            elements.urlInput.value = text;
-            validateInput();
-            showToast('URL pasted from clipboard', 'info');
-        } catch (err) {
-            console.error('Clipboard error:', err);
-            showToast('Failed to read clipboard. Please paste manually.', 'error');
-        }
-    }
-
-    // URL validation with improved regex
-    function isValidTikTokUrl(url) {
-        if (!url) return false;
-        
-        // More comprehensive TikTok URL regex
-        const tiktokRegex = /^(https?:\/\/)?(www\.|vm\.|vt\.)?tiktok\.com\/((@[a-zA-Z0-9._]+\/video\/\d+)|([a-zA-Z0-9._]+\/video\/\d+)|([a-zA-Z0-9]{6,12}))(\?.*)?$/;
-        return tiktokRegex.test(url);
-    }
-
-    // Extract TikTok ID from URL
-    function extractTikTokId(url) {
-        try {
-            const urlObj = new URL(url.includes('http') ? url : `https://${url}`);
-            
-            // Handle shortened URLs (vm.tiktok.com or vt.tiktok.com)
-            if (urlObj.hostname.includes('vm.tiktok.com') || urlObj.hostname.includes('vt.tiktok.com')) {
-                return urlObj.pathname.replace('/', '');
-            }
-            
-            // Handle regular URLs
-            const pathParts = urlObj.pathname.split('/');
-            
-            // If it's a video URL with username
-            if (pathParts.includes('video')) {
-                return pathParts[pathParts.indexOf('video') + 1];
-            }
-            
-            // If it's just a short code
-            if (pathParts.length === 2 && pathParts[1].length > 5) {
-                return pathParts[1];
-            }
-            
-            return null;
-        } catch (err) {
-            console.error('Error extracting TikTok ID:', err);
-            return null;
-        }
-    }
-
-    // Reset UI elements before conversion
-    function resetUI() {
-        elements.progressContainer.classList.remove('visible');
-        elements.statusDiv.style.display = 'none';
-        elements.downloadSection.classList.remove('visible');
-        elements.progressBarInner.style.width = '0%';
-        elements.progressPercentage.textContent = '0%';
-        elements.progressStatus.textContent = 'Initializing...';
-    }
-
-    // Find appropriate progress message based on percentage
-    function getProgressMessage(percentage) {
-        for (let i = PROGRESS_STAGES.length - 1; i >= 0; i--) {
-            if (percentage >= PROGRESS_STAGES[i].threshold) {
-                return PROGRESS_STAGES[i].message;
-            }
-        }
-        return 'Processing...';
-    }
-
-    // Update progress animation with realistic progression
-    function startProgressAnimation() {
-        let progress = 0;
-        let speed = 0.5;
-        let lastUpdateTime = Date.now();
-        
-        return setInterval(() => {
-            const now = Date.now();
-            const deltaTime = now - lastUpdateTime;
-            lastUpdateTime = now;
-            
-            // Adjust speed based on progress - slow down as we get higher
-            if (progress < 30) speed = 0.5;
-            else if (progress < 60) speed = 0.3;
-            else if (progress < 80) speed = 0.2;
-            else speed = 0.1;
-            
-            // Add some randomness to make it look more natural
-            const increment = speed * deltaTime / 100 * (0.8 + Math.random() * 0.4);
-            
-            if (progress < 95) {
-                progress = Math.min(95, progress + increment);
-                updateProgressUI(progress);
-            }
-        }, 100);
-    }
-
-    // Update progress UI
-    function updateProgressUI(progress, message = null) {
-        const roundedProgress = Math.round(progress);
-        elements.progressBarInner.style.width = `${progress}%`;
-        elements.progressPercentage.textContent = `${roundedProgress}%`;
-        
-        // Use provided message or get based on percentage
-        const statusMessage = message || getProgressMessage(roundedProgress);
-        elements.progressStatus.textContent = statusMessage;
-    }
-
-    // Format duration in seconds to MM:SS
-    function formatDuration(seconds) {
-        if (!seconds || isNaN(seconds)) return 'Unknown';
-        
-        seconds = Math.round(parseFloat(seconds));
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-    }
-
-    // Sanitize filenames
-    function sanitizeFilename(str) {
-        if (!str) return 'unknown';
-        return str
-            .replace(/[<>:"/\\|?*]/g, '_')
-            .replace(/\s+/g, ' ')
-            .trim()
-            .substring(0, 100); // Limit length
-    }
-
-    // Display completion and download section
-    function displayCompletionUI(data) {
-        // Complete progress
-        updateProgressUI(100, 'Conversion complete!');
-        
-        // Show metadata in download section
-        elements.audioTitleEl.querySelector('span').textContent = data.title || 'Unknown Title';
-        elements.audioAuthorEl.querySelector('span').textContent = data.author || 'Unknown Creator';
-        elements.audioDurationEl.querySelector('span').textContent = formatDuration(data.duration) || 'Unknown';
-        
-        // Get the full URL to the audio file
-        const baseUrl = data.mp3_url.startsWith('http') ? '' : API_URL.split('/api/')[0];
-        const audioUrl = baseUrl + data.mp3_url;
-        
-        // Set up download link - use direct URL from API
-        elements.downloadLink.href = audioUrl;
-        
-        // Set a meaningful filename
-        const sanitizedTitle = sanitizeFilename(data.title || 'tiktok');
-        const sanitizedAuthor = sanitizeFilename(data.author || 'unknown');
-        elements.downloadLink.download = `${sanitizedAuthor} - ${sanitizedTitle}.mp3`;
-        
-        // Show download section
-        elements.downloadSection.classList.add('visible');
-    }
-
-    // Handle conversion errors
-    function handleConversionError(error, statusCode) {
-        console.error('Conversion failed:', error);
-        
-        let errorMessage = 'An error occurred during conversion. Please try again.';
-        
-        // More specific error messages based on status codes
-        if (statusCode) {
-            switch (statusCode) {
-                case 400:
-                    errorMessage = 'Invalid TikTok URL. Please check and try again.';
-                    break;
-                case 403:
-                    errorMessage = 'Access denied. This video might be private or region-restricted.';
-                    break;
-                case 404:
-                    errorMessage = 'TikTok video not found. It may have been deleted or is private.';
-                    break;
-                case 429:
-                    errorMessage = 'Too many requests. Please wait a moment and try again.';
-                    break;
-                case 500:
-                case 502:
-                case 503:
-                case 504:
-                    errorMessage = 'Server error. Our system is temporarily unavailable. Please try again later.';
-                    break;
-                default:
-                    if (statusCode >= 400) {
-                        errorMessage = `Server error (${statusCode}). Please try again later.`;
-                    }
-            }
-        } else if (error.name === 'AbortError') {
-            errorMessage = 'Request timed out. The server might be busy, please try again later.';
-        } else if (error.message) {
-            // Use error message but limit length
-            errorMessage = `Error: ${error.message.substring(0, 100)}`;
-            if (error.message.length > 100) errorMessage += '...';
-        }
-        
-        elements.statusDiv.textContent = errorMessage;
-        elements.statusDiv.className = 'status error';
-        elements.statusDiv.style.display = 'block';
-        elements.progressContainer.classList.remove('visible');
-        showToast('Conversion failed. Please try again.', 'error');
-    }
-
-    // Main conversion function with improved error handling and CORS
-    async function convertTikTokToMp3() {
-        const url = elements.urlInput.value.trim();
-        
-        // Reset UI
-        resetUI();
-        
-        // Validate URL
-        if (!url) {
-            showToast('Please enter a TikTok URL', 'error');
-            return;
-        }
-        
-        if (!isValidTikTokUrl(url)) {
-            showToast('Please enter a valid TikTok URL', 'error');
-            return;
-        }
-        
-        // Extract TikTok ID for better error handling
-        const tiktokId = extractTikTokId(url);
-        if (!tiktokId) {
-            showToast('Could not extract TikTok ID from URL', 'error');
-            return;
-        }
-        
-        // Show progress
-        elements.progressContainer.classList.add('visible');
-        updateProgressUI(0, 'Initializing request...');
-        elements.convertBtn.disabled = true;
-        
-        // Create AbortController for timeout handling
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), CONVERSION_TIMEOUT);
-        
-        try {
-            // Start progress animation
-            const progressInterval = startProgressAnimation();
-            
-            // Make API request with better error handling
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Origin': window.location.origin,
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin', // Include cookies for same-origin requests
-                body: JSON.stringify({ 
-                    url,
-                    tiktok_id: tiktokId,
-                    client_info: {
-                        userAgent: navigator.userAgent,
-                        screenWidth: window.innerWidth,
-                        language: navigator.language
-                    }
-                }),
-                signal: controller.signal
-            });
-            
-            clearTimeout(timeoutId);
-            clearInterval(progressInterval);
-            
-            if (!response.ok) {
-                // Try to get error details from response
-                let errorDetails = '';
-                try {
-                    const errorData = await response.json();
-                    errorDetails = errorData.error || errorData.message || '';
-                } catch (e) {
-                    try {
-                        errorDetails = await response.text() || '';
-                    } catch (textError) {
-                        // Ignore if we can't get text either
-                    }
-                }
-                
-                const error = new Error(errorDetails || `Server responded with ${response.status}`);
-                throw { error, statusCode: response.status };
-            }
-            
-            const data = await response.json();
-            
-            if (!data.success) {
-                throw { 
-                    error: new Error(data.error || 'Failed to convert TikTok to MP3'),
-                    statusCode: 400
-                };
-            }
-            
-            // Show download section
-            displayCompletionUI(data);
-            
-            showToast('Conversion successful! Your download is ready.', 'success');
-            
-        } catch (error) {
-            clearTimeout(timeoutId);
-            // Check if it's our custom error object
-            if (error.error && error.statusCode) {
-                handleConversionError(error.error, error.statusCode);
-            } else {
-                handleConversionError(error);
-            }
-        } finally {
-            elements.convertBtn.disabled = false;
-        }
-    }
-
-    // Auto-detect TikTok links in clipboard when page loads
-    async function detectClipboardUrl() {
-        if (!navigator.clipboard || !navigator.clipboard.readText) {
-            // Clipboard API not available (possibly due to permissions or HTTP)
-            return;
-        }
-        
-        try {
-            const clipboardText = await navigator.clipboard.readText();
-            if (isValidTikTokUrl(clipboardText) && elements.urlInput.value === '') {
-                elements.urlInput.value = clipboardText;
-                validateInput();
-                showToast('TikTok URL detected in clipboard', 'info');
-            }
-        } catch (err) {
-            // Ignore clipboard errors on load - this is expected in many cases
-            console.log('Clipboard detection disabled or permission denied');
         }
     }
 
@@ -1855,6 +1458,285 @@
             }
         });
     });
+
+    // Mobile menu functions
+    function openMobileMenu() {
+        elements.mobileMenu.classList.add('open');
+        elements.overlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+        elements.mobileMenu.classList.remove('open');
+        elements.overlay.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+
+    // Toast notification function
+    function showToast(message, type = 'success') {
+        const iconMap = {
+            success: 'fa-check-circle',
+            error: 'fa-exclamation-circle',
+            info: 'fa-info-circle',
+            warning: 'fa-exclamation-triangle'
+        };
+        
+        elements.toastIcon.className = 'toast-icon ' + type;
+        elements.toastIcon.innerHTML = `<i class="fas ${iconMap[type] || iconMap.success}"></i>`;
+        elements.toastText.textContent = message;
+        
+        elements.toast.classList.add('show');
+        
+        // Clear any existing timeout
+        if (window.toastTimeout) {
+            clearTimeout(window.toastTimeout);
+        }
+        
+        // Set new timeout
+        window.toastTimeout = setTimeout(hideToast, TOAST_DURATION);
+    }
+
+    function hideToast() {
+        elements.toast.classList.remove('show');
+    }
+
+    // Paste functionality
+    async function pasteFromClipboard() {
+        try {
+            const text = await navigator.clipboard.readText();
+            elements.urlInput.value = text;
+            
+            if (isValidTikTokUrl(text)) {
+                showToast('TikTok URL pasted from clipboard', 'info');
+            } else {
+                showToast('URL pasted, but it doesn\'t appear to be a valid TikTok URL', 'warning');
+            }
+        } catch (err) {
+            console.error('Clipboard error:', err);
+            showToast('Failed to read clipboard. Please paste manually.', 'error');
+        }
+    }
+
+    // URL validation
+    function isValidTikTokUrl(url) {
+        // Enhanced regex to support more TikTok URL formats including the requested format
+        const regex = /^(https?:\/\/)?(www\.|vm\.)?(tiktok\.com)(\/(@[\w.-]+\/video\/\d+|\w+\/\w+\/\w+|v\/\w+|[A-Za-z0-9]+))/;
+        return regex.test(url);
+    }
+
+    // Reset UI elements before conversion
+    function resetUI() {
+        elements.progressContainer.classList.remove('visible');
+        elements.statusDiv.style.display = 'none';
+        elements.downloadSection.classList.remove('visible');
+    }
+
+    // Update progress animation with more detailed stages
+    function startProgressAnimation() {
+        let progress = 0;
+        let currentStageIndex = 0;
+        
+        return setInterval(() => {
+            if (progress < 95) {
+                // Calculate a random increment between 0.5 and 3
+                const increment = 0.5 + Math.random() * 2.5;
+                progress += increment;
+                
+                // Check if we need to update the stage message
+                while (currentStageIndex < CONVERSION_STAGES.length && 
+                      progress >= CONVERSION_STAGES[currentStageIndex].threshold) {
+                    elements.progressStatus.textContent = CONVERSION_STAGES[currentStageIndex].message;
+                    currentStageIndex++;
+                }
+                
+                // Update progress bar and percentage
+                elements.progressBarInner.style.width = `${progress}%`;
+                elements.progressPercentage.textContent = `${Math.round(progress)}%`;
+            }
+        }, 350);
+    }
+
+    // Format duration in seconds to MM:SS
+    function formatDuration(seconds) {
+        if (!seconds || isNaN(seconds)) return 'Unknown';
+        
+        seconds = Math.round(parseFloat(seconds));
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    // Handle specific error types
+    function handleError(error, response) {
+        let errorMessage = 'Failed to convert TikTok to MP3. Please try again.';
+        
+        // Check if it's a network error
+        if (!navigator.onLine) {
+            errorMessage = 'No internet connection. Please check your network and try again.';
+        }
+        // Check if it's a server error
+        else if (response && response.status >= 500) {
+            errorMessage = 'Server error. Our service is experiencing issues. Please try again later.';
+        }
+        // Check if it's a rate limit error
+        else if (response && response.status === 429) {
+            errorMessage = 'Too many requests. Please wait a moment and try again.';
+        }
+        // Check if TikTok video is not found or private
+        else if (response && response.status === 404) {
+            errorMessage = 'Video not found. The TikTok may be private or deleted.';
+        }
+        // Check if it's a bad request
+        else if (response && response.status === 400) {
+            errorMessage = 'Invalid request. Please check the TikTok URL format.';
+        }
+        // If we have an error message from the server, use it
+        else if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        return errorMessage;
+    }
+
+    // Display completion and download section
+    function displayCompletionUI(data) {
+        // Complete progress
+        elements.progressBarInner.style.width = '100%';
+        elements.progressPercentage.textContent = '100%';
+        elements.progressStatus.textContent = 'Conversion complete!';
+        
+        // Show metadata in download section
+        elements.audioTitleEl.querySelector('span').textContent = data.title || 'Unknown';
+        elements.audioAuthorEl.querySelector('span').textContent = data.author || 'Unknown';
+        elements.audioDurationEl.querySelector('span').textContent = formatDuration(data.duration) || 'Unknown';
+        
+        // Get the full URL to the audio file
+        const baseUrl = API_URL.split('/api/')[0];
+        const audioUrl = baseUrl + data.mp3_url;
+        
+        // Set up download link - use direct URL from API
+        elements.downloadLink.href = audioUrl;
+        
+        // Set a meaningful filename
+        const sanitizedTitle = (data.title || 'tiktok').replace(/[<>:"/\\|?*]/g, '_');
+        const sanitizedAuthor = (data.author || 'unknown').replace(/[<>:"/\\|?*]/g, '_');
+        elements.downloadLink.download = `${sanitizedAuthor} - ${sanitizedTitle}.mp3`;
+        
+        // Show download section
+        elements.downloadSection.classList.add('visible');
+    }
+
+    // Main conversion function
+    async function convertTikTokToMp3() {
+        const url = elements.urlInput.value.trim();
+        
+        // Reset UI
+        resetUI();
+        
+        // Validate URL
+        if (!url) {
+            showToast('Please enter a TikTok URL', 'error');
+            return;
+        }
+        
+        if (!isValidTikTokUrl(url)) {
+            showToast('Please enter a valid TikTok URL', 'error');
+            return;
+        }
+        
+        // Show progress
+        elements.progressContainer.classList.add('visible');
+        elements.progressStatus.textContent = 'Initializing...';
+        elements.progressPercentage.textContent = '0%';
+        elements.progressBarInner.style.width = '0%';
+        elements.convertBtn.disabled = true;
+        
+        // Start progress animation
+        const progressInterval = startProgressAnimation();
+        
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
+            
+            // Make API request
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ url }),
+                signal: controller.signal
+            }).catch(error => {
+                if (error.name === 'AbortError') {
+                    throw new Error('Request timed out. The server might be busy or the video might be too long.');
+                }
+                throw error;
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                let errorMessage;
+                try {
+                    const errorData = await response.json();
+                    errorMessage = errorData.error || `Server responded with ${response.status}`;
+                } catch (e) {
+                    errorMessage = await response.text() || `Server responded with ${response.status}`;
+                }
+                throw new Error(errorMessage);
+            }
+            
+            const data = await response.json();
+            
+            if (!data.success) {
+                throw new Error(data.error || 'Failed to convert TikTok to MP3');
+            }
+            
+            // Complete progress animation
+            clearInterval(progressInterval);
+            
+            // Show download section
+            displayCompletionUI(data);
+            
+            showToast('Conversion successful! Your download is ready.', 'success');
+            
+        } catch (error) {
+            console.error('Conversion failed:', error);
+            
+            // Clear progress animation
+            clearInterval(progressInterval);
+            
+            // Handle specific error types
+            const errorMessage = handleError(error, error.response);
+            
+            // Display error status
+            elements.statusDiv.textContent = `Error: ${errorMessage}`;
+            elements.statusDiv.className = 'status error';
+            elements.statusDiv.style.display = 'block';
+            elements.progressContainer.classList.remove('visible');
+            
+            showToast(errorMessage, 'error');
+        } finally {
+            elements.convertBtn.disabled = false;
+        }
+    }
+
+    // Auto-detect TikTok links in clipboard when page loads
+    async function detectClipboardUrl() {
+        try {
+            // Check if clipboard API is available
+            if (navigator.clipboard && navigator.clipboard.readText) {
+                const clipboardText = await navigator.clipboard.readText();
+                if (isValidTikTokUrl(clipboardText) && elements.urlInput.value === '') {
+                    elements.urlInput.value = clipboardText;
+                    showToast('TikTok URL detected in clipboard', 'info');
+                }
+            }
+        } catch (err) {
+            // Silently ignore clipboard errors on load
+            console.log('Clipboard access denied or not available');
+        }
+    }
 });
 </script>
 </body>
