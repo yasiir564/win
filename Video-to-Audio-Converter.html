@@ -1834,6 +1834,7 @@ body {
                     <p id="fileSize">45.2 MB</p>
                 </div>
             </div>
+          <div id="cf-turnstile-container" class="turnstile-container"></div>
 
             <!-- Converter Controls -->
             <div class="converter-controls">
@@ -2093,7 +2094,7 @@ body {
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+   document.addEventListener('DOMContentLoaded', () => {
     // Elements
     const uploadContainer = document.getElementById('uploadContainer');
     const fileInput = document.getElementById('fileInput');
@@ -2123,12 +2124,16 @@ body {
     const overlay = document.getElementById('overlay');
     const toast = document.getElementById('toast');
     const toastClose = document.getElementById('toastClose');
+    const turnstileContainer = document.getElementById('cf-turnstile-container');
     
     // API endpoints
     const API_BASE = 'https://koko-7d1z.onrender.com';
     const API_CONVERT = `${API_BASE}/convert`;
     const API_DOWNLOAD = `${API_BASE}/download`;
     const API_CHECK_LIMIT = `${API_BASE}/checkLimit`;
+    
+    // Cloudflare Turnstile site key - Replace with your actual site key
+    const TURNSTILE_SITE_KEY = '0x4AAAAAAAC5x_ycNF3HQkZ';
     
     let selectedFile = null;
     let convertedFileName = null;
@@ -2138,6 +2143,8 @@ body {
     let progressTimer = null;
     let conversionPhase = 'idle';
     let conversionInProgress = false;
+    let turnstileToken = null;
+    let turnstileWidget = null;
     
     // Conversion status messages
     const conversionMessages = {
@@ -2164,6 +2171,59 @@ body {
             'Just a moment longer...'
         ]
     };
+
+    // Initialize Cloudflare Turnstile
+    function initTurnstile() {
+        if (!turnstileContainer) {
+            logDebug('Turnstile container not found');
+            return;
+        }
+        
+        // Clear any existing widgets
+        turnstileContainer.innerHTML = '';
+        
+        try {
+            if (window.turnstile) {
+                turnstileWidget = window.turnstile.render('#cf-turnstile-container', {
+                    sitekey: TURNSTILE_SITE_KEY,
+                    theme: document.body.classList.contains('dark-mode') ? 'dark' : 'light',
+                    callback: function(token) {
+                        turnstileToken = token;
+                        logDebug('Turnstile verification successful');
+                        
+                        // Enable convert button if file is already selected
+                        if (selectedFile) {
+                            convertBtn.disabled = false;
+                        }
+                    },
+                    'expired-callback': function() {
+                        turnstileToken = null;
+                        logDebug('Turnstile token expired');
+                        
+                        // Disable convert button if token expired
+                        convertBtn.disabled = true;
+                        
+                        // Reset widget
+                        if (turnstileWidget) {
+                            window.turnstile.reset(turnstileWidget);
+                        }
+                    }
+                });
+            } else {
+                logDebug('Turnstile script not loaded');
+                // If Turnstile isn't available, still allow conversion
+                if (selectedFile) {
+                    convertBtn.disabled = false;
+                }
+            }
+        } catch (e) {
+            logDebug(`Turnstile initialization error: ${e.message}`);
+            // If Turnstile fails, still allow conversion
+            if (selectedFile) {
+                convertBtn.disabled = false;
+            }
+        }
+    }
 
     // Smooth scroll function for better UX
     function smoothScrollTo(element) {
@@ -2230,6 +2290,13 @@ body {
     // Convert button handler - Added visual feedback immediately when clicked
     convertBtn.addEventListener('click', () => {
         if (selectedFile && !conversionInProgress) {
+            // Check Turnstile token
+            if (window.turnstile && !turnstileToken) {
+                showToast('Verification Required', 'Please complete the security verification', 'error');
+                smoothScrollTo(turnstileContainer);
+                return;
+            }
+            
             // Immediate visual feedback
             convertBtn.disabled = true;
             convertBtn.textContent = 'Processing...';
@@ -2322,6 +2389,10 @@ body {
     convertAnother.addEventListener('click', (e) => {
         e.preventDefault();
         resetConverter();
+        // Reset Turnstile widget
+        if (window.turnstile && turnstileWidget) {
+            window.turnstile.reset(turnstileWidget);
+        }
         // Scroll back to the upload section
         setTimeout(() => {
             smoothScrollTo(uploadContainer);
@@ -2332,6 +2403,10 @@ body {
     tryAgainBtn.addEventListener('click', () => {
         hideError();
         resetConverter();
+        // Reset Turnstile widget
+        if (window.turnstile && turnstileWidget) {
+            window.turnstile.reset(turnstileWidget);
+        }
         // Scroll back to the upload section
         smoothScrollTo(uploadContainer);
     });
@@ -2346,6 +2421,11 @@ body {
         } else {
             darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
             localStorage.setItem('theme', 'light');
+        }
+        
+        // Reset Turnstile with new theme
+        if (window.turnstile && turnstileWidget) {
+            window.turnstile.reset(turnstileWidget);
         }
         
         logDebug(`Theme toggled to ${document.body.classList.contains('dark-mode') ? 'dark' : 'light'} mode`);
@@ -2459,11 +2539,21 @@ body {
         fileName.textContent = file.name;
         fileSize.textContent = fileSizeFormatted;
         fileInfo.style.display = 'flex';
-        convertBtn.disabled = false;
+        
+        // Only enable convert button if Turnstile token is present or Turnstile is not required
+        if (!window.turnstile || turnstileToken) {
+            convertBtn.disabled = false;
+        }
+        
         hideError();
         
         // Hide result container when selecting a new file
         resultContainer.style.display = 'none';
+        
+        // Ensure Turnstile container is visible
+        if (turnstileContainer) {
+            turnstileContainer.style.display = 'block';
+        }
         
         // Scroll to the file info section
         smoothScrollTo(fileInfo);
@@ -2479,6 +2569,11 @@ body {
         formData.append('video', file);
         formData.append('format', selectedFormat);
         formData.append('bitrate', selectedBitrate);
+        
+        // Add Turnstile token if available
+        if (turnstileToken) {
+            formData.append('cf-turnstile-response', turnstileToken);
+        }
         
         // Set conversion in progress flag
         conversionInProgress = true;
@@ -2545,7 +2640,15 @@ body {
                         logDebug(`Conversion successful. Filename: ${convertedFileName}`);
                         showToast('Success', 'Your file has been converted successfully!', 'success');
                     } else {
-                        handleConversionError(response.error || 'Conversion failed.');
+                        if (response.error === 'Turnstile validation failed') {
+                            handleConversionError('Security verification failed. Please try again.');
+                            // Reset Turnstile
+                            if (window.turnstile && turnstileWidget) {
+                                window.turnstile.reset(turnstileWidget);
+                            }
+                        } else {
+                            handleConversionError(response.error || 'Conversion failed.');
+                        }
                     }
                 } catch (e) {
                     handleConversionError('Invalid response from server.');
@@ -2773,9 +2876,40 @@ body {
         }
     }
     
+    // Load Cloudflare Turnstile script dynamically
+    function loadTurnstileScript() {
+        if (document.getElementById('cf-turnstile-script')) {
+            // Script already loaded
+            initTurnstile();
+            return;
+        }
+        
+        const script = document.createElement('script');
+        script.id = 'cf-turnstile-script';
+        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+        script.async = true;
+        script.defer = true;
+        
+        script.onload = function() {
+            logDebug('Turnstile script loaded');
+            initTurnstile();
+        };
+        
+        script.onerror = function() {
+            logDebug('Failed to load Turnstile script');
+            // If Turnstile script fails to load, still allow conversion
+            if (selectedFile) {
+                convertBtn.disabled = false;
+            }
+        };
+        
+        document.head.appendChild(script);
+    }
+    
     // Initialize
     checkThemePreference();
-    logDebug('TokHaste converter initialized');
+    loadTurnstileScript();
+    logDebug('TokHaste converter initialized with Cloudflare Turnstile protection');
 });
 </script>
 </body>
