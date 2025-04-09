@@ -802,22 +802,31 @@
             opacity: 1;
         }
 
-    /* FAQ Section */
+  /* FAQ Section */
 .faq {
-    background-color: var(--tiktok-light-gray);
+    background-color: var(--section-bg);
+    padding: 2rem 0;
+    transition: var(--transition);
 }
 
 .faq-container {
     max-width: 800px;
     margin: 0 auto;
+    padding: 0 1rem;
 }
 
 .faq-item {
-    background-color: white;
+    background-color: var(--faq-bg);
     border-radius: var(--border-radius);
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.25rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     overflow: hidden;
+    transition: box-shadow 0.4s ease, transform 0.3s ease;
+}
+
+.faq-item:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
 }
 
 .faq-question {
@@ -828,61 +837,117 @@
     cursor: pointer;
     font-weight: 600;
     font-size: 1.1rem;
+    color: var(--text-primary);
+    transition: color 0.3s ease, background-color 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.faq-question:hover {
+    color: #ff0050;
+}
+
+.faq-question::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--tiktok-gradient);
+    transition: width 0.3s ease;
+    z-index: -1;
+}
+
+.faq-question:hover::after {
+    width: 100%;
 }
 
 .faq-question i {
-    transition: transform 0.3s ease;
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    color: var(--text-secondary);
+}
+
+.faq-question:hover i {
+    color: #00f2ea;
 }
 
 .faq-question.active i {
     transform: rotate(180deg);
+    color: #00f2ea;
 }
 
 .faq-answer {
     padding: 0 1.5rem;
     height: 0;
     overflow: hidden;
-    transition: all 0.3s ease;
+    color: var(--text-secondary);
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    opacity: 0;
 }
 
 .faq-question.active + .faq-answer {
     padding: 0 1.5rem 1.5rem;
     height: auto;
+    opacity: 1;
 }
-        /* How to Use Section */
+
+/* How to Use Section */
 .how-to-use {
-    background-color: var(--tiktok-light-gray);
+    background-color: var(--section-bg);
     position: relative;
+    padding: 3rem 0;
+    transition: var(--transition);
 }
 
 .steps-container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
     gap: 2rem;
     flex-wrap: wrap;
     margin-top: 3rem;
 }
 
 .step-card {
-    background-color: var(--tiktok-white);
+    background-color: var(--faq-bg);
     border-radius: var(--border-radius);
     box-shadow: var(--card-shadow);
-    padding: 2rem;
+    padding: 2.5rem 2rem;
     text-align: center;
     flex: 1;
     min-width: 250px;
     max-width: 300px;
-    transition: var(--transition);
+    transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.step-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: var(--tiktok-gradient);
+    transform: scaleX(0);
+    transition: transform 0.5s ease;
+    transform-origin: left;
 }
 
 .step-card:hover {
-    transform: translateY(-10px);
+    transform: translateY(-12px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.step-card:hover::before {
+    transform: scaleX(1);
 }
 
 .step-icon {
-    width: 70px;
-    height: 70px;
+    width: 80px;
+    height: 80px;
     margin: 0 auto 1.5rem;
     display: flex;
     align-items: center;
@@ -891,16 +956,30 @@
     border-radius: 50%;
     color: white;
     font-size: 1.8rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.step-card:hover .step-icon {
+    transform: scale(1.1) rotate(5deg);
 }
 
 .step-title {
     font-size: 1.4rem;
     margin-bottom: 1rem;
     font-weight: 600;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
+}
+
+.step-card:hover .step-title {
+    color: #ff0050;
 }
 
 .step-card p {
-    color: #666;
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
 }
 
 .step-connector {
@@ -908,6 +987,38 @@
     width: 60px;
     background: var(--tiktok-gradient);
     flex-shrink: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.step-connector::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    100% {
+        left: 100%;
+    }
+}
+
+/* Media query for responsive design */
+@media (max-width: 768px) {
+    .steps-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .step-connector {
+        width: 2px;
+        height: 40px;
+    }
 }
 
     </style>
@@ -1022,43 +1133,43 @@
     </main>
 
     <!-- How to Use Section -->
-    <section class="how-to-use">
-        <div class="section-container">
-            <h2 class="section-title">How to Use <span class="highlight">TokHaste</span></h2>
+<section class="how-to-use">
+    <div class="section-container">
+        <h2 class="section-title">How to Use <span class="highlight">TokHaste</span> TikTok MP3 Downloader</h2>
+        
+        <div class="steps-container">
+            <div class="step-card">
+                <div class="step-icon">
+                    <i class="fas fa-link"></i>
+                </div>
+                <h3 class="step-title">Copy Link</h3>
+                <p>Copy the TikTok video link from the app or website</p>
+            </div>
             
-            <div class="steps-container">
-                <div class="step-card">
-                    <div class="step-icon">
-                        <i class="fas fa-link"></i>
-                    </div>
-                    <h3 class="step-title">Copy Link</h3>
-                    <p>Copy the TikTok video link from the app or website</p>
+            <div class="step-connector"></div>
+            
+            <div class="step-card">
+                <div class="step-icon">
+                    <i class="fas fa-paste"></i>
                 </div>
-                
-                <div class="step-connector"></div>
-                
-                <div class="step-card">
-                    <div class="step-icon">
-                        <i class="fas fa-paste"></i>
-                    </div>
-                    <h3 class="step-title">Paste URL</h3>
-                    <p>Paste the link in the input field above</p>
+                <h3 class="step-title">Paste URL</h3>
+                <p>Paste the link in the input field above</p>
+            </div>
+            
+            <div class="step-connector"></div>
+            
+            <div class="step-card">
+                <div class="step-icon">
+                    <i class="fas fa-download"></i>
                 </div>
-                
-                <div class="step-connector"></div>
-                
-                <div class="step-card">
-                    <div class="step-icon">
-                        <i class="fas fa-download"></i>
-                    </div>
-                    <h3 class="step-title">Download</h3>
-                    <p>Click the download button and save your video</p>
-                </div>
+                <h3 class="step-title">Download</h3>
+                <p>Click the download button and save your audio in MP3 format</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- FAQ Section -->
+<!-- FAQ Section -->
 <section class="faq" id="faq">
     <div class="section-container">
         <h2 class="section-title">Frequently Asked Questions</h2>
@@ -1067,29 +1178,29 @@
             <!-- FAQ Item -->
             <div class="faq-item">
                 <div class="faq-question" tabindex="0">
-                    <span>Is this TikTok downloader free to use?</span>
+                    <span>Is this TikTok MP3 downloader free to use?</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="faq-answer">
-                    <p>Yes, our <a href="https://tokhaste.com/" title="Free TikTok Video Downloader">TikTok video downloader</a> is 100% free to use with no hidden charges or subscription fees.</p>
+                    <p>Yes, our <a href="https://tokhaste.com/" title="Free TikTok MP3 Downloader">TikTok MP3 downloader</a> is 100% free to use with no hidden charges or subscription fees.</p>
                 </div>
             </div>
 
             <!-- FAQ Item -->
             <div class="faq-item">
                 <div class="faq-question" tabindex="0">
-                    <span>Can I download TikTok videos without watermark?</span>
+                    <span>How long does it take to download TikTok audio?</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="faq-answer">
-                    <p>Absolutely! Our tool allows you to download TikTok videos without watermark for a clean and professional look.</p>
+                    <p>Our tool processes and downloads TikTok audio in seconds, providing you with fast MP3 extraction.</p>
                 </div>
             </div>
 
             <!-- FAQ Item -->
             <div class="faq-item">
                 <div class="faq-question" tabindex="0">
-                    <span>Is there a limit to how many videos I can download?</span>
+                    <span>Is there a limit to how many audio files I can download?</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="faq-answer">
@@ -1104,25 +1215,24 @@
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="faq-answer">
-                    <p>You can use our downloader on all devices including <strong>Android, iOS, Windows, and Mac</strong> without any installations.</p>
+                    <p>You can use our MP3 downloader on all devices including <strong>Android, iOS, Windows, and Mac</strong> without any installations.</p>
                 </div>
             </div>
 
-            <!-- New FAQ Items for SEO -->
-
+            <!-- New FAQ Items for MP3 Downloader -->
             <div class="faq-item">
                 <div class="faq-question" tabindex="0">
                     <span>Do I need to log in or sign up?</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="faq-answer">
-                    <p>No login or registration is required. Just paste the video link and start downloading instantly.</p>
+                    <p>No login or registration is required. Just paste the video link and start downloading MP3 audio instantly.</p>
                 </div>
             </div>
 
             <div class="faq-item">
                 <div class="faq-question" tabindex="0">
-                    <span>Is this TikTok video downloader safe?</span>
+                    <span>Is this TikTok MP3 downloader safe?</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="faq-answer">
@@ -1132,21 +1242,21 @@
 
             <div class="faq-item">
                 <div class="faq-question" tabindex="0">
-                    <span>Can I download TikTok videos in HD quality?</span>
+                    <span>What is the quality of the downloaded MP3 files?</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="faq-answer">
-                    <p>Yes! We support high-definition downloads so you can enjoy TikTok videos in the best quality available.</p>
+                    <p>We extract audio at the highest quality available from the original TikTok video to provide you with the best MP3 experience.</p>
                 </div>
             </div>
 
             <div class="faq-item">
                 <div class="faq-question" tabindex="0">
-                    <span>How do I download TikTok videos using this tool?</span>
+                    <span>How do I download TikTok audio using this tool?</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="faq-answer">
-                    <p>It's easy! Copy the TikTok video URL, paste it into our <a href="https://tokhaste.com/" title="Online TikTok Video Downloader">TikTok downloader tool</a>, and click "Download".</p>
+                    <p>It's easy! Copy the TikTok video URL, paste it into our <a href="https://tokhaste.com/" title="Online TikTok MP3 Downloader">TikTok MP3 downloader tool</a>, and click "Download".</p>
                 </div>
             </div>
 
@@ -1156,17 +1266,17 @@
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="faq-answer">
-                    <p>Yes, our tool works seamlessly on iPhone and iPad. For best results, use Safari or Chrome browser.</p>
+                    <p>Yes, our MP3 downloader works seamlessly on iPhone and iPad. For best results, use Safari or Chrome browser.</p>
                 </div>
             </div>
 
             <div class="faq-item">
                 <div class="faq-question" tabindex="0">
-                    <span>Do you support TikTok video audio downloads?</span>
+                    <span>Can I download TikTok videos as well?</span>
                     <i class="fas fa-chevron-down"></i>
                 </div>
                 <div class="faq-answer">
-                    <p>Yes, you can also extract and download TikTok video audio in MP3 format. Check out our <a href="/tiktok-audio-downloader" title="TikTok Audio Downloader">audio downloader</a>.</p>
+                    <p>Yes, TokHaste also offers a <a href="https://tokhaste.com/" title="TikTok Video Downloader">TikTok video downloader</a> if you prefer to save the entire video instead of just the audio.</p>
                 </div>
             </div>
         </div>
