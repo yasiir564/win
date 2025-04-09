@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/inter-ui/3.19.3/inter.min.css">
     <link rel="icon" href="cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3JtNTMzLW5lb24tMDA3LXguanBn [MConverter.eu].ico" type="image/x-icon">
     <style>
-       :root {
+      :root {
     --tiktok-black: #000000;
     --tiktok-white: #FFFFFF;
     --tiktok-red: #FE2C55;
@@ -23,17 +23,17 @@
     --border-radius: 12px;
     --transition: all 0.25s ease;
 
-    /* For light mode */
-    --bg-primary: #f8f9fa;
+    /* Unified colors */
+    --bg-primary: var(--tiktok-white);
     --text-primary: var(--tiktok-dark-gray);
     --card-bg: var(--tiktok-white);
     --card-border: rgba(0, 0, 0, 0.08);
 }
 
 [data-theme="dark"] {
-    --bg-primary: #121212;
+    --bg-primary: var(--tiktok-darker-gray);
     --text-primary: var(--tiktok-white);
-    --card-bg: #1e1e1e;
+    --card-bg: var(--tiktok-dark-gray);
     --card-border: rgba(255, 255, 255, 0.08);
 }
 
@@ -82,7 +82,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Navigation */
 .navbar {
-    background-color: var(--card-bg);
+    background-color: var(--bg-primary);
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
     position: sticky;
     top: 0;
@@ -210,7 +210,7 @@ main {
 .container {
     max-width: 700px;
     width: 100%;
-    background-color: var(--card-bg);
+    background-color: var(--bg-primary);
     border-radius: var(--border-radius);
     box-shadow: var(--card-shadow);
     padding: 2.5rem;
@@ -569,10 +569,10 @@ button#convert-btn:disabled::before {
     margin-right: auto;
 }
 
+/* Improved steps container for better responsiveness */
 .steps-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2.5rem;
     margin: 3rem auto 0;
     width: 100%;
@@ -580,20 +580,21 @@ button#convert-btn:disabled::before {
 }
 
 .step-card {
-    background-color: var(--card-bg);
+    background-color: var(--bg-primary);
     border-radius: var(--border-radius);
     padding: 2.5rem;
     box-shadow: var(--card-shadow);
     border: 1px solid var(--card-border);
-    flex: 1;
-    min-width: 280px;
-    max-width: 350px;
     text-align: center;
     transition: var(--transition);
     position: relative;
     overflow: hidden;
     animation: fadeInUp 0.6s ease forwards;
     opacity: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 @keyframes fadeInUp {
@@ -676,7 +677,7 @@ button#convert-btn:disabled::before {
     align-items: center;
     font-weight: bold;
     font-size: 0.9rem;
-    border: 2px solid var(--card-bg);
+    border: 2px solid var(--bg-primary);
 }
 
 .step-card h3 {
@@ -691,15 +692,15 @@ button#convert-btn:disabled::before {
     line-height: 1.7;
 }
 
-/* FAQ Section Styles */
+/* Improved FAQ Section Styles */
 .faq-container {
     max-width: 850px;
     margin: 0 auto;
-    padding: 0 1rem;
+    width: 100%;
 }
 
 .faq-item {
-    background-color: var(--card-bg);
+    background-color: var(--bg-primary);
     border-radius: var(--border-radius);
     margin-bottom: 1.5rem;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
@@ -753,6 +754,7 @@ button#convert-btn:disabled::before {
     overflow: hidden;
     transition: max-height 0.3s ease, padding 0.3s ease;
     padding: 0 1.8rem;
+    background-color: var(--bg-primary);
 }
 
 .faq-item.active .faq-answer {
@@ -770,7 +772,7 @@ button#convert-btn:disabled::before {
 
 /* Footer */
 .footer {
-    background-color: var(--card-bg);
+    background-color: var(--bg-primary);
     border-top: 1px solid var(--card-border);
     padding: 4rem 0 2rem;
     margin-top: auto;
@@ -896,7 +898,7 @@ button#convert-btn:disabled::before {
     width: 80%;
     max-width: 350px;
     height: 100vh;
-    background-color: var(--card-bg);
+    background-color: var(--bg-primary);
     padding: 2.5rem 2rem;
     z-index: 1001;
     transition: right 0.3s ease-in-out;
@@ -1017,7 +1019,6 @@ button#convert-btn:disabled::before {
     display: block;
     opacity: 1;
 }
-
 /* Toast Notification */
         .toast {
             position: fixed;
