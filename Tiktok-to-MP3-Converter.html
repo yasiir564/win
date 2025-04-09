@@ -6,1042 +6,720 @@
     <title>TokHaste - TikTok to MP3 Converter</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/inter-ui/3.19.3/inter.min.css">
-    <link rel="icon" href="cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3JtNTMzLW5lb24tMDA3LXguanBn [MConverter.eu].ico" type="image/x-icon">
     <style>
-      :root {
-    --tiktok-black: #000000;
-    --tiktok-white: #FFFFFF;
-    --tiktok-red: #FE2C55;
-    --tiktok-blue: #25F4EE;
-    --tiktok-light-gray: #F1F1F2;
-    --tiktok-dark-gray: #161823;
-    --tiktok-darker-gray: #0f1016;
-    --tiktok-gradient: linear-gradient(90deg, var(--tiktok-blue), var(--tiktok-red));
-    --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    --btn-shadow: 0 7px 14px rgba(254, 44, 85, 0.25);
-    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --border-radius: 12px;
-    --transition: all 0.25s ease;
-
-    /* Unified colors */
-    --bg-primary: var(--tiktok-white);
-    --text-primary: var(--tiktok-dark-gray);
-    --card-bg: var(--tiktok-white);
-    --card-border: rgba(0, 0, 0, 0.08);
-}
-
-[data-theme="dark"] {
-    --bg-primary: var(--tiktok-darker-gray);
-    --text-primary: var(--tiktok-white);
-    --card-bg: var(--tiktok-dark-gray);
-    --card-border: rgba(255, 255, 255, 0.08);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: var(--font-family);
-}
-
-body {
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    transition: var(--transition);
-    scroll-behavior: smooth;
-    overflow-x: hidden;
-    line-height: 1.6;
-}
-
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: var(--bg-primary);
-}
-
-::-webkit-scrollbar-thumb {
-    background: var(--tiktok-red);
-    border-radius: 8px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(var(--tiktok-blue), var(--tiktok-red));
-}
-
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-    font-weight: 700;
-    line-height: 1.2;
-}
-
-/* Navigation */
-.navbar {
-    background-color: var(--bg-primary);
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    transition: var(--transition);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-.nav-container {
-    max-width: 1280px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem 2rem;
-    height: 70px;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    font-weight: 800;
-    font-size: 1.6rem;
-    background: var(--tiktok-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -0.5px;
-}
-
-.logo i {
-    font-size: 1.8rem;
-    margin-right: 0.5rem;
-}
-
-.nav-links {
-    display: flex;
-    gap: 2.5rem;
-    margin: 0 1rem;
-}
-
-.nav-links a {
-    color: var(--text-primary);
-    text-decoration: none;
-    font-weight: 500;
-    transition: var(--transition);
-    position: relative;
-    padding: 0.5rem 0;
-}
-
-.nav-links a:hover {
-    color: var(--tiktok-red);
-}
-
-.nav-links a.active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: var(--tiktok-gradient);
-    border-radius: 2px;
-}
-
-.nav-actions {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-}
-
-.theme-toggle, .menu-toggle {
-    background: none;
-    border: none;
-    color: var(--text-primary);
-    font-size: 1.2rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 50%;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-}
-
-.theme-toggle:hover, .menu-toggle:hover {
-    background-color: rgba(254, 44, 85, 0.1);
-    color: var(--tiktok-red);
-}
-
-.btn-sign-in {
-    background: var(--tiktok-gradient);
-    color: white;
-    border: none;
-    padding: 0.6rem 1.4rem;
-    border-radius: 50px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: var(--btn-shadow);
-    letter-spacing: 0.3px;
-}
-
-.btn-sign-in:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(254, 44, 85, 0.3);
-}
-
-.menu-toggle {
-    display: none;
-}
-
-/* Main Content */
-main {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 3rem 1.5rem;
-}
-
-.container {
-    max-width: 700px;
-    width: 100%;
-    background-color: var(--bg-primary);
-    border-radius: var(--border-radius);
-    box-shadow: var(--card-shadow);
-    padding: 2.5rem;
-    margin-bottom: 3rem;
-    border: 1px solid var(--card-border);
-    transition: var(--transition);
-    animation: fadeIn 0.5s ease;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-header {
-    text-align: center;
-    margin-bottom: 3rem;
-}
-
-h1 {
-    font-size: 2.4rem;
-    margin-bottom: 0.8rem;
-    background: var(--tiktok-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    position: relative;
-    display: inline-block;
-    letter-spacing: -0.5px;
-}
-
-h1::after {
-    content: '';
-    position: absolute;
-    width: 60px;
-    height: 4px;
-    background: var(--tiktok-gradient);
-    bottom: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 10px;
-}
-
-p.subtitle {
-    color: var(--text-primary);
-    opacity: 0.8;
-    font-size: 1.1rem;
-    margin-top: 1.5rem;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.form-group {
-    margin-bottom: 2.2rem;
-    position: relative;
-}
-
-label {
-    display: block;
-    margin-bottom: 0.8rem;
-    font-weight: 500;
-    color: var(--text-primary);
-}
-
-.input-wrapper {
-    position: relative;
-    display: flex;
-}
-
-input[type="text"] {
-    width: 100%;
-    padding: 1rem 3.5rem 1rem 1.2rem;
-    border: 2px solid var(--card-border);
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    transition: var(--transition);
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-}
-
-input[type="text"]:focus {
-    outline: none;
-    border-color: var(--tiktok-red);
-    box-shadow: 0 0 0 3px rgba(254, 44, 85, 0.15);
-}
-
-.paste-btn {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    color: var(--tiktok-red);
-    font-size: 1.2rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 50%;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.paste-btn:hover {
-    background-color: rgba(254, 44, 85, 0.1);
-}
-
-button#convert-btn {
-    width: 100%;
-    padding: 1.1rem;
-    background: var(--tiktok-gradient);
-    color: white;
-    border: none;
-    border-radius: var(--border-radius);
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: var(--btn-shadow);
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    letter-spacing: 0.5px;
-}
-
-button#convert-btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: 0.5s;
-    z-index: -1;
-}
-
-button#convert-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(254, 44, 85, 0.3);
-}
-
-button#convert-btn:hover::before {
-    left: 100%;
-}
-
-button#convert-btn:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-button#convert-btn:disabled::before {
-    display: none;
-}
-
-.progress-container {
-    margin-top: 2rem;
-    display: none;
-}
-
-.progress-container.visible {
-    display: block;
-    animation: fadeIn 0.3s ease;
-}
-
-.progress-text {
-    font-size: 0.9rem;
-    margin-bottom: 0.8rem;
-    font-weight: 500;
-    color: var(--text-primary);
-    display: flex;
-    justify-content: space-between;
-}
-
-.progress-bar-outer {
-    width: 100%;
-    height: 8px;
-    background-color: var(--tiktok-light-gray);
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.progress-bar-inner {
-    height: 100%;
-    background: var(--tiktok-gradient);
-    width: 0%;
-    border-radius: 10px;
-    transition: width 0.3s ease;
-}
-
-.status {
-    margin-top: 1.5rem;
-    padding: 1.2rem;
-    border-radius: var(--border-radius);
-    display: none;
-    animation: fadeIn 0.3s ease;
-    font-weight: 500;
-}
-
-.status.error {
-    background-color: rgba(255, 77, 79, 0.1);
-    color: #ff4d4f;
-    border: 1px solid rgba(255, 77, 79, 0.3);
-    display: block;
-}
-
-.status.success {
-    background-color: rgba(82, 196, 26, 0.1);
-    color: #52c41a;
-    border: 1px solid rgba(82, 196, 26, 0.3);
-    display: block;
-}
-
-.status.loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.05);
-    color: var(--text-primary);
-}
-
-.spinner {
-    width: 24px;
-    height: 24px;
-    border: 3px solid rgba(254, 44, 85, 0.3);
-    border-radius: 50%;
-    border-top-color: var(--tiktok-red);
-    animation: spin 1s linear infinite;
-    margin-right: 12px;
-}
-
-@keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.download-section {
-    display: none;
-    margin-top: 2.5rem;
-    text-align: center;
-    animation: fadeIn 0.5s ease;
-}
-
-.download-section.visible {
-    display: block;
-}
-
-.audio-info {
-    margin-top: 1.5rem;
-    padding: 1.8rem;
-    background-color: var(--bg-primary);
-    border-radius: var(--border-radius);
-    border: 1px solid var(--card-border);
-    text-align: left;
-}
-
-.audio-info p {
-    margin-bottom: 1rem;
-    color: var(--text-primary);
-    display: flex;
-    align-items: baseline;
-}
-
-.audio-info p:last-child {
-    margin-bottom: 0;
-}
-
-.audio-info p strong {
-    font-weight: 600;
-    margin-right: 0.8rem;
-    color: var(--tiktok-red);
-    min-width: 100px;
-    display: inline-block;
-}
-
-.download-link {
-    display: inline-block;
-    background: var(--tiktok-gradient);
-    color: white;
-    text-decoration: none;
-    padding: 1rem 2.5rem;
-    border-radius: var(--border-radius);
-    font-weight: 600;
-    margin-top: 2rem;
-    transition: var(--transition);
-    box-shadow: var(--btn-shadow);
-    cursor: pointer;
-    letter-spacing: 0.5px;
-}
-
-.download-link:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(254, 44, 85, 0.3);
-}
-
-/* How to Use Section Styles */
-.how-to-use-section,
-.faq-section {
-    padding: 5rem 2rem;
-    max-width: 1280px;
-    margin: 0 auto;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.section-header {
-    text-align: center;
-    margin-bottom: 4rem;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.section-header h2 {
-    font-size: 2.2rem;
-    margin-bottom: 0.8rem;
-    background: var(--tiktok-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    position: relative;
-    display: inline-block;
-    letter-spacing: -0.5px;
-}
-
-.section-header h2::after {
-    content: '';
-    position: absolute;
-    width: 80px;
-    height: 4px;
-    background: var(--tiktok-gradient);
-    bottom: -12px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 10px;
-}
-
-.section-header .subtitle {
-    color: var(--text-primary);
-    opacity: 0.8;
-    font-size: 1.1rem;
-    margin-top: 1.8rem;
-    max-width: 650px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* Improved steps container for better responsiveness */
-.steps-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2.5rem;
-    margin: 3rem auto 0;
-    width: 100%;
-    max-width: 1200px;
-    justify-content: center;
-}
-
-@media (min-width: 992px) {
-    .steps-container {
-        flex-wrap: nowrap;
-        justify-content: space-between;
-    }
-}
-
-.step-card {
-    border-radius: var(--border-radius);
-    padding: 2.5rem;
-    box-shadow: var(--card-shadow);
-    border: 1px solid var(--card-border);
-    text-align: center;
-    transition: var(--transition);
-    position: relative;
-    overflow: hidden;
-    animation: fadeInUp 0.6s ease forwards;
-    opacity: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1;
-    min-width: 280px;
-    max-width: 100%;
-}
-
-@media (min-width: 992px) {
-    .step-card {
-        max-width: calc(33.333% - 1.67rem);
-    }
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.step-card:nth-child(1) {
-    animation-delay: 0.1s;
-}
-
-.step-card:nth-child(2) {
-    animation-delay: 0.3s;
-}
-
-.step-card:nth-child(3) {
-    animation-delay: 0.5s;
-}
-
-.step-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-}
-
-.step-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 5px;
-    background: var(--tiktok-gradient);
-    transform: scaleX(0);
-    transition: transform 0.4s ease;
-    transform-origin: left;
-}
-
-.step-card:hover::before {
-    transform: scaleX(1);
-}
-
-.step-icon {
-    position: relative;
-    width: 90px;
-    height: 90px;
-    background: var(--tiktok-light-gray);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 auto 1.8rem;
-    color: var(--tiktok-red);
-    font-size: 2rem;
-    transition: var(--transition);
-}
-
-.step-card:hover .step-icon {
-    background: var(--tiktok-gradient);
-    color: white;
-    transform: rotate(360deg);
-}
-
-.step-number {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    width: 30px;
-    height: 30px;
-    background: var(--tiktok-red);
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    font-size: 0.9rem;
-    border: 2px solid var(--bg-primary);
-}
-
-.step-card h3 {
-    margin-bottom: 1.2rem;
-    color: var(--text-primary);
-    font-size: 1.4rem;
-}
-
-.step-card p {
-    color: var(--text-primary);
-    opacity: 0.8;
-    line-height: 1.7;
-}
-
-/* Improved FAQ Section Styles */
-.faq-container {
-    max-width: 850px;
-    margin: 0 auto;
-    width: 100%;
-}
-
-.faq-item {
-    border-radius: var(--border-radius);
-    margin-bottom: 1.5rem;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-    border: 1px solid var(--card-border);
-    overflow: hidden;
-    animation: fadeIn 0.6s ease forwards;
-    opacity: 0;
-    width: 100%;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.faq-item:nth-child(1) { animation-delay: 0.1s; }
-.faq-item:nth-child(2) { animation-delay: 0.2s; }
-.faq-item:nth-child(3) { animation-delay: 0.3s; }
-.faq-item:nth-child(4) { animation-delay: 0.4s; }
-.faq-item:nth-child(5) { animation-delay: 0.5s; }
-.faq-item:nth-child(6) { animation-delay: 0.6s; }
-
-.faq-question {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.4rem 1.8rem;
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.faq-question:hover {
-    background-color: rgba(254, 44, 85, 0.05);
-}
-
-.faq-question h3 {
-    font-size: 1.1rem;
-    color: var(--text-primary);
-    font-weight: 500;
-    margin: 0;
-    padding-right: 1rem;
-}
-
-.faq-icon {
-    color: var(--tiktok-red);
-    transition: var(--transition);
-    flex-shrink: 0;
-}
-
-.faq-item.active .faq-icon {
-    transform: rotate(180deg);
-}
-
-.faq-answer {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease, padding 0.3s ease;
-    padding: 0 1.8rem;
-}
-
-.faq-item.active .faq-answer {
-    max-height: 500px;
-    padding: 0 1.8rem 1.8rem;
-    border-top: 1px solid var(--card-border);
-}
-
-.faq-answer p {
-    color: var(--text-primary);
-    opacity: 0.8;
-    line-height: 1.7;
-    margin-top: 1.2rem;
-}
-
-/* Footer */
-.footer {
-    background-color: var(--bg-primary);
-    border-top: 1px solid var(--card-border);
-    padding: 4rem 0 2rem;
-    margin-top: auto;
-    transition: var(--transition);
-}
-
-.footer-container {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 0 2rem;
-}
-
-.footer-top {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 3rem;
-    margin-bottom: 3rem;
-}
-
-.footer-logo {
-    display: flex;
-    align-items: center;
-    font-weight: 800;
-    font-size: 1.5rem;
-    background: var(--tiktok-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -0.5px;
-}
-
-.footer-logo i {
-    font-size: 1.8rem;
-    margin-right: 0.5rem;
-}
-
-.footer-links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4rem;
-}
-
-.footer-column h3 {
-    font-size: 1.1rem;
-    margin-bottom: 1.5rem;
-    color: var(--text-primary);
-    position: relative;
-    display: inline-block;
-}
-
-.footer-column h3::after {
-    content: '';
-    position: absolute;
-    bottom: -8px;
-    left: 0;
-    width: 30px;
-    height: 2px;
-    background: var(--tiktok-gradient);
-    border-radius: 2px;
-}
-
-.footer-column a {
-    display: block;
-    color: var(--text-primary);
-    opacity: 0.75;
-    text-decoration: none;
-    margin-bottom: 0.9rem;
-    transition: var(--transition);
-}
-
-.footer-column a:hover {
-    color: var(--tiktok-red);
-    opacity: 1;
-    transform: translateX(3px);
-}
-
-.footer-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: 2rem;
-    border-top: 1px solid var(--card-border);
-}
-
-.footer-bottom p {
-    color: var(--text-primary);
-    opacity: 0.7;
-    font-size: 0.9rem;
-}
-
-.social-links {
-    display: flex;
-    gap: 1.2rem;
-}
-
-.social-links a {
-    color: var(--text-primary);
-    font-size: 1.2rem;
-    transition: var(--transition);
-    opacity: 0.8;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.05);
-}
-
-.social-links a:hover {
-    color: var(--tiktok-red);
-    transform: translateY(-3px);
-    opacity: 1;
-    background-color: rgba(254, 44, 85, 0.1);
-}
-
-/* Mobile menu */
-.mobile-menu {
-    position: fixed;
-    top: 0;
-    right: -100%;
-    width: 80%;
-    max-width: 350px;
-    height: 100vh;
-    background-color: var(--bg-primary);
-    padding: 2.5rem 2rem;
-    z-index: 1001;
-    transition: right 0.3s ease-in-out;
-    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-}
-
-.mobile-menu.open {
-    right: 0;
-}
-
-.mobile-menu-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--card-border);
-}
-
-.mobile-menu-close {
-    background: none;
-    border: none;
-    color: var(--text-primary);
-    font-size: 1.5rem;
-    cursor: pointer;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: var(--transition);
-}
-
-.mobile-menu-close:hover {
-    background-color: rgba(254, 44, 85, 0.1);
-    color: var(--tiktok-red);
-}
-
-.mobile-menu-links {
-    display: flex;
-    flex-direction: column;
-    gap: 1.8rem;
-    margin-bottom: 2.5rem;
-}
-
-.mobile-menu-links a {
-    color: var(--text-primary);
-    text-decoration: none;
-    font-weight: 500;
-    font-size: 1.2rem;
-    transition: var(--transition);
-    padding: 0.5rem 0;
-    position: relative;
-    width: fit-content;
-}
-
-.mobile-menu-links a:hover {
-    color: var(--tiktok-red);
-}
-
-.mobile-menu-links a::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--tiktok-gradient);
-    transition: width 0.3s ease;
-}
-
-.mobile-menu-links a:hover::after {
-    width: 100%;
-}
-
-.mobile-menu-actions {
-    margin-top: auto;
-}
-
-.mobile-menu-btn {
-    width: 100%;
-    padding: 1rem;
-    background: var(--tiktok-gradient);
-    color: white;
-    border: none;
-    border-radius: var(--border-radius);
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: var(--btn-shadow);
-    letter-spacing: 0.5px;
-}
-
-.mobile-menu-btn:hover {
-    transform: translateY(-2px);
-}
-
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    z-index: 1000;
-    display: none;
-    transition: opacity 0.3s ease;
-    opacity: 0;
-    backdrop-filter: blur(4px);
-}
-
-.overlay.open {
-    display: block;
-    opacity: 1;
-}
-/* Toast Notification */
+        :root {
+            --tiktok-black: #000000;
+            --tiktok-white: #FFFFFF;
+            --tiktok-red: #FE2C55;
+            --tiktok-blue: #25F4EE;
+            --tiktok-light-gray: #F1F1F2;
+            --tiktok-dark-gray: #161823;
+            --tiktok-darker-gray: #0f1016;
+            --tiktok-gradient: linear-gradient(90deg, var(--tiktok-blue), var(--tiktok-red));
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            --btn-shadow: 0 7px 14px rgba(254, 44, 85, 0.3);
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+
+            /* For dark mode */
+            --bg-primary: var(--tiktok-white);
+            --text-primary: var(--tiktok-dark-gray);
+            --card-bg: var(--tiktok-white);
+            --card-border: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: var(--tiktok-darker-gray);
+            --text-primary: var(--tiktok-white);
+            --card-bg: var(--tiktok-dark-gray);
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-family);
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--tiktok-red);
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(var(--tiktok-blue), var(--tiktok-red));
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: var(--bg-primary);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--tiktok-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo i {
+            font-size: 1.8rem;
+            margin-right: 0.5rem;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: var(--tiktok-red);
+        }
+        
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--tiktok-gradient);
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .theme-toggle, .menu-toggle {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        .theme-toggle:hover, .menu-toggle:hover {
+            background-color: rgba(254, 44, 85, 0.1);
+            color: var(--tiktok-red);
+        }
+        
+        .btn-sign-in {
+            background: var(--tiktok-gradient);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--btn-shadow);
+        }
+        
+        .btn-sign-in:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(254, 44, 85, 0.4);
+        }
+        
+        .menu-toggle {
+            display: none;
+        }
+
+        /* Main Content */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 3rem 1rem;
+        }
+        
+        .container {
+            max-width: 700px;
+            width: 100%;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--card-border);
+            transition: var(--transition);
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+            background: var(--tiktok-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 4px;
+            background: var(--tiktok-gradient);
+            bottom: -10px;
+            left: 25%;
+            border-radius: 10px;
+        }
+        
+        p.subtitle {
+            color: var(--text-primary);
+            opacity: 0.7;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+        
+        .input-wrapper {
+            position: relative;
+            display: flex;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 1rem 3.5rem 1rem 1.2rem;
+            border: 2px solid var(--card-border);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--tiktok-red);
+            box-shadow: 0 0 0 3px rgba(254, 44, 85, 0.2);
+        }
+        
+        .paste-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--tiktok-red);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        .paste-btn:hover {
+            background-color: rgba(254, 44, 85, 0.1);
+        }
+        
+        button#convert-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--tiktok-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--btn-shadow);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        button#convert-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+        
+        button#convert-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(254, 44, 85, 0.4);
+        }
+        
+        button#convert-btn:hover::before {
+            left: 100%;
+        }
+        
+        button#convert-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        button#convert-btn:disabled::before {
+            display: none;
+        }
+        
+        .progress-container {
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .progress-container.visible {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .progress-text {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .progress-bar-outer {
+            width: 100%;
+            height: 10px;
+            background-color: var(--tiktok-light-gray);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-inner {
+            height: 100%;
+            background: var(--tiktok-gradient);
+            width: 0%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .status {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .status.error {
+            background-color: rgba(255, 77, 79, 0.1);
+            color: #ff4d4f;
+            border: 1px solid #ff4d4f;
+            display: block;
+        }
+        
+        .status.success {
+            background-color: rgba(82, 196, 26, 0.1);
+            color: #52c41a;
+            border: 1px solid #52c41a;
+            display: block;
+        }
+        
+        .status.loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.05);
+            color: var(--text-primary);
+        }
+        
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(254, 44, 85, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--tiktok-red);
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        .download-section {
+            display: none;
+            margin-top: 2rem;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .download-section.visible {
+            display: block;
+        }
+        
+        .audio-info {
+            margin-top: 1rem;
+            padding: 1.5rem;
+            background-color: var(--bg-primary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--card-border);
+            text-align: left;
+        }
+        
+        .audio-info p {
+            margin-bottom: 0.8rem;
+            color: var(--text-primary);
+        }
+
+        .audio-info p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .audio-info p strong {
+            font-weight: 600;
+            margin-right: 0.5rem;
+            color: var(--tiktok-red);
+        }
+        
+        .download-link {
+            display: inline-block;
+            background: var(--tiktok-gradient);
+            color: white;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            margin-top: 1.5rem;
+            transition: var(--transition);
+            box-shadow: var(--btn-shadow);
+            cursor: pointer;
+        }
+        
+        .download-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(254, 44, 85, 0.4);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            padding: 3rem 0 1.5rem;
+            margin-top: auto;
+            transition: var(--transition);
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            background: var(--tiktok-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .footer-logo i {
+            font-size: 1.8rem;
+            margin-right: 0.5rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3rem;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .footer-column a {
+            display: block;
+            color: var(--text-primary);
+            opacity: 0.7;
+            text-decoration: none;
+            margin-bottom: 0.7rem;
+            transition: var(--transition);
+        }
+        
+        .footer-column a:hover {
+            color: var(--tiktok-red);
+            opacity: 1;
+        }
+        
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--card-border);
+        }
+        
+        .footer-bottom p {
+            color: var(--text-primary);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .social-links a {
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        
+        .social-links a:hover {
+            color: var(--tiktok-red);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .container {
+                padding: 1.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .footer-top {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            
+            .footer-links {
+                gap: 2rem;
+            }
+            
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-container, .footer-container {
+                padding: 1rem;
+            }
+            
+            .btn-sign-in {
+                display: none;
+            }
+            
+            .container {
+                padding: 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+        }
+
+        /* Mobile menu */
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 70%;
+            height: 100vh;
+            background-color: var(--card-bg);
+            padding: 2rem;
+            z-index: 1001;
+            transition: right 0.3s ease;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .mobile-menu.open {
+            right: 0;
+        }
+        
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .mobile-menu-close {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .mobile-menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .mobile-menu-links a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+        
+        .mobile-menu-links a:hover {
+            color: var(--tiktok-red);
+        }
+        
+        .mobile-menu-actions {
+            margin-top: 2rem;
+        }
+        
+        .mobile-menu-btn {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--tiktok-gradient);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            transition: var(--transition);
+        }
+        
+        .overlay.open {
+            display: block;
+        }
+
+        /* Toast Notification */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -1102,6 +780,115 @@ button#convert-btn:disabled::before {
         .toast-close:hover {
             opacity: 1;
         }
+
+    /* FAQ Section */
+.faq {
+    background-color: var(--tiktok-light-gray);
+}
+
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-item {
+    background-color: white;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+}
+
+.faq-question {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.faq-question i {
+    transition: transform 0.3s ease;
+}
+
+.faq-question.active i {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    padding: 0 1.5rem;
+    height: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faq-question.active + .faq-answer {
+    padding: 0 1.5rem 1.5rem;
+    height: auto;
+}
+        /* How to Use Section */
+.how-to-use {
+    background-color: var(--tiktok-light-gray);
+    position: relative;
+}
+
+.steps-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 3rem;
+}
+
+.step-card {
+    background-color: var(--tiktok-white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    padding: 2rem;
+    text-align: center;
+    flex: 1;
+    min-width: 250px;
+    max-width: 300px;
+    transition: var(--transition);
+}
+
+.step-card:hover {
+    transform: translateY(-10px);
+}
+
+.step-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--tiktok-gradient);
+    border-radius: 50%;
+    color: white;
+    font-size: 1.8rem;
+}
+
+.step-title {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.step-card p {
+    color: #666;
+}
+
+.step-connector {
+    height: 2px;
+    width: 60px;
+    background: var(--tiktok-gradient);
+    flex-shrink: 1;
+}
+
     </style>
 </head>
 <body>
@@ -1176,156 +963,194 @@ button#convert-btn:disabled::before {
                 <p class="subtitle">Extract high-quality audio from TikTok videos in seconds</p>
             </header>
             
-            <div class="converter-wrapper">
-                <div class="form-group">
-                    <label for="tiktok-url">Paste TikTok Video URL</label>
-                    <div class="input-wrapper">
-                        <input type="text" id="tiktok-url" placeholder="https://www.tiktok.com/@username/video/1234567890" autocomplete="off">
-                        <button id="paste-btn" class="paste-btn" title="Paste from clipboard">
-                            <i class="fas fa-paste"></i>
-                        </button>
-                    </div>
+            <div class="form-group">
+                <label for="tiktok-url">Paste TikTok Video URL</label>
+                <div class="input-wrapper">
+                    <input type="text" id="tiktok-url" placeholder="https://www.tiktok.com/@username/video/1234567890" autocomplete="off">
+                    <button id="paste-btn" class="paste-btn" title="Paste from clipboard">
+                        <i class="fas fa-paste"></i>
+                    </button>
                 </div>
-                
-                <button id="convert-btn" class="convert-btn">Convert to MP3</button>
-                
-                <div id="progress-container" class="progress-container hidden">
-                    <div class="progress-text">
-                        <span id="progress-status">Preparing...</span>
-                        <span id="progress-percentage">0%</span>
-                    </div>
-                    <div class="progress-bar-outer">
-                        <div id="progress-bar-inner" class="progress-bar-inner"></div>
-                    </div>
+            </div>
+            
+            <button id="convert-btn">Convert to MP3</button>
+            
+            <div id="progress-container" class="progress-container">
+                <div class="progress-text">
+                    <span id="progress-status">Preparing...</span>
+                    <span id="progress-percentage">0%</span>
                 </div>
-                
-                <div id="status" class="status"></div>
-                
-                <div id="download-section" class="download-section hidden">
-                    <div class="audio-info">
-                        <p id="audio-title"><strong>Title:</strong> <span>Unknown</span></p>
-                        <p id="audio-author"><strong>Creator:</strong> <span>Unknown</span></p>
-                        <p id="audio-duration"><strong>Duration:</strong> <span>Unknown</span></p>
-                    </div>
-                    <a id="download-link" class="download-link" href="#" download>
-                        <i class="fas fa-download"></i> Download MP3
-                    </a>
+                <div class="progress-bar-outer">
+                    <div id="progress-bar-inner" class="progress-bar-inner"></div>
                 </div>
+            </div>
+            
+            <div id="status" class="status"></div>
+            
+            <div id="download-section" class="download-section">
+                <div class="audio-info">
+                    <p id="audio-title"><strong>Title:</strong> <span>Unknown</span></p>
+                    <p id="audio-author"><strong>Creator:</strong> <span>Unknown</span></p>
+                    <p id="audio-duration"><strong>Duration:</strong> <span>Unknown</span></p>
+                </div>
+                <a id="download-link" class="download-link" href="#" download>
+                    <i class="fas fa-download"></i> Download MP3
+                </a>
             </div>
         </div>
     </main>
 
     <!-- How to Use Section -->
-    <section class="how-to-use-section">
-        <div class="container">
-            <header class="section-header">
-                <h2>How to Use TokHaste MP3 Converter</h2>
-                <p class="subtitle">Extract audio from TikTok videos in just 3 simple steps</p>
-            </header>
+    <section class="how-to-use">
+        <div class="section-container">
+            <h2 class="section-title">How to Use <span class="highlight">TokHaste</span></h2>
             
             <div class="steps-container">
                 <div class="step-card">
                     <div class="step-icon">
                         <i class="fas fa-link"></i>
-                        <div class="step-number">1</div>
                     </div>
-                    <h3>Copy TikTok URL</h3>
-                    <p>Find your favorite TikTok video and copy the share link from the app or website.</p>
+                    <h3 class="step-title">Copy Link</h3>
+                    <p>Copy the TikTok video link from the app or website</p>
                 </div>
+                
+                <div class="step-connector"></div>
                 
                 <div class="step-card">
                     <div class="step-icon">
                         <i class="fas fa-paste"></i>
-                        <div class="step-number">2</div>
                     </div>
-                    <h3>Paste & Convert</h3>
-                    <p>Paste the URL into the input field above and click the "Convert to MP3" button.</p>
+                    <h3 class="step-title">Paste URL</h3>
+                    <p>Paste the link in the input field above</p>
                 </div>
+                
+                <div class="step-connector"></div>
                 
                 <div class="step-card">
                     <div class="step-icon">
                         <i class="fas fa-download"></i>
-                        <div class="step-number">3</div>
                     </div>
-                    <h3>Download MP3</h3>
-                    <p>Once conversion is complete, click "Download MP3" to save high-quality audio to your device.</p>
+                    <h3 class="step-title">Download</h3>
+                    <p>Click the download button and save your video</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- FAQ Section -->
-    <section class="faq-section">
-        <div class="container">
-            <header class="section-header">
-                <h2>Frequently Asked Questions</h2>
-                <p class="subtitle">Everything you need to know about TokHaste TikTok to MP3 converter</p>
-            </header>
-            
-            <div class="faq-container">
-                <details class="faq-item">
-                    <summary class="faq-question">
-                        <h3>Is TokHaste completely free to use?</h3>
-                        <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
-                    </summary>
-                    <div class="faq-answer">
-                        <p>Yes, TokHaste TikTok to MP3 converter is 100% free to use with no hidden charges. Convert as many TikTok videos to MP3 audio as you want without any limitations.</p>
-                    </div>
-                </details>
-                
-                <details class="faq-item">
-                    <summary class="faq-question">
-                        <h3>What audio quality does TokHaste provide?</h3>
-                        <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
-                    </summary>
-                    <div class="faq-answer">
-                        <p>TokHaste extracts audio at the highest possible quality from TikTok videos. Our converter maintains the original audio quality to deliver crystal-clear sound in MP3 format.</p>
-                    </div>
-                </details>
-                
-                <details class="faq-item">
-                    <summary class="faq-question">
-                        <h3>Is it legal to convert TikTok videos to MP3?</h3>
-                        <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
-                    </summary>
-                    <div class="faq-answer">
-                        <p>TokHaste is designed for personal use only. We encourage users to respect copyright laws and the intellectual property of content creators. Always obtain permission before using audio for commercial purposes.</p>
-                    </div>
-                </details>
-                
-                <details class="faq-item">
-                    <summary class="faq-question">
-                        <h3>Which TikTok videos can I convert to MP3?</h3>
-                        <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
-                    </summary>
-                    <div class="faq-answer">
-                        <p>TokHaste supports conversion of public TikTok videos. Private videos or those with restricted access cannot be processed. Simply ensure the video URL is from a public account and accessible to everyone.</p>
-                    </div>
-                </details>
-                
-                <details class="faq-item">
-                    <summary class="faq-question">
-                        <h3>How long does the conversion process take?</h3>
-                        <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
-                    </summary>
-                    <div class="faq-answer">
-                        <p>The TikTok to MP3 conversion typically takes just a few seconds. However, processing time may vary depending on the video length, your internet connection speed, and our server load.</p>
-                    </div>
-                </details>
-                
-                <details class="faq-item">
-                    <summary class="faq-question">
-                        <h3>Can I use TokHaste on mobile devices?</h3>
-                        <div class="faq-icon"><i class="fas fa-chevron-down"></i></div>
-                    </summary>
-                    <div class="faq-answer">
-                        <p>Absolutely! TokHaste is fully responsive and works seamlessly on smartphones, tablets, and desktop computers. Our mobile-friendly interface makes it easy to convert TikTok videos to MP3 on any device.</p>
-                    </div>
-                </details>
+<section class="faq" id="faq">
+    <div class="section-container">
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        
+        <div class="faq-container">
+            <!-- FAQ Item -->
+            <div class="faq-item">
+                <div class="faq-question" tabindex="0">
+                    <span>Is this TikTok downloader free to use?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, our <a href="https://tokhaste.com/" title="Free TikTok Video Downloader">TikTok video downloader</a> is 100% free to use with no hidden charges or subscription fees.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item -->
+            <div class="faq-item">
+                <div class="faq-question" tabindex="0">
+                    <span>Can I download TikTok videos without watermark?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Absolutely! Our tool allows you to download TikTok videos without watermark for a clean and professional look.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item -->
+            <div class="faq-item">
+                <div class="faq-question" tabindex="0">
+                    <span>Is there a limit to how many videos I can download?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>There is no daily limit. However, we encourage fair usage to keep the service fast and free for all users.</p>
+                </div>
+            </div>
+
+            <!-- FAQ Item -->
+            <div class="faq-item">
+                <div class="faq-question" tabindex="0">
+                    <span>Which devices are supported?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>You can use our downloader on all devices including <strong>Android, iOS, Windows, and Mac</strong> without any installations.</p>
+                </div>
+            </div>
+
+            <!-- New FAQ Items for SEO -->
+
+            <div class="faq-item">
+                <div class="faq-question" tabindex="0">
+                    <span>Do I need to log in or sign up?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>No login or registration is required. Just paste the video link and start downloading instantly.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" tabindex="0">
+                    <span>Is this TikTok video downloader safe?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, our platform is secure and respects your privacy. We do not store or track any user data. Read more on our <a href="https://tokhaste.com/privacypolicy" title="Privacy Policy">Privacy Policy</a> page.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" tabindex="0">
+                    <span>Can I download TikTok videos in HD quality?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes! We support high-definition downloads so you can enjoy TikTok videos in the best quality available.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" tabindex="0">
+                    <span>How do I download TikTok videos using this tool?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>It's easy! Copy the TikTok video URL, paste it into our <a href="https://tokhaste.com/" title="Online TikTok Video Downloader">TikTok downloader tool</a>, and click "Download".</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" tabindex="0">
+                    <span>Can I use this tool on iPhone or iPad?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, our tool works seamlessly on iPhone and iPad. For best results, use Safari or Chrome browser.</p>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" tabindex="0">
+                    <span>Do you support TikTok video audio downloads?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes, you can also extract and download TikTok video audio in MP3 format. Check out our <a href="/tiktok-audio-downloader" title="TikTok Audio Downloader">audio downloader</a>.</p>
+                </div>
             </div>
         </div>
-    </section>
-
+    </div>
+</section>
 
     <!-- Footer -->
     <footer class="footer">
@@ -1368,71 +1193,6 @@ button#convert-btn:disabled::before {
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-    // Get all FAQ items
-    const faqItems = document.querySelectorAll('.faq-item');
-    
-    // Add click event to each FAQ question
-    faqItems.forEach(item => {
-        const question = item.querySelector('.faq-question');
-        
-        question.addEventListener('click', () => {
-            // Toggle active class on the clicked item
-            const isActive = item.classList.contains('active');
-            
-            // Close all FAQ items first
-            faqItems.forEach(faq => {
-                faq.classList.remove('active');
-            });
-            
-            // If the clicked item wasn't already active, open it
-            if (!isActive) {
-                item.classList.add('active');
-            }
-        });
-    });
-    
-    // Initialize - open first FAQ item
-    if (faqItems.length > 0) {
-        faqItems[0].classList.add('active');
-    }
-    
-    // Animation for steps on scroll
-    const stepCards = document.querySelectorAll('.step-card');
-    const faqElements = document.querySelectorAll('.faq-item');
-    
-    // Check if element is in viewport
-    function isInViewport(element) {
-        const rect = element.getBoundingClientRect();
-        return (
-            rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.8
-        );
-    }
-    
-    // Function to handle the scroll animation
-    function handleScrollAnimation() {
-        // For step cards
-        stepCards.forEach(card => {
-            if (isInViewport(card)) {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }
-        });
-        
-        // For FAQ items
-        faqElements.forEach(item => {
-            if (isInViewport(item)) {
-                item.style.opacity = '1';
-            }
-        });
-    }
-    
-    // Initial check
-    handleScrollAnimation();
-    
-    // Listen for scroll events
-    window.addEventListener('scroll', handleScrollAnimation);
-});
        document.addEventListener('DOMContentLoaded', function() {
     // Cache DOM elements
     const elements = {
@@ -1524,6 +1284,38 @@ button#convert-btn:disabled::before {
             localStorage.setItem('darkMode', 'true');
         }
     }
+           // FAQ Accordion Functionality
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+            // Toggle active class on clicked question
+            question.classList.toggle('active');
+            
+            // Get the answer element
+            const answer = question.nextElementSibling;
+            
+            // Toggle visibility of answer
+            if (answer.style.maxHeight) {
+                answer.style.maxHeight = null;
+            } else {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+            }
+            
+            // Rotate chevron icon
+            const chevron = question.querySelector('.fa-chevron-down');
+            if (chevron) {
+                chevron.classList.toggle('rotate');
+            }
+        });
+
+        // Add keyboard support (Enter and Space key)
+        question.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                question.click();
+            }
+        });
+    });
 
     // Mobile menu functions
     function openMobileMenu() {
