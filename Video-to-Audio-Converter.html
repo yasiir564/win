@@ -2129,6 +2129,9 @@ body {
     const API_CONVERT = `${API_BASE}/convert`;
     const API_DOWNLOAD = `${API_BASE}/download`;
     
+    // Cloudflare Turnstile site key
+    const TURNSTILE_SITE_KEY = '0x4AAAAAABHoxdccCZ_9Cezk';
+    
     let selectedFile = null;
     let convertedFileName = null;
     let selectedFormat = 'mp3';
@@ -2137,6 +2140,8 @@ body {
     let progressTimer = null;
     let conversionPhase = 'idle';
     let conversionInProgress = false;
+    let turnstileWidget = null;
+    let turnstileToken = null;
     
     // Conversion status messages
     const conversionMessages = {
@@ -2163,6 +2168,59 @@ body {
             'Just a moment longer...'
         ]
     };
+
+    // Initialize Cloudflare Turnstile
+    function initTurnstile() {
+        // Create a container for Turnstile widget if it doesn't exist
+        let turnstileContainer = document.getElementById('turnstileContainer');
+        if (!turnstileContainer) {
+            turnstileContainer = document.createElement('div');
+            turnstileContainer.id = 'turnstileContainer';
+            // Insert before the convert button
+            convertBtn.parentNode.insertBefore(turnstileContainer, convertBtn);
+        }
+
+        // Render the Turnstile widget
+        if (window.turnstile) {
+            turnstileWidget = window.turnstile.render('#turnstileContainer', {
+                sitekey: TURNSTILE_SITE_KEY,
+                callback: function(token) {
+                    turnstileToken = token;
+                    logDebug('Turnstile token received');
+                    // Enable the convert button when token is received
+                    if (selectedFile) {
+                        convertBtn.disabled = false;
+                    }
+                },
+                'expired-callback': function() {
+                    turnstileToken = null;
+                    logDebug('Turnstile token expired');
+                    // Disable convert button if token expires
+                    convertBtn.disabled = true;
+                }
+            });
+        } else {
+            logDebug('Turnstile not loaded. Loading script...');
+            // Load Turnstile script if not already loaded
+            const script = document.createElement('script');
+            script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+            script.async = true;
+            script.onload = () => {
+                logDebug('Turnstile script loaded');
+                initTurnstile();
+            };
+            document.head.appendChild(script);
+        }
+    }
+
+    // Reset Turnstile widget
+    function resetTurnstile() {
+        if (window.turnstile && turnstileWidget) {
+            window.turnstile.reset(turnstileWidget);
+            turnstileToken = null;
+            logDebug('Turnstile widget reset');
+        }
+    }
 
     // Smooth scroll function for better UX
     function smoothScrollTo(element) {
@@ -2228,7 +2286,7 @@ body {
     
     // Convert button handler - Added visual feedback immediately when clicked
     convertBtn.addEventListener('click', () => {
-        if (selectedFile && !conversionInProgress) {
+        if (selectedFile && !conversionInProgress && turnstileToken) {
             // Immediate visual feedback
             convertBtn.disabled = true;
             convertBtn.textContent = 'Processing...';
@@ -2240,22 +2298,10 @@ body {
             updateProgressMessage();
             smoothScrollTo(progressContainer);
             
-            // Check rate limit before starting conversion
-            checkRateLimit()
-                .then(response => {
-                    if (response.allowed) {
-                        convertVideo(selectedFile);
-                    } else {
-                        showError(`Rate limit exceeded. Please try again in ${response.timeRemaining} minutes.`);
-                        showToast('Rate Limit', `You've reached your conversion limit. Please try again later.`, 'error');
-                        resetConvertButton();
-                    }
-                })
-                .catch(error => {
-                    logDebug(`Rate limit check error: ${error.message}`);
-                    // If rate limit check fails, proceed with conversion anyway
-                    convertVideo(selectedFile);
-                });
+            // Start conversion immediately
+            convertVideo(selectedFile);
+        } else if (!turnstileToken) {
+            showToast('Verification Required', 'Please complete the security verification', 'error');
         }
     });
     
@@ -2321,6 +2367,8 @@ body {
     convertAnother.addEventListener('click', (e) => {
         e.preventDefault();
         resetConverter();
+        // Reset Turnstile widget
+        resetTurnstile();
         // Scroll back to the upload section
         setTimeout(() => {
             smoothScrollTo(uploadContainer);
@@ -2331,6 +2379,8 @@ body {
     tryAgainBtn.addEventListener('click', () => {
         hideError();
         resetConverter();
+        // Reset Turnstile widget
+        resetTurnstile();
         // Scroll back to the upload section
         smoothScrollTo(uploadContainer);
     });
@@ -2413,28 +2463,6 @@ body {
         toast.classList.remove('show');
     });
     
-    // Check rate limit before allowing conversion
-    async function checkRateLimit() {
-        try {
-            const response = await fetch(API_CHECK_LIMIT, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                credentials: 'include' // Include cookies for session-based rate limiting
-            });
-            
-            if (!response.ok) {
-                throw new Error(`Server returned ${response.status}`);
-            }
-            
-            return await response.json();
-        } catch (error) {
-            logDebug(`Rate limit check failed: ${error.message}`);
-            throw error;
-        }
-    }
-    
     // Handle file selection
     function handleFileSelection(file) {
         if (!file) return;
@@ -2458,7 +2486,10 @@ body {
         fileName.textContent = file.name;
         fileSize.textContent = fileSizeFormatted;
         fileInfo.style.display = 'flex';
-        convertBtn.disabled = false;
+        
+        // Enable convert button only if Turnstile token is present
+        convertBtn.disabled = !turnstileToken;
+        
         hideError();
         
         // Hide result container when selecting a new file
@@ -2478,6 +2509,11 @@ body {
         formData.append('video', file);
         formData.append('format', selectedFormat);
         formData.append('bitrate', selectedBitrate);
+        
+        // Add Turnstile token to the form data
+        if (turnstileToken) {
+            formData.append('cf-turnstile-response', turnstileToken);
+        }
         
         // Set conversion in progress flag
         conversionInProgress = true;
@@ -2774,7 +2810,8 @@ body {
     
     // Initialize
     checkThemePreference();
-    logDebug('TokHaste converter initialized');
+    initTurnstile();
+    logDebug('TokHaste converter initialized with Turnstile protection');
 });
 </script>
 </body>
