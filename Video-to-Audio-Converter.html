@@ -66,6 +66,26 @@ body {
     display: flex;
     flex-direction: column;
 }
+        .section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 20px;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.highlight {
+    background: var(--tiktok-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
 
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
@@ -2309,7 +2329,40 @@ body {
         
         logDebug(`Theme toggled to ${document.body.classList.contains('dark-mode') ? 'dark' : 'light'} mode`);
     });
-    
+
+      // FAQ Accordion Functionality
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+            // Toggle active class on clicked question
+            question.classList.toggle('active');
+            
+            // Get the answer element
+            const answer = question.nextElementSibling;
+            
+            // Toggle visibility of answer
+            if (answer.style.maxHeight) {
+                answer.style.maxHeight = null;
+            } else {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+            }
+            
+            // Rotate chevron icon
+            const chevron = question.querySelector('.fa-chevron-down');
+            if (chevron) {
+                chevron.classList.toggle('rotate');
+            }
+        });
+
+        // Add keyboard support (Enter and Space key)
+        question.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                question.click();
+            }
+        });
+    });
+      
     // Mobile menu toggle
     mobileMenuToggle.addEventListener('click', () => {
         mobileMenu.classList.add('active');
