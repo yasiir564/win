@@ -1068,9 +1068,9 @@
             </button>
         </div>
         <div class="mobile-menu-links">
-            <a href="index.html" class="active">Home</a>
-            <a href="privacypolicy.html">Privacy</a>
-            <a href="Advertise.html">Advertise with us</a>
+            <a href="index.html" class="active">Tiktok Downloader</a>
+                <a href="Tiktok-to-MP3-Converter.html">TikTok to MP3 Converter</a>
+                <a href="Video-to-Audio-Converter.html">MP4 To Mp3 FREE</a>
         </div>
         <div class="mobile-menu-actions">
             <button class="mobile-menu-btn">Sign In</button>
@@ -1465,6 +1465,15 @@
         });
     });
 
+        // Sign In Button Functionality
+    const signInButton = document.querySelector('.btn-sign-in');
+    if (signInButton) {
+        signInButton.addEventListener('click', () => {
+            // Redirect to login page
+            window.location.href = 'login.html';
+        });
+    }
+        
     // Mobile menu functions
     function openMobileMenu() {
         elements.mobileMenu.classList.add('open');
