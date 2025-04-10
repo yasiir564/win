@@ -2437,211 +2437,250 @@ button {
 
     <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Cache DOM elements
+    const elements = {
+        darkModeToggle: document.getElementById('darkModeToggle'),
+        body: document.body,
+        urlInput: document.getElementById('urlInput'),
+        clearInputBtn: document.getElementById('clearInput'),
+        downloadBtn: document.getElementById('downloadBtn'),
+        resultDiv: document.getElementById('result'),
+        mobileMenuToggle: document.getElementById('mobileMenuToggle'),
+        navLinks: document.querySelector('.nav-links'),
+        signInButton: document.querySelector('.btn-sign-in'),
+        faqQuestions: document.querySelectorAll('.faq-question')
+    };
 
-    // Dark Mode Toggle
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    const body = document.body;
+    // Initialize dark mode from localStorage
+    initDarkMode();
 
-    // Initialize dark mode preference from localStorage
-    if (localStorage.getItem('darkMode') === 'enabled') {
-        body.classList.add('dark-mode');
-        updateDarkModeIcon(true);
+    // Set up event listeners
+    setupEventListeners();
+
+    // Setup input container enhancements
+    enhanceUrlInputContainer();
+
+    // Initialize background animation
+    animateBackgrounds();
+
+    // Focus the URL input if it exists
+    if (elements.urlInput) {
+        elements.urlInput.focus();
     }
 
-    // Dark mode toggle functionality
-    darkModeToggle?.addEventListener('click', function() {
-        body.classList.toggle('dark-mode');
-        
-        // Save preference to localStorage
-        if (body.classList.contains('dark-mode')) {
-            localStorage.setItem('darkMode', 'enabled');
+    /**
+     * Dark mode initialization
+     */
+    function initDarkMode() {
+        if (localStorage.getItem('darkMode') === 'enabled' && elements.body) {
+            elements.body.classList.add('dark-mode');
             updateDarkModeIcon(true);
-        } else {
-            localStorage.removeItem('darkMode');
-            updateDarkModeIcon(false);
         }
-    });
+    }
 
-    // Function to update dark mode toggle icon
+    /**
+     * Update dark mode toggle icon
+     */
     function updateDarkModeIcon(isDarkMode) {
-        const icon = darkModeToggle?.querySelector('i');
+        const icon = elements.darkModeToggle?.querySelector('i');
         if (icon) {
             icon.className = isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
         }
     }
 
-    // FAQ Accordion Functionality
-    const faqQuestions = document.querySelectorAll('.faq-question');
-    faqQuestions.forEach(question => {
-        question.addEventListener('click', () => {
-            // Toggle active class on clicked question
-            question.classList.toggle('active');
-            
-            // Get the answer element
-            const answer = question.nextElementSibling;
-            
-            // Toggle visibility of answer
-            if (answer.style.maxHeight) {
-                answer.style.maxHeight = null;
-            } else {
-                answer.style.maxHeight = answer.scrollHeight + 'px';
-            }
-            
-            // Rotate chevron icon
-            const chevron = question.querySelector('.fa-chevron-down');
-            if (chevron) {
-                chevron.classList.toggle('rotate');
-            }
-        });
+    /**
+     * Set up all event listeners
+     */
+    function setupEventListeners() {
+        // Dark mode toggle
+        elements.darkModeToggle?.addEventListener('click', toggleDarkMode);
 
-        // Add keyboard support (Enter and Space key)
-        question.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                question.click();
-            }
-        });
-    });
+        // FAQ accordion functionality
+        setupFaqAccordion();
 
-    // Mobile Menu Toggle
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    const navLinks = document.querySelector('.nav-links');
+        // Mobile menu toggle
+        setupMobileMenu();
 
-    mobileMenuToggle?.addEventListener('click', () => {
-        navLinks?.classList.toggle('mobile-active');
-        mobileMenuToggle.classList.toggle('active');
-        
-        // Toggle menu icon
-        const menuIcon = mobileMenuToggle.querySelector('i');
-        if (menuIcon) {
-            menuIcon.className = navLinks?.classList.contains('mobile-active') 
-                ? 'fas fa-times' 
-                : 'fas fa-bars';
-        }
-    });
-
-    // Sign In Button Functionality
-    const signInButton = document.querySelector('.btn-sign-in');
-    if (signInButton) {
-        signInButton.addEventListener('click', () => {
-            // Redirect to login page
+        // Sign in button
+        elements.signInButton?.addEventListener('click', () => {
             window.location.href = 'login.html';
         });
-    }
 
-    // Enhance URL Input Container with Paste Button
-    const urlInput = document.getElementById('urlInput');
-    let urlInputContainer;
-    
-    if (urlInput) {
-        urlInputContainer = urlInput.parentElement;
-        urlInputContainer.classList.add('url-input-container');
-    }
-    
-    // Input Clear Button Functionality
-    const clearInputBtn = document.getElementById('clearInput');
+        // URL input and download button
+        if (elements.urlInput && elements.downloadBtn) {
+            // Clear button functionality
+            setupClearButton();
 
-    if (urlInput && clearInputBtn) {
-        clearInputBtn.addEventListener('click', () => {
-            urlInput.value = '';
-            urlInput.focus();
-            clearInputBtn.style.display = 'none';
-        });
-
-        // Show/hide clear button based on input
-        urlInput.addEventListener('input', () => {
-            clearInputBtn.style.display = urlInput.value ? 'block' : 'none';
-        });
-    }
-
-    // Add Paste Button next to URL input if not already present
-    if (urlInput && !document.getElementById('pasteButton') && urlInputContainer) {
-        const pasteButton = document.createElement('button');
-        pasteButton.id = 'pasteButton';
-        pasteButton.innerHTML = '<i class="fas fa-paste"></i> Paste';
-        pasteButton.setAttribute('aria-label', 'Paste TikTok URL');
-        pasteButton.setAttribute('type', 'button');
-        
-        urlInputContainer.appendChild(pasteButton);
-        
-        // Add paste functionality
-        pasteButton.addEventListener('click', async () => {
-            try {
-                const clipboardText = await navigator.clipboard.readText();
-                urlInput.value = clipboardText;
-                urlInput.focus();
-                
-                // Automatically validate and download if a TikTok URL is pasted
-                if (clipboardText.includes('tiktok.com')) {
+            // URL paste detection
+            elements.urlInput.addEventListener('paste', handlePaste);
+            
+            // Enter key press in URL input
+            elements.urlInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
                     downloadTikTok();
                 }
+            });
+
+            // Download button click
+            elements.downloadBtn.addEventListener('click', downloadTikTok);
+        }
+
+        // Handle page visibility changes for video playback
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+    }
+
+    /**
+     * Toggle dark mode
+     */
+    function toggleDarkMode() {
+        elements.body.classList.toggle('dark-mode');
+        
+        const isDarkMode = elements.body.classList.contains('dark-mode');
+        localStorage.setItem('darkMode', isDarkMode ? 'enabled' : '');
+        updateDarkModeIcon(isDarkMode);
+    }
+
+    /**
+     * Set up the FAQ accordion functionality
+     */
+    function setupFaqAccordion() {
+        elements.faqQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                // Toggle active class
+                question.classList.toggle('active');
                 
-                // Show clear button
-                clearInputBtn.style.display = 'block';
-            } catch (err) {
-                console.error('Failed to read clipboard:', err);
-                showSweetAlert('Failed to paste URL', 'The app was unable to access your clipboard. Please check your browser permissions.', 'error');
+                // Toggle answer visibility
+                const answer = question.nextElementSibling;
+                answer.style.maxHeight = answer.style.maxHeight ? null : `${answer.scrollHeight}px`;
+                
+                // Rotate chevron icon
+                const chevron = question.querySelector('.fa-chevron-down');
+                if (chevron) {
+                    chevron.classList.toggle('rotate');
+                }
+            });
+
+            // Add keyboard accessibility
+            question.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    question.click();
+                }
+            });
+        });
+    }
+
+    /**
+     * Set up mobile menu functionality
+     */
+    function setupMobileMenu() {
+        elements.mobileMenuToggle?.addEventListener('click', () => {
+            elements.navLinks?.classList.toggle('mobile-active');
+            elements.mobileMenuToggle.classList.toggle('active');
+            
+            // Toggle menu icon
+            const menuIcon = elements.mobileMenuToggle.querySelector('i');
+            if (menuIcon) {
+                menuIcon.className = elements.navLinks?.classList.contains('mobile-active') 
+                    ? 'fas fa-times' 
+                    : 'fas fa-bars';
             }
         });
     }
 
-    // Scroll to result area function
-    function scrollToResult() {
-        const resultDiv = document.getElementById('result');
-        if (resultDiv) {
-            // Add small delay to ensure content is rendered before scrolling
-            setTimeout(() => {
-                resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 300);
+    /**
+     * Set up clear button functionality
+     */
+    function setupClearButton() {
+        if (elements.clearInputBtn && elements.urlInput) {
+            elements.clearInputBtn.addEventListener('click', () => {
+                elements.urlInput.value = '';
+                elements.urlInput.focus();
+                elements.clearInputBtn.style.display = 'none';
+            });
+
+            // Show/hide clear button based on input
+            elements.urlInput.addEventListener('input', () => {
+                elements.clearInputBtn.style.display = elements.urlInput.value ? 'block' : 'none';
+            });
         }
     }
 
-    // Function to trigger automatic file download without redirect
-    function triggerDownload(url, filename) {
-        fetch(url)
-            .then(response => response.blob())
-            .then(blob => {
-                const blobUrl = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.href = blobUrl;
-                link.download = filename || 'tiktok-video.mp4';
-                link.style.display = 'none';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(blobUrl);
-            })
-            .catch(error => {
-                console.error('Download error:', error);
-                showSweetAlert('Download failed', 'The video could not be downloaded. Please try again.', 'error');
-            });
-    }
-
-    // Function to show SweetAlert notifications
-    function showSweetAlert(title, text, icon = 'success') {
-        Swal.fire({
-            title: title,
-            text: text,
-            icon: icon,
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: icon === 'error' ? 5000 : 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer);
-                toast.addEventListener('mouseleave', Swal.resumeTimer);
+    /**
+     * Handle paste event for URL input
+     */
+    function handlePaste() {
+        setTimeout(function() {
+            const url = elements.urlInput.value.trim();
+            if (url && url.includes('tiktok.com')) {
+                downloadTikTok();
             }
-        });
+        }, 100);
     }
 
-    // Function to extract video ID from TikTok URL for filename
-    function extractVideoIdFromUrl(url) {
-        const matches = url.match(/video\/(\d+)/);
-        return matches && matches[1] ? `tiktok-${matches[1]}.mp4` : 'tiktok-video.mp4';
+    /**
+     * Handle visibility change for video playback
+     */
+    function handleVisibilityChange() {
+        if (document.visibilityState === 'visible') {
+            const videoPlayer = document.querySelector('.tiktok-video-player');
+            if (videoPlayer) {
+                videoPlayer.play().catch(err => {
+                    console.log('Auto-play prevented by browser:', err);
+                });
+            }
+        }
     }
 
-    // Create TikTok-style loader
+    /**
+     * Enhance URL input container with paste button
+     */
+    function enhanceUrlInputContainer() {
+        if (!elements.urlInput) return;
+
+        const urlInputContainer = elements.urlInput.parentElement;
+        if (!urlInputContainer) return;
+        
+        urlInputContainer.classList.add('url-input-container');
+        
+        // Add Paste Button if not already present
+        if (!document.getElementById('pasteButton')) {
+            const pasteButton = document.createElement('button');
+            pasteButton.id = 'pasteButton';
+            pasteButton.innerHTML = '<i class="fas fa-paste"></i> Paste';
+            pasteButton.setAttribute('aria-label', 'Paste TikTok URL');
+            pasteButton.setAttribute('type', 'button');
+            
+            urlInputContainer.appendChild(pasteButton);
+            
+            // Add paste functionality
+            pasteButton.addEventListener('click', async () => {
+                try {
+                    const clipboardText = await navigator.clipboard.readText();
+                    elements.urlInput.value = clipboardText;
+                    elements.urlInput.focus();
+                    
+                    // Show clear button
+                    if (elements.clearInputBtn) {
+                        elements.clearInputBtn.style.display = 'block';
+                    }
+                    
+                    // Automatically validate and download if a TikTok URL is pasted
+                    if (clipboardText.includes('tiktok.com')) {
+                        downloadTikTok();
+                    }
+                } catch (err) {
+                    console.error('Failed to read clipboard:', err);
+                    showSweetAlert('Failed to paste URL', 'The app was unable to access your clipboard. Please check your browser permissions.', 'error');
+                }
+            });
+        }
+    }
+
+    /**
+     * Create TikTok-style loader animation
+     */
     function createTikTokLoader() {
         return `
             <div class="loading-container">
@@ -2677,48 +2716,141 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
     }
 
-    // Make createTikTokLoader globally available
-    window.createTikTokLoader = createTikTokLoader;
+    /**
+     * Animate background elements
+     */
+    function animateBackgrounds() {
+        const circles = document.querySelectorAll('.bg-circle');
+        circles.forEach(circle => {
+            const randomDuration = 15 + Math.random() * 10;
+            const randomDelay = Math.random() * 5;
+            circle.style.animationDuration = `${randomDuration}s`;
+            circle.style.animationDelay = `${randomDelay}s`;
+        });
+    }
 
-    // TikTok Download Function
-    async function downloadTikTok() {
-        const urlInput = document.getElementById('urlInput');
-        const resultDiv = document.getElementById('result');
+    /**
+     * Scroll to result area
+     */
+    function scrollToResult() {
+        if (elements.resultDiv) {
+            setTimeout(() => {
+                elements.resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        }
+    }
+
+    /**
+     * Extract video ID from TikTok URL for filename
+     */
+    function extractVideoIdFromUrl(url) {
+        const matches = url.match(/video\/(\d+)/);
+        return matches && matches[1] ? `tiktok-${matches[1]}.mp4` : 'tiktok-video.mp4';
+    }
+
+    /**
+     * Format large numbers for display
+     */
+    function formatNumber(num) {
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(1) + 'M';
+        } else if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+        }
+        return num;
+    }
+
+    /**
+     * Show SweetAlert notifications
+     */
+    function showSweetAlert(title, text, icon = 'success') {
+        if (typeof Swal === 'undefined') {
+            console.error('SweetAlert2 is not loaded');
+            alert(`${title}: ${text}`);
+            return;
+        }
         
-        if (!urlInput || !resultDiv) {
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: icon,
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: icon === 'error' ? 5000 : 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
+        });
+    }
+
+    /**
+     * Trigger file download
+     */
+    function triggerDownload(url, filename) {
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const blobUrl = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                link.download = filename || 'tiktok-video.mp4';
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(blobUrl);
+            })
+            .catch(error => {
+                console.error('Download error:', error);
+                showSweetAlert('Download failed', 'The video could not be downloaded. Please try again.', 'error');
+            });
+    }
+
+    /**
+     * Main function to download TikTok videos
+     */
+    async function downloadTikTok() {
+        if (!elements.urlInput || !elements.resultDiv) {
             console.error('Required elements not found in the DOM');
             return;
         }
         
-        const url = urlInput.value.trim();
+        const url = elements.urlInput.value.trim();
         
         if (!url) {
             showSweetAlert('Missing URL', 'Please enter a TikTok video URL in the input field.', 'error');
-            urlInput.focus();
+            elements.urlInput.focus();
             return;
         }
         
         // Basic URL validation
         if (!url.includes('tiktok.com')) {
             showSweetAlert('Invalid URL format', 'Please enter a valid TikTok URL (e.g., https://www.tiktok.com/@username/video/123456789)', 'error');
-            urlInput.focus();
+            elements.urlInput.focus();
             return;
         }
         
-        // Use the complete WordPress REST API endpoint
+        // API endpoint
         const apiEndpoint = 'https://denmara.com/wp-json/tiktok/v1/download';
         
         // Disable input and button during processing
-        urlInput.disabled = true;
-        const downloadBtn = document.getElementById('downloadBtn');
-        if (downloadBtn) {
-            downloadBtn.disabled = true;
+        elements.urlInput.disabled = true;
+        if (elements.downloadBtn) {
+            elements.downloadBtn.disabled = true;
         }
         
-        // Show loading state with TikTok-like animation
-        resultDiv.innerHTML = createTikTokLoader();
+        // Show loading state
+        elements.resultDiv.innerHTML = createTikTokLoader();
         
-        // Scroll to result area to show the loading animation
+        // Scroll to result area
         scrollToResult();
         
         try {
@@ -2732,9 +2864,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const response = await fetch(apiEndpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    url: url
-                }),
+                body: JSON.stringify({ url: url }),
                 signal: controller.signal
             });
             
@@ -2800,18 +2930,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const comments = data.comments || 0;
             const shares = data.shares || 0;
             
-            // Format large numbers
-            const formatNumber = (num) => {
-                if (num >= 1000000) {
-                    return (num / 1000000).toFixed(1) + 'M';
-                } else if (num >= 1000) {
-                    return (num / 1000).toFixed(1) + 'K';
-                }
-                return num;
-            };
-            
             // Create modern TikTok-style video display with engagement metrics
-            resultDiv.innerHTML = `
+            elements.resultDiv.innerHTML = `
                 <div class="tiktok-video-container">
                     <div class="video-player-section">
                         <video controls autoplay class="tiktok-video-player" poster="${data.cover_url || ''}">
@@ -2858,14 +2978,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
             
-            // Scroll to result area again to show the video
+            // Scroll to result area
             scrollToResult();
                         
             // Clear the input field for next use
-            urlInput.value = '';
-            const clearInputBtn = document.getElementById('clearInput');
-            if (clearInputBtn) {
-                clearInputBtn.style.display = 'none';
+            elements.urlInput.value = '';
+            if (elements.clearInputBtn) {
+                elements.clearInputBtn.style.display = 'none';
             }
             
         } catch (error) {
@@ -2883,7 +3002,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show error notification
             showSweetAlert(errorMessage, errorDetails, 'error');
             
-            resultDiv.innerHTML = `
+            elements.resultDiv.innerHTML = `
                 <div class="error-container">
                     <div class="error-icon">
                         <i class="fas fa-exclamation-circle"></i>
@@ -2900,13 +3019,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
             
-            // Scroll to result area to show the error
+            // Scroll to result area
             scrollToResult();
         } finally {
             // Re-enable input and button
-            urlInput.disabled = false;
-            if (downloadBtn) {
-                downloadBtn.disabled = false;
+            elements.urlInput.disabled = false;
+            if (elements.downloadBtn) {
+                elements.downloadBtn.disabled = false;
             }
         }
     }
@@ -2915,56 +3034,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.downloadTikTok = downloadTikTok;
     window.triggerDownload = triggerDownload;
     window.scrollToResult = scrollToResult;
-
-    // Auto-detect and process URLs as they're pasted
-    const downloadBtn = document.getElementById('downloadBtn');
-    if (urlInput && downloadBtn) {
-        urlInput.addEventListener('paste', function(e) {
-            setTimeout(function() {
-                const url = urlInput.value.trim();
-                if (url && url.includes('tiktok.com')) {
-                    downloadTikTok();
-                }
-            }, 100);
-        });
-        
-        urlInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                downloadTikTok();
-            }
-        });
-
-        downloadBtn.addEventListener('click', downloadTikTok);
-
-        urlInput.focus();
-    }
-
-    // Cool floating background effect
-    animateBackgrounds();
-
-    function animateBackgrounds() {
-        const circles = document.querySelectorAll('.bg-circle');
-        circles.forEach(circle => {
-            const randomDuration = 15 + Math.random() * 10;
-            const randomDelay = Math.random() * 5;
-            circle.style.animationDuration = `${randomDuration}s`;
-            circle.style.animationDelay = `${randomDelay}s`;
-        });
-    }
-
-    // Add event listener for page visibility changes
-    // This helps resume video playback if the user switches tabs and returns
-    document.addEventListener('visibilitychange', function() {
-        if (document.visibilityState === 'visible') {
-            const videoPlayer = document.querySelector('.tiktok-video-player');
-            if (videoPlayer) {
-                videoPlayer.play().catch(err => {
-                    console.log('Auto-play prevented by browser:', err);
-                });
-            }
-        }
-    });
+    window.createTikTokLoader = createTikTokLoader;
 });
     </script>
 
