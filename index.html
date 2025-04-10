@@ -467,22 +467,31 @@ button {
     color: #666;
 }
 
-/* FAQ Section */
+ /* FAQ Section */
 .faq {
-    background-color: var(--tiktok-light-gray);
+    background-color: var(--section-bg);
+    padding: 2rem 0;
+    transition: var(--transition);
 }
 
 .faq-container {
     max-width: 800px;
     margin: 0 auto;
+    padding: 0 1rem;
 }
 
 .faq-item {
-    background-color: white;
+    background-color: var(--faq-bg);
     border-radius: var(--border-radius);
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 1.25rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     overflow: hidden;
+    transition: box-shadow 0.4s ease, transform 0.3s ease;
+}
+
+.faq-item:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
 }
 
 .faq-question {
@@ -493,26 +502,59 @@ button {
     cursor: pointer;
     font-weight: 600;
     font-size: 1.1rem;
+    color: var(--text-primary);
+    transition: color 0.3s ease, background-color 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.faq-question:hover {
+    color: #ff0050;
+}
+
+.faq-question::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--tiktok-gradient);
+    transition: width 0.3s ease;
+    z-index: -1;
+}
+
+.faq-question:hover::after {
+    width: 100%;
 }
 
 .faq-question i {
-    transition: transform 0.3s ease;
+    transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    color: var(--text-secondary);
+}
+
+.faq-question:hover i {
+    color: #00f2ea;
 }
 
 .faq-question.active i {
     transform: rotate(180deg);
+    color: #00f2ea;
 }
 
 .faq-answer {
     padding: 0 1.5rem;
     height: 0;
     overflow: hidden;
-    transition: all 0.3s ease;
+    color: var(--text-secondary);
+    transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    opacity: 0;
 }
 
 .faq-question.active + .faq-answer {
     padding: 0 1.5rem 1.5rem;
     height: auto;
+    opacity: 1;
 }
 
 /* Notification */
