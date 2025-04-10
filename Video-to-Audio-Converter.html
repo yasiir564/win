@@ -2493,20 +2493,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Handle file selection with new size and duration checks
+    // Handle file selection with only duration check
     function handleFileSelection(file) {
         if (!file) return;
         
         // Check if the file is a video
         if (!file.type.startsWith('video/')) {
             showError('Please select a video file.');
-            return;
-        }
-        
-        // Check file size (15MB max)
-        const maxSize = 15 * 1024 * 1024; // 15MB in bytes
-        if (file.size > maxSize) {
-            showError('File size exceeds the 15MB limit. Please upload a video that is 15MB or less.');
             return;
         }
         
@@ -2520,12 +2513,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                // If both checks pass, proceed with file selection
+                // If duration check passes, proceed with file selection
                 proceedWithFileSelection(file);
             })
             .catch(error => {
                 logDebug(`Error checking duration: ${error.message}`);
-                // If we can't check duration, continue with file selection based on size only
+                // If we can't check duration, continue with file selection
                 proceedWithFileSelection(file);
             });
     }
