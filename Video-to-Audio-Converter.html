@@ -1742,6 +1742,406 @@ body {
     height: auto;
     opacity: 1;
 }
+      /* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(37, 244, 238, 0.3), 0 0 10px rgba(254, 44, 85, 0.2); }
+    50% { box-shadow: 0 0 20px rgba(37, 244, 238, 0.5), 0 0 30px rgba(254, 44, 85, 0.4); }
+    100% { box-shadow: 0 0 5px rgba(37, 244, 238, 0.3), 0 0 10px rgba(254, 44, 85, 0.2); }
+}
+
+@keyframes slide-in {
+    0% { transform: translateY(20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Common Styles for New Sections */
+.format-comparison,
+.choosing-format,
+.supported-devices,
+.audio-needs {
+    padding: 60px 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+
+.section-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 700;
+}
+
+.section-title .highlight {
+    background: var(--tiktok-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Format Comparison Section */
+.format-grid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.format-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    padding: 30px;
+    flex: 1;
+    max-width: 400px;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.format-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    animation: glow 1.5s infinite;
+}
+
+.format-icon {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    color: var(--tiktok-blue);
+    background: var(--tiktok-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.format-vs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--tiktok-gradient);
+    color: var(--tiktok-white);
+    font-size: 1.2rem;
+    font-weight: 700;
+    animation: pulse 3s infinite;
+    box-shadow: 0 5px 15px rgba(254, 44, 85, 0.3);
+}
+
+.format-features {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    text-align: left;
+}
+
+.format-features li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.format-features i {
+    color: var(--tiktok-blue);
+    margin-right: 10px;
+}
+
+/* Choosing Format Section */
+.choice-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+}
+
+.choice-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    padding: 30px;
+    flex: 1;
+    min-width: 300px;
+    max-width: 450px;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+}
+
+.choice-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.choice-icon {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    width: 70px;
+    height: 70px;
+    background: var(--tiktok-gradient);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 20px;
+    color: var(--tiktok-white);
+}
+
+.choice-list {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.choice-list li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.choice-list i {
+    color: var(--tiktok-red);
+    margin-right: 10px;
+}
+
+.choice-cta {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.choice-btn {
+    width: 100%;
+    transition: var(--transition);
+}
+
+.choice-btn:hover {
+    background: var(--tiktok-gradient);
+    color: var(--tiktok-white);
+    border-color: transparent;
+}
+
+/* Supported Devices Section */
+.device-subtitle {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.device-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-bottom: 50px;
+}
+
+.device-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 25px;
+    text-align: center;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+}
+
+.device-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border-color: var(--tiktok-blue);
+}
+
+.device-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: var(--tiktok-blue);
+    animation: float 3s infinite ease-in-out;
+}
+
+.platform-banner {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+    margin-top: 40px;
+    padding: 30px;
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+}
+
+.platform-icon {
+    font-size: 2rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    transition: var(--transition);
+}
+
+.platform-icon:hover {
+    transform: scale(1.2);
+    opacity: 1;
+    color: var(--tiktok-red);
+}
+
+/* Audio Needs Section */
+.needs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.need-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 30px;
+    text-align: center;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: slide-in 0.5s ease-out;
+    animation-fill-mode: both;
+}
+
+.need-card:hover {
+    transform: translateY(-5px);
+    border-color: transparent;
+    background: linear-gradient(var(--card-bg), var(--card-bg)) padding-box,
+                var(--tiktok-gradient) border-box;
+    border: 1px solid transparent;
+}
+
+.need-icon {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--tiktok-light-gray);
+    color: var(--tiktok-red);
+    transition: var(--transition);
+}
+
+.need-card:hover .need-icon {
+    background: var(--tiktok-gradient);
+    color: var(--tiktok-white);
+}
+
+.need-card h3 {
+    margin: 15px 0;
+    font-weight: 600;
+}
+
+.need-card p {
+    color: var(--text-color);
+    opacity: 0.8;
+    line-height: 1.6;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    .format-grid {
+        flex-direction: column;
+    }
+    
+    .format-vs {
+        margin: 20px 0;
+    }
+    
+    .section-title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .choice-cards {
+        flex-direction: column;
+    }
+    
+    .choice-card {
+        max-width: 100%;
+    }
+    
+    .device-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    
+    .needs-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animation Delays for Staggered Entrance */
+.format-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.format-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.device-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.device-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.device-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.device-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.need-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.need-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.need-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.need-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.need-card:nth-child(5) {
+    animation-delay: 0.5s;
+}
+
+.need-card:nth-child(6) {
+    animation-delay: 0.6s;
+}
     </style>
 </head>
 <body>
@@ -1921,6 +2321,218 @@ body {
                 </div>
                 <h3 class="step-title">Download</h3>
                 <p>Click the download button and save your audio file</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+      <!-- Understanding MP4 and MP3 Section -->
+<section class="format-comparison animate__animated animate__fadeIn">
+    <div class="section-container">
+        <h2 class="section-title">Understanding <span class="highlight">MP4 and MP3</span>: What's the Difference?</h2>
+        
+        <div class="format-grid">
+            <div class="format-card">
+                <div class="format-icon">
+                    <i class="fas fa-film"></i>
+                </div>
+                <h3>MP4 Format</h3>
+                <p>MP4 is a <strong>container format</strong> that can store video, audio, and subtitles. It's the standard for online video sharing and streaming platforms.</p>
+                <ul class="format-features">
+                    <li><i class="fas fa-check-circle"></i> Contains video and audio</li>
+                    <li><i class="fas fa-check-circle"></i> Excellent quality</li>
+                    <li><i class="fas fa-check-circle"></i> Larger file size</li>
+                </ul>
+            </div>
+            
+            <div class="format-vs">
+                <span>VS</span>
+            </div>
+            
+            <div class="format-card">
+                <div class="format-icon">
+                    <i class="fas fa-music"></i>
+                </div>
+                <h3>MP3 Format</h3>
+                <p>MP3 is an <strong>audio-only format</strong> that compresses sound files while maintaining good quality. Perfect for music and podcast listening.</p>
+                <ul class="format-features">
+                    <li><i class="fas fa-check-circle"></i> Audio only</li>
+                    <li><i class="fas fa-check-circle"></i> Smaller file size</li>
+                    <li><i class="fas fa-check-circle"></i> Universal compatibility</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Choosing Between MP4 and MP3 Section -->
+<section class="choosing-format animate__animated animate__fadeIn">
+    <div class="section-container">
+        <h2 class="section-title">Choosing Between <span class="highlight">MP4 and MP3</span></h2>
+        
+        <div class="choice-cards">
+            <div class="choice-card">
+                <div class="choice-icon">
+                    <i class="fas fa-headphones-alt"></i>
+                </div>
+                <h3>Choose MP3 When:</h3>
+                <ul class="choice-list">
+                    <li><i class="fas fa-check"></i> You only need the audio portion</li>
+                    <li><i class="fas fa-check"></i> You want to save storage space</li>
+                    <li><i class="fas fa-check"></i> You're creating a music playlist</li>
+                    <li><i class="fas fa-check"></i> You need maximum device compatibility</li>
+                </ul>
+                <div class="choice-cta">
+                    <button class="btn btn-outline choice-btn">
+                        <i class="fas fa-exchange-alt"></i>
+                        Convert to MP3
+                    </button>
+                </div>
+            </div>
+            
+            <div class="choice-card">
+                <div class="choice-icon">
+                    <i class="fas fa-video"></i>
+                </div>
+                <h3>Keep MP4 When:</h3>
+                <ul class="choice-list">
+                    <li><i class="fas fa-check"></i> You need both video and audio</li>
+                    <li><i class="fas fa-check"></i> Visual content is important</li>
+                    <li><i class="fas fa-check"></i> You're sharing on social media</li>
+                    <li><i class="fas fa-check"></i> You need the highest quality</li>
+                </ul>
+                <div class="choice-cta">
+                    <button class="btn btn-outline choice-btn">
+                        <i class="fas fa-film"></i>
+                        Keep Original
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Supported Devices and Platforms Section -->
+<section class="supported-devices animate__animated animate__fadeIn">
+    <div class="section-container">
+        <h2 class="section-title">Supported <span class="highlight">Devices and Platforms</span></h2>
+        <p class="device-subtitle">Our converter works seamlessly across all your favorite devices and platforms</p>
+        
+        <div class="device-grid">
+            <div class="device-card">
+                <div class="device-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3>Mobile</h3>
+                <p>Convert on the go with full support for iOS and Android devices</p>
+            </div>
+            
+            <div class="device-card">
+                <div class="device-icon">
+                    <i class="fas fa-laptop"></i>
+                </div>
+                <h3>Desktop</h3>
+                <p>Full functionality on Windows, Mac, and Linux computers</p>
+            </div>
+            
+            <div class="device-card">
+                <div class="device-icon">
+                    <i class="fas fa-tablet-alt"></i>
+                </div>
+                <h3>Tablets</h3>
+                <p>Perfect for iPad, Samsung Galaxy Tab, and other tablets</p>
+            </div>
+            
+            <div class="device-card">
+                <div class="device-icon">
+                    <i class="fab fa-chrome"></i>
+                </div>
+                <h3>Browsers</h3>
+                <p>Works on Chrome, Safari, Firefox, Edge, and Opera</p>
+            </div>
+        </div>
+        
+        <div class="platform-banner">
+            <div class="platform-icon">
+                <i class="fab fa-apple"></i>
+            </div>
+            <div class="platform-icon">
+                <i class="fab fa-android"></i>
+            </div>
+            <div class="platform-icon">
+                <i class="fab fa-windows"></i>
+            </div>
+            <div class="platform-icon">
+                <i class="fab fa-linux"></i>
+            </div>
+            <div class="platform-icon">
+                <i class="fab fa-chrome"></i>
+            </div>
+            <div class="platform-icon">
+                <i class="fab fa-firefox"></i>
+            </div>
+            <div class="platform-icon">
+                <i class="fab fa-safari"></i>
+            </div>
+            <div class="platform-icon">
+                <i class="fab fa-edge"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Perfect for All Your Audio Needs Section -->
+<section class="audio-needs animate__animated animate__fadeIn">
+    <div class="section-container">
+        <h2 class="section-title">Perfect for All Your <span class="highlight">Audio Needs</span></h2>
+        
+        <div class="needs-grid">
+            <div class="need-card">
+                <div class="need-icon">
+                    <i class="fas fa-podcast"></i>
+                </div>
+                <h3>Podcast Creation</h3>
+                <p>Extract audio from interviews and video content to create engaging podcasts</p>
+            </div>
+            
+            <div class="need-card">
+                <div class="need-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3>Learning Materials</h3>
+                <p>Convert educational videos to audio for on-the-go learning experiences</p>
+            </div>
+            
+            <div class="need-card">
+                <div class="need-icon">
+                    <i class="fas fa-music"></i>
+                </div>
+                <h3>Music Collection</h3>
+                <p>Extract music from videos to build your personal music library</p>
+            </div>
+            
+            <div class="need-card">
+                <div class="need-icon">
+                    <i class="fas fa-microphone-alt"></i>
+                </div>
+                <h3>Voice Recordings</h3>
+                <p>Save important voice recordings from video conferences and meetings</p>
+            </div>
+            
+            <div class="need-card">
+                <div class="need-icon">
+                    <i class="fas fa-language"></i>
+                </div>
+                <h3>Language Learning</h3>
+                <p>Extract audio from language tutorials for practicing on the move</p>
+            </div>
+            
+            <div class="need-card">
+                <div class="need-icon">
+                    <i class="fas fa-book-reader"></i>
+                </div>
+                <h3>Audiobooks</h3>
+                <p>Convert video narrations into audio files for your audiobook collection</p>
             </div>
         </div>
     </div>
