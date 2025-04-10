@@ -2093,7 +2093,7 @@ body {
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     // Elements
     const uploadContainer = document.getElementById('uploadContainer');
     const fileInput = document.getElementById('fileInput');
@@ -2463,7 +2463,37 @@ body {
         toast.classList.remove('show');
     });
     
-    // Handle file selection
+    // Function to check video duration
+    function checkVideoDuration(file) {
+        return new Promise((resolve, reject) => {
+            // Create a temporary URL for the video file
+            const videoUrl = URL.createObjectURL(file);
+            const video = document.createElement('video');
+            
+            video.onloadedmetadata = () => {
+                // Get video duration in seconds
+                const duration = video.duration;
+                
+                // Clean up
+                URL.revokeObjectURL(videoUrl);
+                
+                resolve(duration);
+            };
+            
+            video.onerror = () => {
+                // Clean up
+                URL.revokeObjectURL(videoUrl);
+                
+                // Resolve with a very high duration to force size-based validation
+                // in case we can't determine duration
+                reject(new Error("Couldn't determine video duration"));
+            };
+            
+            video.src = videoUrl;
+        });
+    }
+    
+    // Handle file selection with new size and duration checks
     function handleFileSelection(file) {
         if (!file) return;
         
@@ -2473,13 +2503,35 @@ body {
             return;
         }
         
-        // Check file size (500MB max)
-        const maxSize = 500 * 1024 * 1024; // 500MB in bytes
+        // Check file size (15MB max)
+        const maxSize = 15 * 1024 * 1024; // 15MB in bytes
         if (file.size > maxSize) {
-            showError('File size exceeds the 500MB limit.');
+            showError('File size exceeds the 15MB limit. Please upload a video that is 15MB or less.');
             return;
         }
         
+        // Check video duration (3 minutes max)
+        checkVideoDuration(file)
+            .then(duration => {
+                const maxDuration = 3 * 60; // 3 minutes in seconds
+                
+                if (duration > maxDuration) {
+                    showError('Video duration exceeds the 3-minute limit. Please upload a shorter video.');
+                    return;
+                }
+                
+                // If both checks pass, proceed with file selection
+                proceedWithFileSelection(file);
+            })
+            .catch(error => {
+                logDebug(`Error checking duration: ${error.message}`);
+                // If we can't check duration, continue with file selection based on size only
+                proceedWithFileSelection(file);
+            });
+    }
+    
+    // Proceed with file selection after validation
+    function proceedWithFileSelection(file) {
         // Update UI with file info
         selectedFile = file;
         const fileSizeFormatted = formatFileSize(file.size);
