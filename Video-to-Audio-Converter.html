@@ -1191,7 +1191,7 @@ body {
             opacity: 1;
         }
 
-    /* Mobile Menu */
+   /* Mobile Menu */
 .mobile-menu {
     position: fixed;
     top: 0;
@@ -1202,13 +1202,14 @@ body {
     background-color: var(--card-bg);
     z-index: 1001;
     padding: 0;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
+    transition: var(--transition);
+    box-shadow: var(--card-shadow);
     display: flex;
     flex-direction: column;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    border-left: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    border-left: 1px solid var(--border-color);
+    font-family: var(--font-family);
 }
 
 .mobile-menu.active {
@@ -1220,7 +1221,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 24px 20px;
-    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    border-bottom: 1px solid var(--border-color);
     position: relative;
 }
 
@@ -1234,8 +1235,16 @@ body {
 }
 
 .logo i {
-    color: #ff0050;
+    color: var(--tiktok-red);
     font-size: 1.8rem;
+}
+
+.logo span {
+    background: var(--tiktok-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
 }
 
 .mobile-menu-close {
@@ -1250,11 +1259,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
+    transition: var(--transition);
 }
 
 .mobile-menu-close:hover {
-    background-color: var(--hover-bg, rgba(255, 255, 255, 0.1));
+    background-color: var(--tiktok-light-gray);
     transform: rotate(90deg);
 }
 
@@ -1273,8 +1282,8 @@ body {
     font-size: 1.1rem;
     padding: 16px;
     margin-bottom: 10px;
-    border-radius: 12px;
-    transition: all 0.3s ease;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition);
     display: flex;
     align-items: center;
     gap: 12px;
@@ -1289,7 +1298,7 @@ body {
 }
 
 .mobile-menu-links a:hover {
-    background-color: var(--hover-bg, rgba(255, 255, 255, 0.1));
+    background-color: var(--tiktok-light-gray);
     transform: translateX(5px);
 }
 
@@ -1298,7 +1307,7 @@ body {
 }
 
 .mobile-menu-links a.active {
-    background-color: var(--active-bg, rgba(255, 255, 255, 0.15));
+    background-color: var(--tiktok-light-gray);
     font-weight: 600;
     position: relative;
 }
@@ -1310,7 +1319,7 @@ body {
     top: 0;
     height: 100%;
     width: 4px;
-    background: linear-gradient(to bottom, #ff0050, #00f2ea);
+    background: var(--tiktok-gradient);
     border-radius: 0 4px 4px 0;
 }
 
@@ -1318,9 +1327,9 @@ body {
     padding: 20px;
     text-align: center;
     font-size: 0.9rem;
-    color: var(--text-secondary-color, var(--text-color));
+    color: var(--text-color);
     opacity: 0.7;
-    border-top: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+    border-top: 1px solid var(--border-color);
 }
 
 .overlay {
@@ -1329,13 +1338,13 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--overlay-bg, rgba(0, 0, 0, 0.7));
+    background-color: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     z-index: 1000;
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: var(--transition);
     pointer-events: none;
 }
 
@@ -1373,6 +1382,26 @@ body {
     animation-delay: 0.3s;
 }
 
+/* TikTok-style button */
+.mobile-menu-links a.download-btn {
+    background: var(--tiktok-gradient);
+    color: var(--tiktok-white);
+    font-weight: 600;
+    margin-top: 10px;
+    text-align: center;
+    justify-content: center;
+    box-shadow: var(--btn-shadow);
+}
+
+.mobile-menu-links a.download-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 20px rgba(254, 44, 85, 0.35);
+}
+
+.mobile-menu-links a.download-btn:active {
+    transform: translateY(0);
+}
+
 /* Media queries for responsiveness */
 @media (max-width: 480px) {
     .mobile-menu {
@@ -1392,70 +1421,24 @@ body {
     }
 }
 
-/* Theme Variables */
-:root {
-    /* Light mode default variables */
-    --overlay-bg: rgba(0, 0, 0, 0.5);
-    --hover-bg: rgba(0, 0, 0, 0.05);
-    --active-bg: rgba(0, 0, 0, 0.1);
-    --border-color: rgba(0, 0, 0, 0.1);
+/* Dark mode */
+.dark-mode .mobile-menu-links a:hover {
+    background-color: var(--tiktok-light-gray);
 }
 
-/* Dark mode - Using both class-based and media query approaches for compatibility */
-.dark-mode .mobile-menu,
-:root.dark-theme .mobile-menu {
-    background-color: rgba(25, 25, 35, 0.95);
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
+.dark-mode .mobile-menu-close:hover {
+    background-color: var(--tiktok-light-gray);
 }
 
-.dark-mode .overlay,
-:root.dark-theme .overlay {
-    background-color: rgba(0, 0, 0, 0.8);
+/* Animation for logo */
+@keyframes logoGlow {
+    0% { filter: drop-shadow(0 0 2px rgba(37, 244, 238, 0.3)); }
+    50% { filter: drop-shadow(0 0 5px rgba(254, 44, 85, 0.5)); }
+    100% { filter: drop-shadow(0 0 2px rgba(37, 244, 238, 0.3)); }
 }
 
-.dark-mode .mobile-menu-links a:hover,
-:root.dark-theme .mobile-menu-links a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.dark-mode .mobile-menu-links a.active,
-:root.dark-theme .mobile-menu-links a.active {
-    background-color: rgba(255, 255, 255, 0.15);
-}
-
-.dark-mode .mobile-menu-close:hover,
-:root.dark-theme .mobile-menu-close:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* System preference dark mode */
-@media (prefers-color-scheme: dark) {
-    :root:not(.light-theme) {
-        --overlay-bg: rgba(0, 0, 0, 0.8);
-        --hover-bg: rgba(255, 255, 255, 0.1);
-        --active-bg: rgba(255, 255, 255, 0.15);
-        --border-color: rgba(255, 255, 255, 0.1);
-    }
-    
-    /* Apply dark mode styles when system preference is dark and no override class is present */
-    :root:not(.light-theme) .mobile-menu {
-        background-color: rgba(25, 25, 35, 0.95); 
-    }
-}
-
-/* System preference light mode */
-@media (prefers-color-scheme: light) {
-    :root:not(.dark-theme) {
-        --overlay-bg: rgba(0, 0, 0, 0.5);
-        --hover-bg: rgba(0, 0, 0, 0.05);
-        --active-bg: rgba(0, 0, 0, 0.1);
-        --border-color: rgba(0, 0, 0, 0.1);
-    }
-    
-    /* Apply light mode styles when system preference is light and no override class is present */
-    :root:not(.dark-theme) .mobile-menu {
-        background-color: rgba(255, 255, 255, 0.95);
-    }
+.logo i {
+    animation: logoGlow 3s infinite;
 }
         /* Media Queries */
         @media (max-width: 768px) {
