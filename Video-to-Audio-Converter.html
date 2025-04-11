@@ -3538,13 +3538,25 @@ body {
         });
         
         // Play/Pause toggle
-        playPauseBtn.addEventListener('click', () => {
-            if (isPlaying) {
-                pauseAudio();
-            } else {
-                playAudio();
-            }
-        });
+playPauseBtn.addEventListener('click', () => {
+    if (isPlaying) {
+        pauseAudio();
+    } else {
+        playAudio();
+    }
+});
+
+// Pause audio function
+function pauseAudio() {
+    audioElement.pause();
+    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+    isPlaying = false;
+    
+    // Stop visualization animation
+    if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+    }
+}
         
         // Timeline click
         timeline.addEventListener('click', (e) => {
