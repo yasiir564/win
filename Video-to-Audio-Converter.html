@@ -2142,6 +2142,190 @@ body {
 .need-card:nth-child(6) {
     animation-delay: 0.6s;
 }
+      /* Audio Player Styles */
+.audio-player-container {
+    width: 100%;
+    margin: 20px 0;
+    padding: 10px;
+    border-radius: var(--border-radius);
+    background: var(--card-bg);
+    box-shadow: var(--card-shadow);
+    transition: var(--transition);
+}
+
+.audio-player-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.audio-player {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Visualization */
+.player-visualization {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    background: var(--tiktok-dark-gray);
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+}
+
+.visualization-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 5px;
+    height: 100%;
+    width: 100%;
+}
+
+.bar {
+    width: 8%;
+    height: 5px;
+    background: var(--tiktok-gradient);
+    border-radius: 2px;
+    transition: height 0.2s ease;
+}
+
+/* Controls */
+.player-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.play-pause {
+    min-width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--tiktok-red);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    transition: var(--transition);
+    box-shadow: var(--btn-shadow);
+}
+
+.play-pause:hover {
+    transform: scale(1.1);
+    background: var(--tiktok-gradient);
+}
+
+.timeline-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.timeline {
+    height: 6px;
+    background: var(--tiktok-light-gray);
+    border-radius: 3px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress {
+    height: 100%;
+    background: var(--tiktok-gradient);
+    width: 0;
+    border-radius: 3px;
+    transition: width 0.1s linear;
+}
+
+.time {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-color);
+}
+
+/* Volume controls */
+.volume-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.volume-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--text-color);
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.volume-btn:hover {
+    color: var(--tiktok-red);
+}
+
+.volume-slider {
+    width: 60px;
+    height: 4px;
+    background: var(--tiktok-light-gray);
+    border-radius: 2px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.volume-progress {
+    height: 100%;
+    background: var(--tiktok-gradient);
+    width: 100%;
+    border-radius: 2px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .player-controls {
+        flex-wrap: wrap;
+    }
+    
+    .volume-container {
+        width: 100%;
+        margin-top: 10px;
+        justify-content: flex-end;
+    }
+    
+    .volume-slider {
+        width: 100px;
+    }
+}
+
+@media (max-width: 480px) {
+    .player-visualization {
+        height: 50px;
+    }
+    
+    .player-controls {
+        gap: 10px;
+    }
+    
+    .play-pause {
+        min-width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+}
     </style>
 </head>
 <body>
@@ -2705,7 +2889,7 @@ body {
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+   document.addEventListener('DOMContentLoaded', () => {
     // Elements
     const uploadContainer = document.getElementById('uploadContainer');
     const fileInput = document.getElementById('fileInput');
@@ -3262,15 +3446,240 @@ body {
         progressTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     }
     
+    // Create audio player element function
+    function createAudioPlayer() {
+        const audioPlayerHTML = `
+            <div class="audio-player-container">
+                <div class="audio-player">
+                    <div class="player-visualization">
+                        <div class="visualization-bars">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
+                    </div>
+                    <div class="player-controls">
+                        <button class="play-pause">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <div class="timeline-container">
+                            <div class="timeline">
+                                <div class="progress"></div>
+                            </div>
+                            <div class="time">
+                                <span class="current">0:00</span>
+                                <span class="duration">0:00</span>
+                            </div>
+                        </div>
+                        <div class="volume-container">
+                            <button class="volume-btn">
+                                <i class="fas fa-volume-up"></i>
+                            </button>
+                            <div class="volume-slider">
+                                <div class="volume-progress"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <audio id="audio-preview"></audio>
+                </div>
+            </div>
+        `;
+        
+        return audioPlayerHTML;
+    }
+    
+    // Add audio player to the DOM
+    function addAudioPlayer() {
+        // Create the audio player element
+        const audioPlayerElement = createAudioPlayer();
+        
+        // Insert audio player before the download button
+        downloadBtn.insertAdjacentHTML('beforebegin', audioPlayerElement);
+        
+        // Initialize audio player
+        initAudioPlayer();
+    }
+    
+    // Initialize audio player functionality
+    function initAudioPlayer() {
+        const audioElement = document.getElementById('audio-preview');
+        const playPauseBtn = document.querySelector('.play-pause');
+        const timeline = document.querySelector('.timeline');
+        const progress = document.querySelector('.progress');
+        const currentTime = document.querySelector('.current');
+        const duration = document.querySelector('.duration');
+        const volumeBtn = document.querySelector('.volume-btn');
+        const volumeSlider = document.querySelector('.volume-slider');
+        const volumeProgress = document.querySelector('.volume-progress');
+        const visualizationBars = document.querySelectorAll('.bar');
+        
+        let isPlaying = false;
+        let animationFrameId;
+        
+        // Set audio source
+        if (convertedFileName) {
+            audioElement.src = `${API_DOWNLOAD}/${convertedFileName}`;
+        }
+        
+        // Auto play when loaded
+        audioElement.addEventListener('canplaythrough', () => {
+            // Start playing automatically
+            playAudio();
+            // Update duration display
+            const audioDuration = formatTime(audioElement.duration);
+            duration.textContent = audioDuration;
+        });
+        
+        // Play/Pause toggle
+        playPauseBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                pauseAudio();
+            } else {
+                playAudio();
+            }
+        });
+        
+        // Timeline click
+        timeline.addEventListener('click', (e) => {
+            const timelineWidth = timeline.clientWidth;
+            const clickPosition = e.offsetX;
+            const clickPercentage = clickPosition / timelineWidth;
+            const seekTime = clickPercentage * audioElement.duration;
+            
+            audioElement.currentTime = seekTime;
+        });
+        
+        // Volume button click
+        volumeBtn.addEventListener('click', () => {
+            if (audioElement.muted) {
+                audioElement.muted = false;
+                volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                volumeProgress.style.width = (audioElement.volume * 100) + '%';
+            } else {
+                audioElement.muted = true;
+                volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                volumeProgress.style.width = '0%';
+            }
+        });
+        
+        // Volume slider click
+        volumeSlider.addEventListener('click', (e) => {
+            const sliderWidth = volumeSlider.clientWidth;
+            const clickPosition = e.offsetX;
+            const newVolume = clickPosition / sliderWidth;
+            
+            audioElement.volume = newVolume;
+            volumeProgress.style.width = (newVolume * 100) + '%';
+            
+            // Update volume icon
+            updateVolumeIcon(newVolume);
+        });
+        
+        // Update time and progress
+        audioElement.addEventListener('timeupdate', () => {
+            const currentTimeValue = audioElement.currentTime;
+            const durationValue = audioElement.duration;
+            
+            // Update current time display
+            currentTime.textContent = formatTime(currentTimeValue);
+            
+            // Update progress bar
+            const progressPercentage = (currentTimeValue / durationValue) * 100;
+            progress.style.width = progressPercentage + '%';
+        });
+        
+        // When audio ends
+        audioElement.addEventListener('ended', () => {
+            pauseAudio();
+            audioElement.currentTime = 0;
+        });
+        
+        // Format time function (converts seconds to MM:SS format)
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Update volume icon based on volume level
+        function updateVolumeIcon(volume) {
+            if (volume === 0 || audioElement.muted) {
+                volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            } else if (volume < 0.5) {
+                volumeBtn.innerHTML = '<i class="fas fa-volume-down"></i>';
+            } else {
+                volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            }
+        }
+        
+        // Animation for visualization bars
+        function animateVisualizationBars() {
+            if (!isPlaying) {
+                // Reset bars when not playing
+                visualizationBars.forEach(bar => {
+                    bar.style.height = '5px';
+                });
+                return;
+            }
+            
+            visualizationBars.forEach(bar => {
+                // Create random heights for the bars when audio is playing
+                const height = isPlaying ? 5 + Math.random() * 35 : 5;
+                bar.style.height = `${height}px`;
+            });
+            
+            animationFrameId = requestAnimationFrame(animateVisualizationBars);
+        }
+        
+        // Play audio function
+        function playAudio() {
+            audioElement.play().catch(error => {
+                console.error('Audio playback error:', error);
+                logDebug(`Audio playback error: ${error.message}`);
+            });
+            
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            isPlaying = true;
+            
+            // Start visualization animation
+            animateVisualizationBars();
+        }
+        
+        // Pause audio function
+        function pauseAudio() {
+            audioElement.pause();
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            isPlaying = false;
+            
+            // Stop visualization animation
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+        }
+    }
+    
     // Show result container
     function showResult() {
         progressContainer.style.display = 'none';
         resultContainer.style.display = 'block';
         
+        // Add audio player
+        addAudioPlayer();
+        
         // Scroll to result container
         smoothScrollTo(resultContainer);
         
-        logDebug('Showing result container, ready for download');
+        logDebug('Showing result container with audio player, ready for download');
     }
     
     // Handle conversion errors with specific messages
@@ -3340,6 +3749,12 @@ body {
         progressTime.textContent = '00:00';
         conversionPhase = 'idle';
         conversionInProgress = false;
+        
+        // Remove audio player if it exists
+        const audioPlayerContainer = document.querySelector('.audio-player-container');
+        if (audioPlayerContainer) {
+            audioPlayerContainer.remove();
+        }
         
         if (progressTimer) {
             clearInterval(progressTimer);
