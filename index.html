@@ -29,7 +29,7 @@
      crossorigin="anonymous"></script>
 
     <style>
-:root {
+ :root {
     --tiktok-black: #000000;
     --tiktok-white: #FFFFFF;
     --tiktok-red: #FE2C55;
@@ -38,11 +38,29 @@
     --tiktok-dark-gray: #161823;
     --tiktok-darker-gray: #0f1016;
     --tiktok-gradient: linear-gradient(90deg, var(--tiktok-blue), var(--tiktok-red));
-    --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    --btn-shadow: 0 7px 14px rgba(254, 44, 85, 0.3);
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --btn-shadow: 0 8px 16px rgba(254, 44, 85, 0.25);
     --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --border-radius: 12px;
-    --transition: all 0.3s ease;
+    --border-radius: 16px;
+    --border-radius-sm: 8px;
+    --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* Dark Mode */
+.dark-mode {
+    --tiktok-light-gray: #2c2c2e;
+    --bg-color: var(--tiktok-darker-gray);
+    --text-color: var(--tiktok-white);
+    --card-bg: #1e1e26;
+    --border-color: #2a2a30;
+}
+
+/* Light Mode (default) */
+:root {
+    --bg-color: #f8f8f9;
+    --text-color: var(--tiktok-black);
+    --card-bg: var(--tiktok-white);
+    --border-color: #e0e0e0;
 }
 
 
