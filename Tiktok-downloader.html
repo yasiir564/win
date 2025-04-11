@@ -1787,7 +1787,7 @@ a:active {
             </div>
             
             <div class="nav-links">
-                <a href="index.html" class="active">Tiktok Downloader</a>
+               <a href="Tiktok-downloader.html">Tiktok Downloader</a>
                 <a href="Tiktok-to-MP3-Converter.html">TikTok to MP3 Converter</a>
                 <a href="Video-to-Audio-Converter.html">MP4 To Mp3 FREE</a>
             </div>
@@ -1815,7 +1815,7 @@ a:active {
         </button>
     </div>
     <div class="mobile-menu-links">
-        <a href="index.html" class="active">
+        <a href="Tiktok-downloader.html" class="active">
             <i class="fas fa-home"></i>
             <span>Tiktok Downloader</span>
         </a>
@@ -2081,13 +2081,13 @@ a:active {
                 <div class="footer-links">
                     <div class="footer-column">
                         <h3>Pages</h3>
-                        <a href="index.html">Home</a>
+                        <a href="Tiktok-downloader.html">Home</a>
                         <a href="privacypolicy.html">Privacy Policy</a>
                         <a href="Advertise.html">Advertise with us</a>
                     </div>
                     <div class="footer-column">
                         <h3>Our Tools</h3>
-                        <a href="index.html">Tiktok Downloader</a>
+                        <a href="Tiktok-downloader.html">Tiktok Downloader</a>
                         <a href="Tiktok-to-MP3-Converter.html">Tiktok To Mp3</a>
                         <a href="Video-to-Audio-Converter.html">Video To Mp3</a>
                     </div>
@@ -2111,7 +2111,7 @@ a:active {
 
     <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Cache DOM elements - improved to include mobile menu elements
+    // Cache DOM elements
     const elements = {
         darkModeToggle: document.getElementById('darkModeToggle'),
         body: document.body,
@@ -2145,9 +2145,13 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.urlInput.focus();
     }
 
+    /**
+     * Dark mode initialization
+     */
     function initDarkMode() {
         const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
         
+        // Check localStorage first, then fallback to system preference
         const darkModeEnabled = localStorage.getItem('darkMode') === 'enabled' || 
                               (localStorage.getItem('darkMode') === null && prefersDarkMode);
                               
@@ -2157,6 +2161,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /**
+     * Update dark mode toggle icon
+     */
     function updateDarkModeIcon(isDarkMode) {
         const icon = elements.darkModeToggle?.querySelector('i');
         if (icon) {
@@ -2164,6 +2171,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /**
+     * Set up all event listeners
+     */
     function setupEventListeners() {
         // Dark mode toggle
         elements.darkModeToggle?.addEventListener('click', toggleDarkMode);
@@ -2187,6 +2197,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // URL paste detection
             elements.urlInput.addEventListener('paste', handlePaste);
             
+            // Real-time URL validation as user types
+            elements.urlInput.addEventListener('input', validateTikTokUrl);
+            
             // Enter key press in URL input
             elements.urlInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
@@ -2203,6 +2216,69 @@ document.addEventListener('DOMContentLoaded', function() {
         document.addEventListener('visibilitychange', handleVisibilityChange);
     }
 
+    /**
+     * Immediate validation of TikTok URLs as user types
+     */
+    function validateTikTokUrl() {
+        if (!elements.urlInput) return;
+        
+        const url = elements.urlInput.value.trim();
+        
+        // Only validate if there's actual content to check
+        if (url.length > 5) {
+            if (!url.includes('tiktok.com')) {
+                elements.urlInput.classList.add('error');
+                
+                // Create or update error message
+                let errorMsg = document.getElementById('url-error-message');
+                if (!errorMsg) {
+                    errorMsg = document.createElement('div');
+                    errorMsg.id = 'url-error-message';
+                    errorMsg.className = 'error-message';
+                    elements.urlInput.parentNode.appendChild(errorMsg);
+                }
+                errorMsg.textContent = 'Please enter a valid TikTok URL';
+                errorMsg.style.display = 'block';
+                
+                // Disable download button
+                if (elements.downloadBtn) {
+                    elements.downloadBtn.disabled = true;
+                    elements.downloadBtn.classList.add('disabled');
+                }
+            } else {
+                // Valid URL - remove error styling
+                elements.urlInput.classList.remove('error');
+                
+                // Hide error message if it exists
+                const errorMsg = document.getElementById('url-error-message');
+                if (errorMsg) {
+                    errorMsg.style.display = 'none';
+                }
+                
+                // Enable download button
+                if (elements.downloadBtn) {
+                    elements.downloadBtn.disabled = false;
+                    elements.downloadBtn.classList.remove('disabled');
+                }
+            }
+        } else {
+            // Too short to validate, reset to normal state
+            elements.urlInput.classList.remove('error');
+            const errorMsg = document.getElementById('url-error-message');
+            if (errorMsg) {
+                errorMsg.style.display = 'none';
+            }
+        }
+        
+        // Show/hide clear button
+        if (elements.clearInputBtn) {
+            elements.clearInputBtn.style.display = url ? 'block' : 'none';
+        }
+    }
+
+    /**
+     * Toggle dark mode
+     */
     function toggleDarkMode() {
         if (!elements.body) return;
         
@@ -2213,24 +2289,31 @@ document.addEventListener('DOMContentLoaded', function() {
         updateDarkModeIcon(isDarkMode);
     }
 
+    /**
+     * Set up the FAQ accordion functionality
+     */
     function setupFaqAccordion() {
         if (!elements.faqQuestions || !elements.faqQuestions.length) return;
         
         elements.faqQuestions.forEach(question => {
             question.addEventListener('click', () => {
+                // Toggle active class
                 question.classList.toggle('active');
                 
+                // Toggle answer visibility
                 const answer = question.nextElementSibling;
                 if (!answer) return;
                 
                 answer.style.maxHeight = answer.style.maxHeight ? null : `${answer.scrollHeight}px`;
                 
+                // Rotate chevron icon
                 const chevron = question.querySelector('.fa-chevron-down');
                 if (chevron) {
                     chevron.classList.toggle('rotate');
                 }
             });
 
+            // Add keyboard accessibility
             question.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
@@ -2240,12 +2323,16 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    /**
+     * Set up mobile menu functionality
+     */
     function setupMobileMenu() {
+        // Fix for mobile menu toggle
         if (elements.mobileMenuToggle && elements.mobileMenu && elements.overlay) {
             elements.mobileMenuToggle.addEventListener('click', () => {
                 elements.mobileMenu.classList.add('active');
                 elements.overlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
+                document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
             });
             
             if (elements.mobileMenuClose) {
@@ -2256,6 +2343,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 elements.overlay.addEventListener('click', closeMobileMenu);
             }
             
+            // Close menu when clicking on a link
             const mobileNavLinks = elements.mobileMenu?.querySelectorAll('a');
             if (mobileNavLinks) {
                 mobileNavLinks.forEach(link => {
@@ -2265,47 +2353,75 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    /**
+     * Close mobile menu helper function
+     */
     function closeMobileMenu() {
         if (elements.mobileMenu && elements.overlay) {
             elements.mobileMenu.classList.remove('active');
             elements.overlay.classList.remove('active');
-            document.body.style.overflow = '';
+            document.body.style.overflow = ''; // Re-enable scrolling
         }
     }
 
+    /**
+     * Set up clear button functionality
+     */
     function setupClearButton() {
         if (elements.clearInputBtn && elements.urlInput) {
             elements.clearInputBtn.addEventListener('click', () => {
                 elements.urlInput.value = '';
                 elements.urlInput.focus();
                 elements.clearInputBtn.style.display = 'none';
+                
+                // Reset validation state
+                elements.urlInput.classList.remove('error');
+                const errorMsg = document.getElementById('url-error-message');
+                if (errorMsg) {
+                    errorMsg.style.display = 'none';
+                }
+                
+                // Enable download button
+                if (elements.downloadBtn) {
+                    elements.downloadBtn.disabled = false;
+                    elements.downloadBtn.classList.remove('disabled');
+                }
             });
 
+            // Show/hide clear button based on input
             elements.urlInput.addEventListener('input', () => {
                 elements.clearInputBtn.style.display = elements.urlInput.value ? 'block' : 'none';
             });
             
+            // Initialize clear button visibility
             elements.clearInputBtn.style.display = elements.urlInput.value ? 'block' : 'none';
         }
     }
 
+    /**
+     * Handle paste event for URL input
+     */
     function handlePaste() {
         setTimeout(function() {
             if (!elements.urlInput) return;
             
             const url = elements.urlInput.value.trim();
             
-            // Enhanced URL validation for pasted content
-            if (url && isTikTokUrl(url)) {
-                downloadTikTok();
-            }
+            // Validate TikTok URL after paste
+            validateTikTokUrl();
             
-            if (elements.clearInputBtn) {
-                elements.clearInputBtn.style.display = url ? 'block' : 'none';
+            if (url && url.includes('tiktok.com')) {
+                downloadTikTok();
+            } else if (url && !url.includes('tiktok.com')) {
+                // Show error for non-TikTok URL
+                showSweetAlert('Invalid URL', 'Please enter a valid TikTok URL (e.g., https://www.tiktok.com/@username/video/123456789)', 'error');
             }
         }, 100);
     }
 
+    /**
+     * Handle visibility change for video playback
+     */
     function handleVisibilityChange() {
         if (document.visibilityState === 'visible') {
             const videoPlayer = document.querySelector('.tiktok-video-player');
@@ -2317,6 +2433,9 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /**
+     * Enhance URL input container with paste button
+     */
     function enhanceUrlInputContainer() {
         if (!elements.urlInput) return;
 
@@ -2325,6 +2444,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         urlInputContainer.classList.add('url-input-container');
         
+        // Add Paste Button if not already present
         if (!document.getElementById('pasteButton')) {
             const pasteButton = document.createElement('button');
             pasteButton.id = 'pasteButton';
@@ -2335,19 +2455,22 @@ document.addEventListener('DOMContentLoaded', function() {
             
             urlInputContainer.appendChild(pasteButton);
             
+            // Add paste functionality
             pasteButton.addEventListener('click', async () => {
                 try {
                     const clipboardText = await navigator.clipboard.readText();
                     elements.urlInput.value = clipboardText;
                     elements.urlInput.focus();
                     
-                    if (elements.clearInputBtn) {
-                        elements.clearInputBtn.style.display = 'block';
-                    }
+                    // Validate the pasted URL
+                    validateTikTokUrl();
                     
-                    // Improved validation - only process if it's a TikTok URL
-                    if (isTikTokUrl(clipboardText)) {
+                    // Automatically validate and download if a TikTok URL is pasted
+                    if (clipboardText.includes('tiktok.com')) {
                         downloadTikTok();
+                    } else if (clipboardText.trim() !== '') {
+                        // Show error for non-TikTok URL
+                        showSweetAlert('Invalid URL', 'Please paste a valid TikTok URL (e.g., https://www.tiktok.com/@username/video/123456789)', 'error');
                     }
                 } catch (err) {
                     console.error('Failed to read clipboard:', err);
@@ -2357,18 +2480,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /**
+     * Create TikTok-style loader animation
+     */
     function createTikTokLoader() {
         return `
             <div class="loading-container">
                 <p class="loading-text shimmer-text">Getting your TikTok video...</p>
                 
                 <div class="tiktok-loader">
+                    <!-- Circular progress ring -->
                     <svg class="progress-ring" viewBox="0 0 100 100">
                         <circle class="bg-circle" cx="50" cy="50" r="40"></circle>
                         <circle class="blue-circle" cx="50" cy="50" r="40"></circle>
                         <circle class="red-circle" cx="50" cy="50" r="40"></circle>
                     </svg>
                     
+                    <!-- Music notes -->
                     <div class="music-note blue">
                         <svg viewBox="0 0 24 24">
                             <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
@@ -2381,6 +2509,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </svg>
                     </div>
                     
+                    <!-- TikTok logo center piece -->
                     <div class="tick-tock"></div>
                 </div>
                 
@@ -2389,6 +2518,9 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
     }
 
+    /**
+     * Animate background elements
+     */
     function animateBackgrounds() {
         const circles = document.querySelectorAll('.bg-circle');
         if (!circles.length) return;
@@ -2401,31 +2533,59 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // ENHANCED: Improved auto-scroll function with more reliable behavior
+    /**
+     * Improved scroll to result area with smooth behavior
+     * Uses IntersectionObserver for better performance
+     */
     function scrollToResult() {
-        if (elements.resultDiv) {
-            setTimeout(() => {
-                // Force scroll regardless of visibility
-                elements.resultDiv.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                });
+        if (!elements.resultDiv) return;
+        
+        // Create new IntersectionObserver
+        const observer = new IntersectionObserver((entries) => {
+            // If result area is not visible, scroll to it
+            if (!entries[0].isIntersecting) {
+                const headerHeight = document.querySelector('header')?.offsetHeight || 0;
+                const scrollOptions = {
+                    behavior: 'smooth',
+                    block: 'start'
+                };
                 
-                // For mobile devices, ensure the scroll works
-                const resultOffset = elements.resultDiv.getBoundingClientRect().top + window.pageYOffset;
-                window.scrollTo({
-                    top: resultOffset,
-                    behavior: 'smooth'
-                });
-            }, 300);
-        }
+                // Scroll with offset for fixed header if present
+                if (headerHeight > 0) {
+                    const targetY = entries[0].target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
+                    window.scrollTo({
+                        top: targetY,
+                        behavior: 'smooth'
+                    });
+                } else {
+                    entries[0].target.scrollIntoView(scrollOptions);
+                }
+            }
+            
+            // Disconnect observer after checking
+            observer.disconnect();
+        }, {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        });
+        
+        // Start observing the result div
+        observer.observe(elements.resultDiv);
     }
 
+    /**
+     * Extract video ID from TikTok URL for filename
+     */
     function extractVideoIdFromUrl(url) {
+        // Improved regex to handle more URL formats
         const matches = url.match(/video\/(\d+)/);
         return matches && matches[1] ? `tiktok-${matches[1]}.mp4` : 'tiktok-video.mp4';
     }
 
+    /**
+     * Format large numbers for display
+     */
     function formatNumber(num) {
         if (!num && num !== 0) return '0';
         
@@ -2439,6 +2599,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return num.toString();
     }
 
+    /**
+     * Show SweetAlert notifications
+     */
     function showSweetAlert(title, text, icon = 'success') {
         if (typeof Swal === 'undefined') {
             console.error('SweetAlert2 is not loaded');
@@ -2462,6 +2625,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    /**
+     * Trigger file download with error handling
+     */
     function triggerDownload(url, filename) {
         if (!url) {
             console.error('Download error: URL is empty');
@@ -2469,6 +2635,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // Show download started notification
         showSweetAlert('Download started', 'Your file will be downloaded shortly.', 'info');
         
         fetch(url, { method: 'GET' })
@@ -2487,6 +2654,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.body.appendChild(link);
                 link.click();
                 
+                // Cleanup
                 setTimeout(() => {
                     document.body.removeChild(link);
                     window.URL.revokeObjectURL(blobUrl);
@@ -2498,15 +2666,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // NEW FUNCTION: Validate TikTok URLs
-    function isTikTokUrl(url) {
-        if (!url) return false;
-        
-        // More comprehensive regex that checks for various TikTok URL formats
-        const tiktokUrlRegex = /^(https?:\/\/)?(www\.|vm\.)?tiktok\.com\/((@[^\/]+\/video\/\d+)|([^\/]+\/video\/\d+)|v\/\d+|embed\/\d+|trending)/;
-        return tiktokUrlRegex.test(url);
-    }
-
+    /**
+     * Main function to download TikTok videos
+     */
     async function downloadTikTok() {
         if (!elements.urlInput || !elements.resultDiv) {
             console.error('Required elements not found in the DOM');
@@ -2521,47 +2683,63 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // ENHANCED: Improved TikTok URL validation
-        if (!isTikTokUrl(url)) {
+        // Improved URL validation with immediate feedback
+        if (!url.includes('tiktok.com')) {
             showSweetAlert('Invalid URL format', 'Please enter a valid TikTok URL (e.g., https://www.tiktok.com/@username/video/123456789)', 'error');
             elements.urlInput.focus();
+            elements.urlInput.classList.add('error');
+            
+            // Create or update error message
+            let errorMsg = document.getElementById('url-error-message');
+            if (!errorMsg) {
+                errorMsg = document.createElement('div');
+                errorMsg.id = 'url-error-message';
+                errorMsg.className = 'error-message';
+                elements.urlInput.parentNode.appendChild(errorMsg);
+            }
+            errorMsg.textContent = 'Please enter a valid TikTok URL';
+            errorMsg.style.display = 'block';
+            
             return;
         }
         
+        // API endpoint
         const apiEndpoint = 'https://denmara.com/wp-json/tiktok/v1/download';
         
+        // Disable input and button during processing
         elements.urlInput.disabled = true;
         if (elements.downloadBtn) {
             elements.downloadBtn.disabled = true;
             elements.downloadBtn.classList.add('disabled');
         }
         
+        // Show loading state
         elements.resultDiv.innerHTML = createTikTokLoader();
         
-        // Always scroll to result immediately when starting the download
+        // Always scroll to result area when starting download
         scrollToResult();
         
         try {
             console.log('Sending request with URL:', url);
             
+            // Create an AbortController for timeout
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000);
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
             
-            // ENHANCED: Remove comments by adding parameter to API request
+            // Start the fetch request
             const response = await fetch(apiEndpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    url: url,
-                    removeComments: true // Flag to remove comments from the response
-                }),
+                body: JSON.stringify({ url: url }),
                 signal: controller.signal
             });
             
+            // Clear the timeout
             clearTimeout(timeoutId);
             
             console.log('Response status:', response.status);
             
+            // Handle HTTP errors
             if (!response.ok) {
                 const errorText = await response.text();
                 console.error('Server error response:', errorText);
@@ -2570,10 +2748,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 let errorDetails = '';
                 
                 try {
+                    // Try to parse error as JSON
                     const errorJson = JSON.parse(errorText);
                     errorMessage = errorJson.error || errorMessage;
                     errorDetails = errorJson.message || 'Server returned an error response. Please try again.';
                 } catch (e) {
+                    // If not JSON, use status text
                     errorMessage = `Server error: ${response.status}`;
                     errorDetails = `${response.statusText}. This could be due to server issues or the video may be private.`;
                 }
@@ -2582,6 +2762,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(errorMessage);
             }
             
+            // Parse JSON response
             const data = await response.json();
             
             if (!data.success) {
@@ -2592,23 +2773,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 throw new Error(errorMsg);
             }
             
+            // Log success information
             console.log('Video successfully fetched using method:', data.method || 'unknown');
             
+            // Format creator name with @ if not already present
             const creatorName = data.author && !data.author.startsWith('@') ? `@${data.author}` : (data.author || 'Unknown');
             
+            // Create a filename for the download
             const videoFileName = extractVideoIdFromUrl(url);
             
+            // Trigger automatic download without redirect
             triggerDownload(data.video_url, videoFileName);
             
+            // Show success notification
             showSweetAlert(
                 'Download successful!', 
                 `Video from ${creatorName} has been downloaded to your device.`
             );
             
+            // Use actual engagement metrics from TikTok data
             const likes = data.likes || 0;
+            const comments = data.comments || 0;
             const shares = data.shares || 0;
             
-            // ENHANCED: Removed comments section from the display when showing video
+            // Create modern TikTok-style video display with engagement metrics
             elements.resultDiv.innerHTML = `
                 <div class="tiktok-video-container">
                     <div class="video-player-section">
@@ -2638,6 +2826,10 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <span>${formatNumber(likes)}</span>
                             </div>
                             <div class="stat-item">
+                                <i class="fas fa-comment-dots"></i>
+                                <span>${formatNumber(comments)}</span>
+                            </div>
+                            <div class="stat-item">
                                 <i class="fas fa-share"></i>
                                 <span>${formatNumber(shares)}</span>
                             </div>
@@ -2655,10 +2847,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
             
+            // Add video error handling
             const videoEl = elements.resultDiv.querySelector('.tiktok-video-player');
             if (videoEl) {
                 videoEl.addEventListener('error', (e) => {
                     console.error('Video playback error:', e);
+                    // Display error message in the video container
                     videoEl.parentElement.innerHTML = `
                         <div class="video-error-overlay">
                             <i class="fas fa-exclamation-triangle"></i>
@@ -2668,12 +2862,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
             
-            // Scroll again to the result area after loading the video
+            // Scroll to result area after content is loaded
             scrollToResult();
                         
+            // Clear the input field for next use
             elements.urlInput.value = '';
             if (elements.clearInputBtn) {
                 elements.clearInputBtn.style.display = 'none';
+            }
+            
+            // Reset validation state
+            elements.urlInput.classList.remove('error');
+            const errorMsgElement = document.getElementById('url-error-message');
+            if (errorMsgElement) {
+                errorMsgElement.style.display = 'none';
             }
             
         } catch (error) {
@@ -2682,11 +2884,13 @@ document.addEventListener('DOMContentLoaded', function() {
             let errorMessage = 'Download failed';
             let errorDetails = error.message || 'An unknown error occurred while trying to download the video.';
             
+            // Specific error handling for timeout
             if (error.name === 'AbortError') {
                 errorMessage = 'Request timed out';
                 errorDetails = 'The server took too long to respond. This could be due to network issues or high server load.';
             }
             
+            // Show error notification
             showSweetAlert(errorMessage, errorDetails, 'error');
             
             elements.resultDiv.innerHTML = `
@@ -2706,8 +2910,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             `;
             
+            // Scroll to result area even on error
             scrollToResult();
         } finally {
+            // Re-enable input and button
             elements.urlInput.disabled = false;
             if (elements.downloadBtn) {
                 elements.downloadBtn.disabled = false;
@@ -2722,7 +2928,6 @@ document.addEventListener('DOMContentLoaded', function() {
     window.scrollToResult = scrollToResult;
     window.createTikTokLoader = createTikTokLoader;
     window.showSweetAlert = showSweetAlert;
-    window.isTikTokUrl = isTikTokUrl;
 });
     </script>
 
