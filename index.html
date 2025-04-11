@@ -1598,6 +1598,221 @@ a:active {
             height: 30px;
             border-radius: 50%;
         }
+        /* Video Details & Engagement Section */
+.video-details {
+    padding: 16px;
+    border-top: 1px solid var(--border-color);
+    background: var(--card-bg);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+
+.video-caption {
+    font-size: 0.95rem;
+    line-height: 1.4;
+    margin-bottom: 16px;
+    color: var(--text-color);
+    font-weight: 500;
+    word-break: break-word;
+    max-height: 80px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--tiktok-red) transparent;
+}
+
+.video-caption::-webkit-scrollbar {
+    width: 4px;
+}
+
+.video-caption::-webkit-scrollbar-thumb {
+    background-color: var(--tiktok-red);
+    border-radius: 4px;
+}
+
+/* Engagement Stats Container */
+.engagement-stats {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+/* Individual Stat Item (Likes, Comments, Shares) */
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.stat-item i {
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    color: var(--text-color);
+}
+
+.stat-item span {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    transition: all 0.3s ease;
+}
+
+/* Heart icon specific styling */
+.stat-item:nth-child(1) i {
+    color: var(--tiktok-red);
+}
+
+/* Comment icon specific styling */
+.stat-item:nth-child(2) i {
+    color: var(--tiktok-blue);
+}
+
+/* Share icon specific styling */
+.stat-item:nth-child(3) i {
+    color: var(--tiktok-dark-gray);
+}
+
+.dark-mode .stat-item:nth-child(3) i {
+    color: var(--tiktok-light-gray);
+}
+
+/* Hover Effects for Stats */
+.stat-item:hover {
+    transform: translateY(-2px);
+}
+
+.stat-item:nth-child(1):hover i {
+    animation: heartBeat 0.8s ease;
+}
+
+.stat-item:nth-child(2):hover i {
+    animation: commentBounce 0.8s ease;
+}
+
+.stat-item:nth-child(3):hover i {
+    animation: shareRotate 0.8s ease;
+}
+
+/* Animations for Icons */
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    15% { transform: scale(1.2); }
+    30% { transform: scale(1); }
+    45% { transform: scale(1.1); }
+    60% { transform: scale(1); }
+}
+
+@keyframes commentBounce {
+    0%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-6px); }
+    60% { transform: translateY(3px); }
+    80% { transform: translateY(-2px); }
+}
+
+@keyframes shareRotate {
+    0% { transform: rotate(0); }
+    50% { transform: rotate(25deg); }
+    100% { transform: rotate(0); }
+}
+
+/* Video Actions Container */
+.video-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* TikTok style buttons */
+.tiktok-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: var(--border-radius-sm);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+    outline: none;
+    color: var(--tiktok-white);
+    box-shadow: var(--btn-shadow);
+    flex: 1;
+    min-width: 140px;
+}
+
+.tiktok-btn i {
+    font-size: 1rem;
+}
+
+.download-btn {
+    background: var(--tiktok-red);
+}
+
+.download-btn:hover {
+    background: var(--tiktok-red);
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(254, 44, 85, 0.3);
+}
+
+.share-btn {
+    background: var(--tiktok-blue);
+}
+
+.share-btn:hover {
+    background: var(--tiktok-blue);
+    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(37, 244, 238, 0.3);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .video-details {
+        border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
+        padding: 12px;
+    }
+    
+    .engagement-stats {
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .video-actions {
+        flex-direction: column;
+    }
+    
+    .tiktok-btn {
+        width: 100%;
+    }
+}
+
+/* Compact view for very small screens */
+@media (max-width: 480px) {
+    .engagement-stats {
+        justify-content: space-between;
+        gap: 8px;
+    }
+    
+    .stat-item i {
+        font-size: 1rem;
+    }
+    
+    .stat-item span {
+        font-size: 0.8rem;
+    }
+    
+    .tiktok-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+    }
+}
     </style>
 </head>
 
