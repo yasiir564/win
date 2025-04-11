@@ -2128,6 +2128,255 @@ button {
     font-size: calc(18px + 0.7vw);
   }
 }
+         /* Mobile Menu */
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 85%;
+    max-width: 400px;
+    height: 100%;
+    background-color: var(--card-bg);
+    z-index: 1001;
+    padding: 0;
+    transition: var(--transition);
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-left: 1px solid var(--border-color);
+    font-family: var(--font-family);
+}
+
+.mobile-menu.active {
+    right: 0;
+}
+
+.mobile-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 24px 20px;
+    border-bottom: 1px solid var(--border-color);
+    position: relative;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.logo i {
+    color: var(--tiktok-red);
+    font-size: 1.8rem;
+}
+
+.logo span {
+    background: var(--tiktok-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+}
+
+.mobile-menu-close {
+    background: none;
+    border: none;
+    color: var(--text-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.mobile-menu-close:hover {
+    background-color: var(--tiktok-light-gray);
+    transform: rotate(90deg);
+}
+
+.mobile-menu-links {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.mobile-menu-links a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 1.1rem;
+    padding: 16px;
+    margin-bottom: 10px;
+    border-radius: var(--border-radius-sm);
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.mobile-menu-links a i {
+    font-size: 1.2rem;
+    width: 24px;
+    text-align: center;
+}
+
+.mobile-menu-links a:hover {
+    background-color: var(--tiktok-light-gray);
+    transform: translateX(5px);
+}
+
+.mobile-menu-links a:active {
+    transform: scale(0.97);
+}
+
+.mobile-menu-links a.active {
+    background-color: var(--tiktok-light-gray);
+    font-weight: 600;
+    position: relative;
+}
+
+.mobile-menu-links a.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: var(--tiktok-gradient);
+    border-radius: 0 4px 4px 0;
+}
+
+.mobile-menu-footer {
+    padding: 20px;
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    border-top: 1px solid var(--border-color);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+    pointer-events: none;
+}
+
+.overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(20px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.mobile-menu.active .mobile-menu-links a {
+    animation: slideIn 0.4s ease forwards;
+    opacity: 0;
+}
+
+.mobile-menu.active .mobile-menu-links a:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.mobile-menu.active .mobile-menu-links a:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.mobile-menu.active .mobile-menu-links a:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+/* TikTok-style button */
+.mobile-menu-links a.download-btn {
+    background: var(--tiktok-gradient);
+    color: var(--tiktok-white);
+    font-weight: 600;
+    margin-top: 10px;
+    text-align: center;
+    justify-content: center;
+    box-shadow: var(--btn-shadow);
+}
+
+.mobile-menu-links a.download-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 20px rgba(254, 44, 85, 0.35);
+}
+
+.mobile-menu-links a.download-btn:active {
+    transform: translateY(0);
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 480px) {
+    .mobile-menu {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .mobile-menu-links a {
+        font-size: 1rem;
+        padding: 14px;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    .mobile-menu {
+        width: 90%;
+    }
+}
+
+/* Dark mode */
+.dark-mode .mobile-menu-links a:hover {
+    background-color: var(--tiktok-light-gray);
+}
+
+.dark-mode .mobile-menu-close:hover {
+    background-color: var(--tiktok-light-gray);
+}
+
+/* Animation for logo */
+@keyframes logoGlow {
+    0% { filter: drop-shadow(0 0 2px rgba(37, 244, 238, 0.3)); }
+    50% { filter: drop-shadow(0 0 5px rgba(254, 44, 85, 0.5)); }
+    100% { filter: drop-shadow(0 0 2px rgba(37, 244, 238, 0.3)); }
+}
+
+.logo i {
+    animation: logoGlow 3s infinite;
+}
     </style>
 </head>
 
@@ -2157,6 +2406,36 @@ button {
             </div>
         </div>
     </nav>
+     <!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+        <div class="logo">
+            <i class="fab fa-tiktok"></i>
+            <span>TokHaste</span>
+        </div>
+        <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Close menu">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="mobile-menu-links">
+        <a href="index.html" class="active">
+            <i class="fas fa-home"></i>
+            <span>Tiktok Downloader</span>
+        </a>
+        <a href="Tiktok-to-MP3-Converter.html">
+            <i class="fas fa-music"></i>
+            <span>TikTok to MP3 Converter</span>
+        </a>
+        <a href="Video-to-Audio-Converter.html">
+            <i class="fas fa-file-audio"></i>
+            <span>MP4 To Mp3 FREE</span>
+        </a>
+    </div>
+    <div class="mobile-menu-footer">
+        <p>© 2025 TokHaste</p>
+    </div>
+</div>
+<div class="overlay" id="overlay"></div>
 
 
     <!-- Hero Section -->
