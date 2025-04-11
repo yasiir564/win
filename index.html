@@ -1568,6 +1568,36 @@ a:active {
 .copy-btn:hover {
   background-color: var(--button-secondary-hover, #e6e6e7);
 }
+        /* Improved URL input container */
+        .url-input-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        #urlInput {
+            width: 100%;
+            padding-right: 120px; /* Space for the paste button */
+        }
+
+        #clearInput {
+            position: absolute;
+            right: 90px;
+            background: transparent;
+            border: none;
+            color: var(--tiktok-dark-gray);
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
     </style>
 </head>
 
