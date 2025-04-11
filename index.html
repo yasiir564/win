@@ -2845,23 +2845,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    /**
-     * Set up mobile menu functionality
-     */
-    function setupMobileMenu() {
-        elements.mobileMenuToggle?.addEventListener('click', () => {
-            elements.navLinks?.classList.toggle('mobile-active');
-            elements.mobileMenuToggle.classList.toggle('active');
-            
-            // Toggle menu icon
-            const menuIcon = elements.mobileMenuToggle.querySelector('i');
-            if (menuIcon) {
-                menuIcon.className = elements.navLinks?.classList.contains('mobile-active') 
-                    ? 'fas fa-times' 
-                    : 'fas fa-bars';
-            }
-        });
-    }
+ // Mobile menu toggle
+    mobileMenuToggle.addEventListener('click', () => {
+        mobileMenu.classList.add('active');
+        overlay.classList.add('active');
+    });
+    
+    mobileMenuClose.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+    
+    overlay.addEventListener('click', () => {
+        mobileMenu.classList.remove('active');
+        overlay.classList.remove('active');
+    });
 
     /**
      * Set up clear button functionality
