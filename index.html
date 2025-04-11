@@ -2711,7 +2711,7 @@ button {
 
     <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Cache DOM elements
+    // Cache DOM elements - improved to include mobile menu elements
     const elements = {
         darkModeToggle: document.getElementById('darkModeToggle'),
         body: document.body,
@@ -2720,6 +2720,9 @@ document.addEventListener('DOMContentLoaded', function() {
         downloadBtn: document.getElementById('downloadBtn'),
         resultDiv: document.getElementById('result'),
         mobileMenuToggle: document.getElementById('mobileMenuToggle'),
+        mobileMenu: document.getElementById('mobileMenu'),
+        mobileMenuClose: document.getElementById('mobileMenuClose'),
+        overlay: document.getElementById('overlay'),
         navLinks: document.querySelector('.nav-links'),
         signInButton: document.querySelector('.btn-sign-in'),
         faqQuestions: document.querySelectorAll('.faq-question')
@@ -2746,7 +2749,13 @@ document.addEventListener('DOMContentLoaded', function() {
      * Dark mode initialization
      */
     function initDarkMode() {
-        if (localStorage.getItem('darkMode') === 'enabled' && elements.body) {
+        const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        // Check localStorage first, then fallback to system preference
+        const darkModeEnabled = localStorage.getItem('darkMode') === 'enabled' || 
+                              (localStorage.getItem('darkMode') === null && prefersDarkMode);
+                              
+        if (darkModeEnabled && elements.body) {
             elements.body.classList.add('dark-mode');
             updateDarkModeIcon(true);
         }
@@ -2808,6 +2817,8 @@ document.addEventListener('DOMContentLoaded', function() {
      * Toggle dark mode
      */
     function toggleDarkMode() {
+        if (!elements.body) return;
+        
         elements.body.classList.toggle('dark-mode');
         
         const isDarkMode = elements.body.classList.contains('dark-mode');
@@ -2819,6 +2830,8 @@ document.addEventListener('DOMContentLoaded', function() {
      * Set up the FAQ accordion functionality
      */
     function setupFaqAccordion() {
+        if (!elements.faqQuestions || !elements.faqQuestions.length) return;
+        
         elements.faqQuestions.forEach(question => {
             question.addEventListener('click', () => {
                 // Toggle active class
@@ -2826,6 +2839,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Toggle answer visibility
                 const answer = question.nextElementSibling;
+                if (!answer) return;
+                
                 answer.style.maxHeight = answer.style.maxHeight ? null : `${answer.scrollHeight}px`;
                 
                 // Rotate chevron icon
@@ -2845,21 +2860,46 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
- // Mobile menu toggle
-    mobileMenuToggle.addEventListener('click', () => {
-        mobileMenu.classList.add('active');
-        overlay.classList.add('active');
-    });
+    /**
+     * Set up mobile menu functionality
+     */
+    function setupMobileMenu() {
+        // Fix for mobile menu toggle
+        if (elements.mobileMenuToggle && elements.mobileMenu && elements.overlay) {
+            elements.mobileMenuToggle.addEventListener('click', () => {
+                elements.mobileMenu.classList.add('active');
+                elements.overlay.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+            });
+            
+            if (elements.mobileMenuClose) {
+                elements.mobileMenuClose.addEventListener('click', closeMobileMenu);
+            }
+            
+            if (elements.overlay) {
+                elements.overlay.addEventListener('click', closeMobileMenu);
+            }
+            
+            // Close menu when clicking on a link
+            const mobileNavLinks = elements.mobileMenu?.querySelectorAll('a');
+            if (mobileNavLinks) {
+                mobileNavLinks.forEach(link => {
+                    link.addEventListener('click', closeMobileMenu);
+                });
+            }
+        }
+    }
     
-    mobileMenuClose.addEventListener('click', () => {
-        mobileMenu.classList.remove('active');
-        overlay.classList.remove('active');
-    });
-    
-    overlay.addEventListener('click', () => {
-        mobileMenu.classList.remove('active');
-        overlay.classList.remove('active');
-    });
+    /**
+     * Close mobile menu helper function
+     */
+    function closeMobileMenu() {
+        if (elements.mobileMenu && elements.overlay) {
+            elements.mobileMenu.classList.remove('active');
+            elements.overlay.classList.remove('active');
+            document.body.style.overflow = ''; // Re-enable scrolling
+        }
+    }
 
     /**
      * Set up clear button functionality
@@ -2876,6 +2916,9 @@ document.addEventListener('DOMContentLoaded', function() {
             elements.urlInput.addEventListener('input', () => {
                 elements.clearInputBtn.style.display = elements.urlInput.value ? 'block' : 'none';
             });
+            
+            // Initialize clear button visibility
+            elements.clearInputBtn.style.display = elements.urlInput.value ? 'block' : 'none';
         }
     }
 
@@ -2884,9 +2927,16 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function handlePaste() {
         setTimeout(function() {
+            if (!elements.urlInput) return;
+            
             const url = elements.urlInput.value.trim();
             if (url && url.includes('tiktok.com')) {
                 downloadTikTok();
+            }
+            
+            // Update clear button visibility
+            if (elements.clearInputBtn) {
+                elements.clearInputBtn.style.display = url ? 'block' : 'none';
             }
         }, 100);
     }
@@ -2920,6 +2970,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!document.getElementById('pasteButton')) {
             const pasteButton = document.createElement('button');
             pasteButton.id = 'pasteButton';
+            pasteButton.className = 'paste-button';
             pasteButton.innerHTML = '<i class="fas fa-paste"></i> Paste';
             pasteButton.setAttribute('aria-label', 'Paste TikTok URL');
             pasteButton.setAttribute('type', 'button');
@@ -2993,6 +3044,8 @@ document.addEventListener('DOMContentLoaded', function() {
      */
     function animateBackgrounds() {
         const circles = document.querySelectorAll('.bg-circle');
+        if (!circles.length) return;
+        
         circles.forEach(circle => {
             const randomDuration = 15 + Math.random() * 10;
             const randomDelay = Math.random() * 5;
@@ -3002,12 +3055,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * Scroll to result area
+     * Scroll to result area with smooth behavior
      */
     function scrollToResult() {
         if (elements.resultDiv) {
             setTimeout(() => {
-                elements.resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Use intersection observer to check if result is already visible
+                const observer = new IntersectionObserver((entries) => {
+                    if (!entries[0].isIntersecting) {
+                        elements.resultDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                    observer.disconnect();
+                });
+                
+                observer.observe(elements.resultDiv);
             }, 300);
         }
     }
@@ -3016,6 +3077,7 @@ document.addEventListener('DOMContentLoaded', function() {
      * Extract video ID from TikTok URL for filename
      */
     function extractVideoIdFromUrl(url) {
+        // Improved regex to handle more URL formats
         const matches = url.match(/video\/(\d+)/);
         return matches && matches[1] ? `tiktok-${matches[1]}.mp4` : 'tiktok-video.mp4';
     }
@@ -3024,12 +3086,16 @@ document.addEventListener('DOMContentLoaded', function() {
      * Format large numbers for display
      */
     function formatNumber(num) {
+        if (!num && num !== 0) return '0';
+        
+        num = parseInt(num, 10);
+        
         if (num >= 1000000) {
             return (num / 1000000).toFixed(1) + 'M';
         } else if (num >= 1000) {
             return (num / 1000).toFixed(1) + 'K';
         }
-        return num;
+        return num.toString();
     }
 
     /**
@@ -3059,10 +3125,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     /**
-     * Trigger file download
+     * Trigger file download with error handling
      */
     function triggerDownload(url, filename) {
-        fetch(url)
+        if (!url) {
+            console.error('Download error: URL is empty');
+            showSweetAlert('Download failed', 'The video URL is missing. Please try again.', 'error');
+            return;
+        }
+        
+        // Show download started notification
+        showSweetAlert('Download started', 'Your file will be downloaded shortly.', 'info');
+        
+        fetch(url, { method: 'GET' })
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -3077,8 +3152,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 link.style.display = 'none';
                 document.body.appendChild(link);
                 link.click();
-                document.body.removeChild(link);
-                window.URL.revokeObjectURL(blobUrl);
+                
+                // Cleanup
+                setTimeout(() => {
+                    document.body.removeChild(link);
+                    window.URL.revokeObjectURL(blobUrl);
+                }, 100);
             })
             .catch(error => {
                 console.error('Download error:', error);
@@ -3103,7 +3182,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Basic URL validation
+        // Improved URL validation
         if (!url.includes('tiktok.com')) {
             showSweetAlert('Invalid URL format', 'Please enter a valid TikTok URL (e.g., https://www.tiktok.com/@username/video/123456789)', 'error');
             elements.urlInput.focus();
@@ -3117,6 +3196,7 @@ document.addEventListener('DOMContentLoaded', function() {
         elements.urlInput.disabled = true;
         if (elements.downloadBtn) {
             elements.downloadBtn.disabled = true;
+            elements.downloadBtn.classList.add('disabled');
         }
         
         // Show loading state
@@ -3245,10 +3325,28 @@ document.addEventListener('DOMContentLoaded', function() {
                             <button class="tiktok-btn download-btn" onclick="window.triggerDownload('${data.video_url}', '${videoFileName}')">
                                 <i class="fas fa-download"></i> Download Again
                             </button>
+                            <button class="tiktok-btn share-btn" onclick="navigator.clipboard.writeText('${data.video_url}').then(() => showSweetAlert('URL Copied', 'Video URL has been copied to clipboard.'))">
+                                <i class="fas fa-link"></i> Copy URL
+                            </button>
                         </div>
                     </div>
                 </div>
             `;
+            
+            // Add video error handling
+            const videoEl = elements.resultDiv.querySelector('.tiktok-video-player');
+            if (videoEl) {
+                videoEl.addEventListener('error', (e) => {
+                    console.error('Video playback error:', e);
+                    // Display error message in the video container
+                    videoEl.parentElement.innerHTML = `
+                        <div class="video-error-overlay">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <p>Unable to play video. <a href="${data.video_url}" target="_blank">Download directly</a>.</p>
+                        </div>
+                    `;
+                });
+            }
             
             // Scroll to result area
             scrollToResult();
@@ -3298,6 +3396,7 @@ document.addEventListener('DOMContentLoaded', function() {
             elements.urlInput.disabled = false;
             if (elements.downloadBtn) {
                 elements.downloadBtn.disabled = false;
+                elements.downloadBtn.classList.remove('disabled');
             }
         }
     }
@@ -3307,6 +3406,7 @@ document.addEventListener('DOMContentLoaded', function() {
     window.triggerDownload = triggerDownload;
     window.scrollToResult = scrollToResult;
     window.createTikTokLoader = createTikTokLoader;
+    window.showSweetAlert = showSweetAlert;
 });
     </script>
 
