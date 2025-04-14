@@ -1029,7 +1029,7 @@
     }
 }
 
-      /* Progress Bar Enhancement */
+      /* Progress Bar Enhancement - Keeping as is */
 .progress-container {
     display: none;
     flex-direction: column;
@@ -1110,7 +1110,8 @@
     content: '|';
     animation: blink 1s infinite;
 }
-/* Audio Player Styles */
+
+/* Enhanced Modern Audio Player Styles */
 .audio-player-container {
     display: none;
     width: 100%;
@@ -1120,54 +1121,134 @@
 }
 .audio-player-container.visible {
     display: block;
-    animation: slideUp 0.5s ease;
+    animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .audio-player {
     background: var(--card-bg);
     border-radius: var(--border-radius);
-    padding: 20px;
+    padding: 24px;
     box-shadow: var(--card-shadow);
     border: 1px solid var(--card-border);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
+.audio-player:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+.audio-player::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--tiktok-gradient);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+.audio-player:hover::before {
+    transform: scaleX(1);
+}
+
+/* Title and metadata styling */
+.audio-info {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.audio-title {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 16px;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+}
+.audio-metadata {
+    color: var(--tiktok-dark-gray);
+    font-size: 12px;
+    opacity: 0.7;
+}
+
 .audio-controls {
     display: flex;
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    gap: 15px;
+    gap: 18px;
 }
 .player-btn {
     background: var(--tiktok-gradient);
     color: var(--tiktok-white);
     border: none;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     box-shadow: var(--btn-shadow);
     flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+.player-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 .player-btn:hover {
-    transform: scale(1.05);
+    transform: scale(1.08);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+}
+.player-btn:hover::before {
+    opacity: 1;
+}
+.player-btn:active {
+    transform: scale(0.95);
 }
 .player-btn.pulse {
-    animation: pulse 0.3s ease;
+    animation: enhancedPulse 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .time-slider {
     display: flex;
     align-items: center;
     flex-grow: 1;
-    gap: 10px;
+    gap: 12px;
+    position: relative;
 }
 .time {
     font-size: 14px;
     color: var(--text-primary);
-    min-width: 40px;
+    min-width: 44px;
     text-align: center;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    transition: color 0.2s ease;
+}
+.time.current-time {
+    color: var(--tiktok-red);
+}
+.seek-slider-container {
+    position: relative;
+    flex-grow: 1;
+    height: 20px;
+    display: flex;
+    align-items: center;
 }
 .seek-slider {
     flex-grow: 1;
@@ -1177,13 +1258,46 @@
     background: #e5e5e5;
     border-radius: 5px;
     outline: none;
-    transition: var(--transition);
+    transition: height 0.2s ease;
+    position: relative;
+    cursor: pointer;
 }
+.seek-slider:hover {
+    height: 8px;
+}
+.seek-slider-container:hover .seek-preview {
+    opacity: 1;
+    transform: translateY(0);
+}
+.seek-preview {
+    position: absolute;
+    top: -30px;
+    padding: 4px 8px;
+    background: var(--card-bg);
+    border-radius: 4px;
+    font-size: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: all 0.2s ease;
+    border: 1px solid var(--card-border);
+}
+
 .volume-controls {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     width: 150px;
+    position: relative;
+    transition: width 0.3s ease;
+}
+.volume-controls:hover {
+    width: 160px;
+}
+.volume-slider-container {
+    position: relative;
+    flex-grow: 1;
 }
 .volume-slider {
     flex-grow: 1;
@@ -1193,10 +1307,14 @@
     background: #e5e5e5;
     border-radius: 5px;
     outline: none;
-    transition: var(--transition);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+.volume-slider:hover {
+    height: 5px;
 }
 
-/* Slider thumb and track styling */
+/* Enhanced slider thumb and track styling */
 .seek-slider::-webkit-slider-thumb,
 .volume-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -1206,7 +1324,8 @@
     background: var(--tiktok-red);
     border-radius: 50%;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 .seek-slider::-moz-range-thumb,
@@ -1217,17 +1336,27 @@
     border-radius: 50%;
     cursor: pointer;
     border: none;
-    transition: var(--transition);
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
 .seek-slider:hover::-webkit-slider-thumb,
 .volume-slider:hover::-webkit-slider-thumb {
     transform: scale(1.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .seek-slider:hover::-moz-range-thumb,
 .volume-slider:hover::-moz-range-thumb {
     transform: scale(1.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.seek-slider:active::-webkit-slider-thumb,
+.volume-slider:active::-webkit-slider-thumb,
+.seek-slider:active::-moz-range-thumb,
+.volume-slider:active::-moz-range-thumb {
+    transform: scale(1.3);
 }
 
 .seek-slider:focus,
@@ -1235,25 +1364,86 @@
     background: #d5d5d5;
 }
 
+/* Enhanced track fill effect */
+.seek-slider-fill, 
+.volume-slider-fill {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    height: 6px;
+    background: var(--tiktok-gradient);
+    border-radius: 5px;
+    z-index: -1;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: width 0.1s ease, height 0.2s ease;
+}
+.seek-slider:hover + .seek-slider-fill {
+    height: 8px;
+}
+.volume-slider:hover + .volume-slider-fill {
+    height: 5px;
+}
+
 /* Icon styling */
 .player-icon {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
     fill: var(--tiktok-white);
+    transition: transform 0.2s ease;
+}
+.player-btn:hover .player-icon {
+    transform: scale(1.1);
 }
 
 .volume-icon {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     fill: var(--text-primary);
     cursor: pointer;
+    transition: all 0.2s ease;
 }
-
 .volume-icon:hover {
     fill: var(--tiktok-red);
+    transform: scale(1.1);
 }
 
-/* Animation keyframes */
+/* Additional controls */
+.secondary-controls {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 12px;
+    gap: 16px;
+}
+.control-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.control-btn:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.05);
+    transform: translateY(-1px);
+}
+.control-btn.active {
+    color: var(--tiktok-red);
+    opacity: 1;
+}
+.control-icon {
+    width: 16px;
+    height: 16px;
+}
+
+/* Enhanced Animation keyframes */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -1275,6 +1465,12 @@
     100% { transform: translateX(100%); }
 }
 
+@keyframes enhancedPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+    100% { transform: scale(1); }
+}
+
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.05); }
@@ -1292,20 +1488,53 @@
     50% { opacity: 0; }
 }
 
+@keyframes waveform {
+    0% { height: 3px; }
+    50% { height: 12px; }
+    100% { height: 3px; }
+}
+
+/* Playing state animations */
+.audio-player.playing .waveform span {
+    animation: waveform 0.5s ease infinite;
+    animation-delay: calc(var(--i) * 0.05s);
+}
+
+.waveform {
+    display: none;
+    gap: 3px;
+    height: 15px;
+    align-items: center;
+}
+.audio-player.playing .waveform {
+    display: flex;
+}
+.waveform span {
+    display: inline-block;
+    width: 3px;
+    height: 3px;
+    background: var(--tiktok-red);
+    border-radius: 1px;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .volume-controls {
-        width: 100px;
+        width: 120px;
     }
     
     .player-btn {
-        width: 36px;
-        height: 36px;
+        width: 44px;
+        height: 44px;
     }
     
     .time {
-        min-width: 35px;
-        font-size: 12px;
+        min-width: 40px;
+        font-size: 13px;
+    }
+    
+    .secondary-controls {
+        gap: 12px;
     }
 }
 
@@ -1316,11 +1545,20 @@
     
     .volume-controls {
         width: 100%;
-        margin-top: 10px;
+        margin-top: 12px;
     }
     
     .time-slider {
         width: 100%;
+    }
+    
+    .audio-player {
+        padding: 20px;
+    }
+    
+    .secondary-controls {
+        margin-top: 16px;
+        justify-content: space-between;
     }
 }
     </style>
@@ -1692,7 +1930,7 @@
     const TOAST_DURATION = 3000;
     const CONVERSION_STAGES = [
         { threshold: 5, message: 'Initializing download process...', subtext: 'Getting ready' },
-        { threshold: 15, message: 'Connecting to TikTok servers...', subtext: 'Establishing secure connection' },
+        { threshold: 15, message: 'Connecting to our servers...', subtext: 'Establishing secure connection' },
         { threshold: 25, message: 'Fetching video information...', subtext: 'Retrieving metadata' },
         { threshold: 40, message: 'Retrieving audio stream...', subtext: 'Finding the best quality' },
         { threshold: 55, message: 'Extracting audio content...', subtext: 'Isolating the sound' },
