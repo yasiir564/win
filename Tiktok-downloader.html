@@ -1783,10 +1783,47 @@ a:active {
         font-size: 0.85rem;
     }
 }
-      /* Additional Sections Styling */
+    /* Section Container Layout */
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+
+/* Section Title Style */
+.section-title {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 48px;
+  position: relative;
+  display: inline-block;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  left: 25%;
+  bottom: -10px;
+  width: 50%;
+  height: 4px;
+  background: var(--tiktok-gradient);
+  border-radius: 2px;
+}
+
+.highlight {
+  background: var(--tiktok-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Additional Sections Styling */
 #who-downloads,
 #why-use {
-    padding: 80px 0;
+    padding: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
 }
@@ -1795,21 +1832,35 @@ a:active {
 #why-use .section-title {
     font-size: clamp(1.75rem, 5vw, 2.5rem); /* Responsive font sizing */
     text-align: center;
-    margin-bottom: 50px;
+    margin-bottom: 48px;
     font-weight: 700;
     position: relative;
-    overflow: hidden;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
     line-height: 1.3;
-    padding: 0 15px;
-    width: 100%;
+    width: auto;
     max-width: 100%;
     word-wrap: break-word;
+}
+
+#who-downloads .section-title::after,
+#why-use .section-title::after {
+    content: '';
+    position: absolute;
+    left: 25%;
+    bottom: -10px;
+    width: 50%;
+    height: 4px;
+    background: var(--tiktok-gradient);
+    border-radius: 2px;
 }
 
 #who-downloads .highlight,
 #why-use .highlight {
     background: var(--tiktok-gradient);
     -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
     background-clip: text;
     color: transparent;
     position: relative;
@@ -1979,21 +2030,28 @@ a:active {
 
 /* Enhanced Responsive Adjustments */
 @media (max-width: 768px) {
+    .section-container {
+        padding: 60px 15px;
+    }
+    
+    .section-title {
+        font-size: clamp(1.75rem, 5vw, 2.5rem);
+        margin-bottom: 40px;
+    }
+    
     #who-downloads,
     #why-use {
-        padding: 60px 15px;
+        padding: 0;
     }
     
     #who-downloads .section-container,
     #why-use .section-container {
         width: 100%;
-        padding: 0 10px;
     }
     
     #who-downloads .section-title,
     #why-use .section-title {
-        margin-bottom: 30px;
-        padding: 0 10px;
+        margin-bottom: 40px;
         word-break: break-word;
     }
     
@@ -2006,11 +2064,24 @@ a:active {
 
 /* Small screens - further adjustments */
 @media (max-width: 480px) {
+    .section-container {
+        padding: 40px 15px;
+    }
+    
+    .section-title {
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+    }
+    
+    .section-title::after {
+        bottom: -8px;
+        height: 3px;
+    }
+    
     #who-downloads .section-title,
     #why-use .section-title {
         font-size: 1.5rem;
-        padding: 0 5px;
-        margin-bottom: 25px;
+        margin-bottom: 30px;
     }
     
     #who-downloads .highlight,
@@ -2023,134 +2094,7 @@ a:active {
         padding: 20px 15px;
     }
 }
-        /* New Section Title Styling */
-#who-downloads .section-title,
-#why-use .section-title {
-    font-size: clamp(1.75rem, 5vw, 2.5rem);
-    text-align: center;
-    margin-bottom: 50px;
-    font-weight: 800;
-    position: relative;
-    overflow: visible;
-    line-height: 1.3;
-    padding: 10px 15px 30px;
-    width: 100%;
-    max-width: 100%;
-    word-wrap: break-word;
-    letter-spacing: -0.02em;
-}
-
-/* Title with Glowing Underline */
-#who-downloads .section-title::after,
-#why-use .section-title::after {
-    content: '';
-    position: absolute;
-    width: 80px;
-    height: 4px;
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--tiktok-gradient);
-    border-radius: 4px;
-    box-shadow: 0 0 15px rgba(254, 44, 85, 0.6);
-}
-
-/* Gradient Text for Highlight */
-#who-downloads .highlight,
-#why-use .highlight {
-    background: var(--tiktok-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    position: relative;
-    display: inline-block;
-    white-space: normal;
-    font-weight: 900;
-}
-
-/* 3D Effect for Highlighted Text */
-#who-downloads .highlight::before,
-#why-use .highlight::before {
-    content: '';
-    position: absolute;
-    top: 0.05em;
-    left: 0.05em;
-    right: 0;
-    bottom: 0;
-    background: var(--tiktok-gradient);
-    filter: blur(12px);
-    opacity: 0.5;
-    z-index: -1;
-    border-radius: 8px;
-}
-
-/* Animation for Section Titles */
-@keyframes titleFadeIn {
-    0% {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-#who-downloads .section-title,
-#why-use .section-title {
-    animation: titleFadeIn 0.8s ease-out forwards;
-}
-
-/* Pulse Animation for Underline */
-@keyframes pulseLine {
-    0% {
-        opacity: 0.6;
-        width: 60px;
-    }
-    50% {
-        opacity: 1;
-        width: 100px;
-    }
-    100% {
-        opacity: 0.6;
-        width: 60px;
-    }
-}
-
-#who-downloads .section-title::after,
-#why-use .section-title::after {
-    animation: pulseLine 3s ease-in-out infinite;
-}
-
-/* Responsive Adjustments for Section Titles */
-@media (max-width: 768px) {
-    #who-downloads .section-title,
-    #why-use .section-title {
-        padding-bottom: 25px;
-    }
-    
-    #who-downloads .section-title::after,
-    #why-use .section-title::after {
-        height: 3px;
-        bottom: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    #who-downloads .section-title,
-    #why-use .section-title {
-        font-size: 1.5rem;
-        padding: 0 5px 20px;
-        margin-bottom: 25px;
-    }
-    
-    #who-downloads .section-title::after,
-    #why-use .section-title::after {
-        width: 50px;
-        height: 3px;
-        bottom: 8px;
-    }
-}
+      
     </style>
 </head>
 
