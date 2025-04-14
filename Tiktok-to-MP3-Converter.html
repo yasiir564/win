@@ -1029,6 +1029,300 @@
     }
 }
 
+      /* Progress Bar Enhancement */
+.progress-container {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    margin: 20px 0;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--card-border);
+    transition: var(--transition);
+}
+.progress-container.visible {
+    display: flex;
+    animation: fadeIn 0.5s ease;
+}
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.progress-status {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+.progress-percentage {
+    font-weight: 700;
+    color: var(--tiktok-red);
+}
+.progress-bar {
+    width: 100%;
+    height: 12px;
+    background-color: var(--tiktok-light-gray);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+.progress-bar-inner {
+    height: 100%;
+    width: 0;
+    background: var(--tiktok-gradient);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+.progress-bar-inner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer 2s infinite;
+}
+.progress-bar-inner.pulse {
+    animation: pulse 0.3s ease;
+}
+.progress-bar-inner.complete {
+    animation: complete 1s ease;
+}
+.progress-text {
+    font-size: 14px;
+    margin-top: 10px;
+    color: var(--tiktok-dark-gray);
+    opacity: 0.7;
+    min-height: 20px;
+    position: relative;
+}
+.progress-text.typing::after {
+    content: '|';
+    animation: blink 1s infinite;
+}
+/* Audio Player Styles */
+.audio-player-container {
+    display: none;
+    width: 100%;
+    margin: 20px 0;
+    padding: 0;
+    transition: var(--transition);
+}
+.audio-player-container.visible {
+    display: block;
+    animation: slideUp 0.5s ease;
+}
+.audio-player {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--card-border);
+}
+.audio-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 15px;
+}
+.player-btn {
+    background: var(--tiktok-gradient);
+    color: var(--tiktok-white);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--btn-shadow);
+    flex-shrink: 0;
+}
+.player-btn:hover {
+    transform: scale(1.05);
+}
+.player-btn.pulse {
+    animation: pulse 0.3s ease;
+}
+.time-slider {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    gap: 10px;
+}
+.time {
+    font-size: 14px;
+    color: var(--text-primary);
+    min-width: 40px;
+    text-align: center;
+}
+.seek-slider {
+    flex-grow: 1;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #e5e5e5;
+    border-radius: 5px;
+    outline: none;
+    transition: var(--transition);
+}
+.volume-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 150px;
+}
+.volume-slider {
+    flex-grow: 1;
+    height: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: #e5e5e5;
+    border-radius: 5px;
+    outline: none;
+    transition: var(--transition);
+}
+
+/* Slider thumb and track styling */
+.seek-slider::-webkit-slider-thumb,
+.volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--tiktok-red);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.seek-slider::-moz-range-thumb,
+.volume-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: var(--tiktok-red);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition);
+}
+
+.seek-slider:hover::-webkit-slider-thumb,
+.volume-slider:hover::-webkit-slider-thumb {
+    transform: scale(1.2);
+}
+
+.seek-slider:hover::-moz-range-thumb,
+.volume-slider:hover::-moz-range-thumb {
+    transform: scale(1.2);
+}
+
+.seek-slider:focus,
+.volume-slider:focus {
+    background: #d5d5d5;
+}
+
+/* Icon styling */
+.player-icon {
+    width: 18px;
+    height: 18px;
+    fill: var(--tiktok-white);
+}
+
+.volume-icon {
+    width: 16px;
+    height: 16px;
+    fill: var(--text-primary);
+    cursor: pointer;
+}
+
+.volume-icon:hover {
+    fill: var(--tiktok-red);
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes complete {
+    0% { background: var(--tiktok-gradient); }
+    50% { background: var(--tiktok-green); }
+    100% { background: var(--tiktok-gradient); }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .volume-controls {
+        width: 100px;
+    }
+    
+    .player-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .time {
+        min-width: 35px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .audio-controls {
+        flex-wrap: wrap;
+    }
+    
+    .volume-controls {
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    .time-slider {
+        width: 100%;
+    }
+}
     </style>
 </head>
 <body>
@@ -1115,18 +1409,42 @@
             
             <button id="convert-btn">Convert to MP3</button>
             
-            <div id="progress-container" class="progress-container">
-                <div class="progress-text">
-                    <span id="progress-status">Preparing...</span>
-                    <span id="progress-percentage">0%</span>
-                </div>
-                <div class="progress-bar-outer">
-                    <div id="progress-bar-inner" class="progress-bar-inner"></div>
-                </div>
-            </div>
+           <div id="progress-container" class="progress-container">
+    <div class="progress-header">
+        <div id="progress-status" class="progress-status">Initializing...</div>
+        <div id="progress-percentage" class="progress-percentage">0%</div>
+    </div>
+    <div class="progress-bar">
+        <div id="progress-bar-inner" class="progress-bar-inner"></div>
+    </div>
+    <div id="progress-text" class="progress-text">Getting ready</div>
+</div>
             
             <div id="status" class="status"></div>
+            <div id="audio-player-container" class="audio-player-container">
+    <div class="audio-player">
+        <div class="audio-controls">
+            <button id="play-pause-btn" class="player-btn play-pause">
+                <i class="fas fa-play"></i>
+            </button>
             
+            <div class="time-slider">
+                <span id="current-time" class="time">0:00</span>
+                <input type="range" id="seek-slider" class="seek-slider" min="0" max="100" value="0" step="1">
+                <span id="duration-time" class="time">0:00</span>
+            </div>
+            
+            <div class="volume-controls">
+                <button id="volume-btn" class="player-btn volume">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+                <input type="range" id="volume-control" class="volume-slider" min="0" max="100" value="70" step="1">
+            </div>
+        </div>
+        
+        <audio id="audio-element"></audio>
+    </div>
+</div>
             <div id="download-section" class="download-section">
                 <div class="audio-info">
                     <p id="audio-title"><strong>Title:</strong> <span>Unknown</span></p>
@@ -1343,6 +1661,7 @@
         progressStatus: document.getElementById('progress-status'),
         progressPercentage: document.getElementById('progress-percentage'),
         progressBarInner: document.getElementById('progress-bar-inner'),
+        progressText: document.getElementById('progress-text'),
         downloadSection: document.getElementById('download-section'),
         downloadLink: document.getElementById('download-link'),
         audioTitleEl: document.getElementById('audio-title'),
@@ -1357,21 +1676,29 @@
         toast: document.getElementById('toast'),
         toastText: document.getElementById('toastText'),
         toastIcon: document.getElementById('toastIcon'),
-        toastClose: document.getElementById('toastClose')
+        toastClose: document.getElementById('toastClose'),
+        audioPlayer: document.getElementById('audio-player-container'),
+        audioElement: document.getElementById('audio-element'),
+        playPauseBtn: document.getElementById('play-pause-btn'),
+        seekSlider: document.getElementById('seek-slider'),
+        currentTimeEl: document.getElementById('current-time'),
+        durationEl: document.getElementById('duration-time'),
+        volumeControl: document.getElementById('volume-control'),
+        volumeBtn: document.getElementById('volume-btn')
     };
 
     // Constants
     const API_URL = 'https://mainpy-v09m.onrender.com';
     const TOAST_DURATION = 3000;
     const CONVERSION_STAGES = [
-        { threshold: 10, message: 'Initializing download process...' },
-        { threshold: 20, message: 'Connecting to TikTok servers...' },
-        { threshold: 30, message: 'Fetching video information...' },
-        { threshold: 45, message: 'Retrieving audio stream...' },
-        { threshold: 60, message: 'Extracting audio content...' },
-        { threshold: 75, message: 'Processing audio file...' },
-        { threshold: 85, message: 'Optimizing audio quality...' },
-        { threshold: 95, message: 'Preparing download...' }
+        { threshold: 5, message: 'Initializing download process...', subtext: 'Getting ready' },
+        { threshold: 15, message: 'Connecting to TikTok servers...', subtext: 'Establishing secure connection' },
+        { threshold: 25, message: 'Fetching video information...', subtext: 'Retrieving metadata' },
+        { threshold: 40, message: 'Retrieving audio stream...', subtext: 'Finding the best quality' },
+        { threshold: 55, message: 'Extracting audio content...', subtext: 'Isolating the sound' },
+        { threshold: 70, message: 'Processing audio file...', subtext: 'Almost there' },
+        { threshold: 85, message: 'Optimizing audio quality...', subtext: 'Making it sound great' },
+        { threshold: 95, message: 'Preparing download...', subtext: 'Final touches' }
     ];
 
     // Initialize dark mode
@@ -1382,6 +1709,9 @@
     
     // Check for TikTok URL in clipboard on load
     detectClipboardUrl();
+
+    // Initialize audio player
+    initAudioPlayer();
 
     // Dark mode functionality
     function initDarkMode() {
@@ -1417,6 +1747,109 @@
                 elements.convertBtn.click();
             }
         });
+    }
+
+    // Initialize audio player
+    function initAudioPlayer() {
+        if (!elements.audioElement) return;
+        
+        // Play/Pause button
+        elements.playPauseBtn.addEventListener('click', togglePlayPause);
+        
+        // Update seek slider as audio plays
+        elements.audioElement.addEventListener('timeupdate', updateSeekSlider);
+        
+        // Allow seeking
+        elements.seekSlider.addEventListener('input', seekAudio);
+        
+        // Update duration when metadata is loaded
+        elements.audioElement.addEventListener('loadedmetadata', function() {
+            elements.durationEl.textContent = formatTime(elements.audioElement.duration);
+            elements.seekSlider.max = Math.floor(elements.audioElement.duration);
+        });
+        
+        // Handle volume control
+        elements.volumeControl.addEventListener('input', function() {
+            elements.audioElement.volume = this.value / 100;
+            updateVolumeIcon(this.value);
+        });
+        
+        // Handle volume button click (mute/unmute)
+        elements.volumeBtn.addEventListener('click', toggleMute);
+        
+        // Reset player when audio ends
+        elements.audioElement.addEventListener('ended', function() {
+            elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            elements.seekSlider.value = 0;
+            elements.currentTimeEl.textContent = '0:00';
+        });
+    }
+
+    // Toggle play/pause
+    function togglePlayPause() {
+        if (elements.audioElement.paused) {
+            elements.audioElement.play();
+            elements.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            
+            // Add pulse animation to the play button
+            elements.playPauseBtn.classList.add('pulse');
+            setTimeout(() => {
+                elements.playPauseBtn.classList.remove('pulse');
+            }, 300);
+        } else {
+            elements.audioElement.pause();
+            elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+    }
+
+    // Update seek slider and current time
+    function updateSeekSlider() {
+        const currentTime = Math.floor(elements.audioElement.currentTime);
+        elements.seekSlider.value = currentTime;
+        elements.currentTimeEl.textContent = formatTime(currentTime);
+        
+        // Update seek slider background
+        const percentage = (currentTime / elements.audioElement.duration) * 100;
+        elements.seekSlider.style.background = `linear-gradient(to right, var(--tiktok-red) 0%, var(--tiktok-blue) ${percentage}%, #e5e5e5 ${percentage}%, #e5e5e5 100%)`;
+    }
+
+    // Seek audio
+    function seekAudio() {
+        elements.audioElement.currentTime = elements.seekSlider.value;
+    }
+
+    // Toggle mute
+    function toggleMute() {
+        elements.audioElement.muted = !elements.audioElement.muted;
+        
+        if (elements.audioElement.muted) {
+            elements.volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            elements.volumeControl.value = 0;
+        } else {
+            updateVolumeIcon(elements.volumeControl.value);
+            elements.volumeControl.value = elements.audioElement.volume * 100;
+        }
+    }
+
+    // Update volume icon based on level
+    function updateVolumeIcon(volumeLevel) {
+        if (volumeLevel == 0) {
+            elements.volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+        } else if (volumeLevel < 50) {
+            elements.volumeBtn.innerHTML = '<i class="fas fa-volume-down"></i>';
+        } else {
+            elements.volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+        }
+    }
+
+    // Format time in seconds to MM:SS
+    function formatTime(seconds) {
+        if (!seconds || isNaN(seconds)) return '0:00';
+        
+        seconds = Math.round(parseFloat(seconds));
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
     // Dark mode toggle function
@@ -1467,7 +1900,7 @@
         });
     });
 
-        // Sign In Button Functionality
+    // Sign In Button Functionality
     const signInButton = document.querySelector('.btn-sign-in');
     if (signInButton) {
         signInButton.addEventListener('click', () => {
@@ -1546,31 +1979,72 @@
         elements.progressContainer.classList.remove('visible');
         elements.statusDiv.style.display = 'none';
         elements.downloadSection.classList.remove('visible');
+        elements.audioPlayer.classList.remove('visible');
+        
+        // Reset audio player
+        if (elements.audioElement) {
+            elements.audioElement.pause();
+            elements.audioElement.src = '';
+            elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
     }
 
-    // Update progress animation with more detailed stages
+    // Update progress animation with more detailed stages and subtext
     function startProgressAnimation() {
         let progress = 0;
         let currentStageIndex = 0;
         
         return setInterval(() => {
             if (progress < 95) {
-                // Calculate a random increment between 0.5 and 3
-                const increment = 0.5 + Math.random() * 2.5;
+                // Calculate a random increment between 0.5 and 2
+                const increment = 0.5 + Math.random() * 1.5;
                 progress += increment;
                 
                 // Check if we need to update the stage message
                 while (currentStageIndex < CONVERSION_STAGES.length && 
                       progress >= CONVERSION_STAGES[currentStageIndex].threshold) {
                     elements.progressStatus.textContent = CONVERSION_STAGES[currentStageIndex].message;
+                    
+                    // Update subtext with typing animation
+                    updateProgressSubtext(CONVERSION_STAGES[currentStageIndex].subtext);
+                    
                     currentStageIndex++;
                 }
                 
                 // Update progress bar and percentage
                 elements.progressBarInner.style.width = `${progress}%`;
                 elements.progressPercentage.textContent = `${Math.round(progress)}%`;
+                
+                // Add pulsing animation for visual feedback
+                if (progress % 10 < 0.5) {
+                    elements.progressBarInner.classList.add('pulse');
+                    setTimeout(() => {
+                        elements.progressBarInner.classList.remove('pulse');
+                    }, 300);
+                }
             }
         }, 350);
+    }
+    
+    // Typing animation for progress subtext
+    function updateProgressSubtext(text) {
+        if (!elements.progressText) return;
+        
+        elements.progressText.textContent = '';
+        elements.progressText.classList.add('typing');
+        
+        let i = 0;
+        const typingInterval = setInterval(() => {
+            if (i < text.length) {
+                elements.progressText.textContent += text.charAt(i);
+                i++;
+            } else {
+                clearInterval(typingInterval);
+                setTimeout(() => {
+                    elements.progressText.classList.remove('typing');
+                }, 500);
+            }
+        }, 50);
     }
 
     // Format duration in seconds to MM:SS
@@ -1615,12 +2089,29 @@
         return errorMessage;
     }
 
+    // Scroll to element function with smooth animation
+    function scrollToElement(element) {
+        if (!element) return;
+        
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        const offset = 80; // Offset for fixed headers
+        
+        window.scrollTo({
+            top: elementPosition - offset,
+            behavior: 'smooth'
+        });
+    }
+
     // Display completion and download section
     function displayCompletionUI(data) {
         // Complete progress
         elements.progressBarInner.style.width = '100%';
         elements.progressPercentage.textContent = '100%';
         elements.progressStatus.textContent = 'Conversion complete!';
+        elements.progressText.textContent = 'Your MP3 is ready';
+        
+        // Add completion animation
+        elements.progressBarInner.classList.add('complete');
         
         // Show metadata in download section
         elements.audioTitleEl.querySelector('span').textContent = data.title || 'Unknown';
@@ -1639,8 +2130,29 @@
         const sanitizedAuthor = (data.author || 'unknown').replace(/[<>:"/\\|?*]/g, '_');
         elements.downloadLink.download = `${sanitizedAuthor} - ${sanitizedTitle}.mp3`;
         
-        // Show download section
+        // Set up audio player
+        elements.audioElement.src = audioUrl;
+        elements.audioElement.volume = 0.7; // Set default volume
+        elements.volumeControl.value = 70;
+        elements.currentTimeEl.textContent = '0:00';
+        elements.durationEl.textContent = formatDuration(data.duration);
+        
+        // Show download section and audio player
         elements.downloadSection.classList.add('visible');
+        elements.audioPlayer.classList.add('visible');
+        
+        // Auto-play audio
+        elements.audioElement.play().then(() => {
+            elements.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        }).catch(error => {
+            console.log('Auto-play prevented by browser:', error);
+            elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        });
+        
+        // Scroll to download section
+        setTimeout(() => {
+            scrollToElement(elements.downloadSection);
+        }, 500);
     }
 
     // Main conversion function
@@ -1664,9 +2176,13 @@
         // Show progress
         elements.progressContainer.classList.add('visible');
         elements.progressStatus.textContent = 'Initializing...';
+        elements.progressText.textContent = 'Getting ready';
         elements.progressPercentage.textContent = '0%';
         elements.progressBarInner.style.width = '0%';
         elements.convertBtn.disabled = true;
+        
+        // Scroll to progress
+        scrollToElement(elements.progressContainer);
         
         // Start progress animation
         const progressInterval = startProgressAnimation();
