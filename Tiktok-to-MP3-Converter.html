@@ -1886,7 +1886,7 @@
 
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
+     document.addEventListener('DOMContentLoaded', function() {
     // Cache DOM elements
     const elements = {
         urlInput: document.getElementById('tiktok-url'),
@@ -2293,6 +2293,18 @@
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     }
 
+    // Helper function to extract filename from the Content-Disposition header
+    function getFilenameFromResponse(response) {
+        const contentDisposition = response.headers.get('Content-Disposition');
+        if (!contentDisposition) return null;
+        
+        const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(contentDisposition);
+        if (matches && matches[1]) {
+            return matches[1].replace(/['"]/g, '');
+        }
+        return null;
+    }
+
     // Handle specific error types
     function handleError(error, response) {
         let errorMessage = 'Failed to convert TikTok to MP3. Please try again.';
@@ -2354,12 +2366,16 @@
         elements.audioAuthorEl.querySelector('span').textContent = data.author || 'Unknown';
         elements.audioDurationEl.querySelector('span').textContent = formatDuration(data.duration) || 'Unknown';
         
-        // Get the full URL to the audio file
-        const baseUrl = API_URL.split('/api/')[0];
-        const audioUrl = baseUrl + data.mp3_url;
-        
-        // Set up download link - use direct URL from API
-        elements.downloadLink.href = audioUrl;
+        // Set up download link
+        if (data.mp3_url) {
+            // For JSON API response with URL
+            const baseUrl = API_URL.split('/api/')[0];
+            const audioUrl = data.mp3_url.startsWith('http') ? data.mp3_url : baseUrl + data.mp3_url;
+            elements.downloadLink.href = audioUrl;
+        } else {
+            // For direct binary response, URL is already set
+            // Nothing to do here as the URL is already set in the conversion function
+        }
         
         // Set a meaningful filename
         const sanitizedTitle = (data.title || 'tiktok').replace(/[<>:"/\\|?*]/g, '_');
@@ -2367,7 +2383,9 @@
         elements.downloadLink.download = `${sanitizedAuthor} - ${sanitizedTitle}.mp3`;
         
         // Set up audio player
-        elements.audioElement.src = audioUrl;
+        if (!elements.audioElement.src) {
+            elements.audioElement.src = elements.downloadLink.href;
+        }
         elements.audioElement.volume = 0.7; // Set default volume
         elements.volumeControl.value = 70;
         elements.currentTimeEl.textContent = '0:00';
@@ -2445,29 +2463,92 @@
             clearTimeout(timeoutId);
             
             if (!response.ok) {
+                // Try to get error as JSON first
                 let errorMessage;
-                try {
+                const contentType = response.headers.get('Content-Type') || '';
+                
+                if (contentType.includes('application/json')) {
                     const errorData = await response.json();
                     errorMessage = errorData.error || `Server responded with ${response.status}`;
-                } catch (e) {
+                } else {
                     errorMessage = await response.text() || `Server responded with ${response.status}`;
                 }
                 throw new Error(errorMessage);
             }
             
-            const data = await response.json();
+            // Check if response is JSON or binary (MP3)
+            const contentType = response.headers.get('Content-Type') || '';
             
-            if (!data.success) {
-                throw new Error(data.error || 'Failed to convert TikTok to MP3');
+            if (contentType.includes('audio/mpeg')) {
+                // Handle direct MP3 file response
+                const blob = await response.blob();
+                const fileName = getFilenameFromResponse(response) || 'tiktok_audio.mp3';
+                
+                // Get video ID from filename if possible
+                let videoId = 'unknown';
+                const videoIdMatch = fileName.match(/tiktok_(\d+)\.mp3/);
+                if (videoIdMatch) {
+                    videoId = videoIdMatch[1];
+                }
+                
+                // Create object URL for the blob
+                const audioUrl = URL.createObjectURL(blob);
+                
+                // Set up download link
+                elements.downloadLink.href = audioUrl;
+                elements.downloadLink.download = fileName;
+                
+                // Set up audio player
+                elements.audioElement.src = audioUrl;
+                
+                // Create a cleaner title from the filename
+                const title = fileName
+                    .replace(/^tiktok_/, '')
+                    .replace(/\.mp3$/, '')
+                    .replace(/_/g, ' ');
+                
+                // Create mock data for the UI
+                const mockData = {
+                    title: title,
+                    author: 'TikTok Creator',
+                    duration: 0 // Will be updated when audio is loaded
+                };
+                
+                // Update duration when audio metadata is loaded
+                elements.audioElement.onloadedmetadata = function() {
+                    mockData.duration = elements.audioElement.duration;
+                    elements.durationEl.textContent = formatDuration(elements.audioElement.duration);
+                    elements.audioDurationEl.querySelector('span').textContent = formatDuration(elements.audioElement.duration);
+                };
+                
+                // Complete progress animation
+                clearInterval(progressInterval);
+                
+                // Show download section
+                displayCompletionUI(mockData);
+                
+                showToast('Conversion successful! Your download is ready.', 'success');
+            } else {
+                // Handle JSON response (for backward compatibility)
+                try {
+                    const data = await response.json();
+                    
+                    if (!data.success && !data.mp3_url) {
+                        throw new Error(data.error || 'Failed to convert TikTok to MP3');
+                    }
+                    
+                    // Complete progress animation
+                    clearInterval(progressInterval);
+                    
+                    // Show download section
+                    displayCompletionUI(data);
+                    
+                    showToast('Conversion successful! Your download is ready.', 'success');
+                } catch (jsonError) {
+                    console.error('Error parsing JSON response:', jsonError);
+                    throw new Error('Invalid response format from server');
+                }
             }
-            
-            // Complete progress animation
-            clearInterval(progressInterval);
-            
-            // Show download section
-            displayCompletionUI(data);
-            
-            showToast('Conversion successful! Your download is ready.', 'success');
             
         } catch (error) {
             console.error('Conversion failed:', error);
