@@ -1113,7 +1113,6 @@
 
 /* Audio Player Styles */
 .audio-player-container {
-    display: none;
     width: 100%;
     margin: 20px 0;
     padding: 10px;
@@ -1121,10 +1120,6 @@
     background: var(--card-bg);
     box-shadow: var(--card-shadow);
     transition: var(--transition);
-}
-
-.audio-player-container.visible {
-    display: block;
 }
 
 .audio-player-container:hover {
@@ -1551,7 +1546,7 @@
     </style>
 </head>
 <body>
-<!-- Navigation -->
+     <!-- Navigation -->
 <nav class="navbar">
     <div class="nav-container">
         <div class="logo">
@@ -1659,8 +1654,8 @@
             <button id="tryAgainBtn" class="try-again-btn">Try Again</button>
         </div>
         
-        <!-- Updated Audio Player Container with Visualization - Now Hidden by Default -->
-        <div id="audio-player-container" class="audio-player-container" style="display: none;">
+        <!-- Updated Audio Player Container with Visualization -->
+        <div id="audio-player-container" class="audio-player-container">
             <div class="audio-player">
                 <div class="player-visualization">
                     <div class="visualization-bars">
