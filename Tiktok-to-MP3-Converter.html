@@ -2672,6 +2672,297 @@
                 const height = isPlaying ? 5 + Math.random() * 35 : 5;
                 bar.style.height = `${height}px`;
             });
+          
+          // Continue animation loop for visualization bars
+            animationFrameId = requestAnimationFrame(animateVisualizationBars);
+        }
+        
+        // Set initial volume
+        audioElement.volume = 0.75;
+        volumeProgress.style.width = '75%';
+    }
+
+    // Main function to convert TikTok to MP3
+    async function convertTikTokToMp3() {
+        const url = elements.urlInput.value.trim();
+        
+        // Validate URL
+        if (!url) {
+            showToast('Error', 'Please enter a TikTok URL', 'error');
+            return;
+        }
+        
+        if (!isValidTikTokUrl(url)) {
+            showToast('Invalid URL', 'Please enter a valid TikTok URL', 'error');
+            return;
+        }
+        
+        // Check if Turnstile token is available
+        if (!turnstileToken) {
+            showToast('Verification Required', 'Please complete the verification challenge', 'warning');
+            return;
+        }
+        
+        // Reset UI and start conversion process
+        resetUI();
+        hideError();
+        
+        // Update button state
+        elements.convertBtn.disabled = true;
+        elements.convertBtn.textContent = 'Converting...';
+        elements.convertBtn.classList.add('processing');
+        
+        // Show progress container
+        elements.progressContainer.classList.add('visible');
+        elements.progressStatus.textContent = CONVERSION_STAGES[0].message;
+        elements.progressText.textContent = CONVERSION_STAGES[0].subtext;
+        
+        // Track conversion start time
+        conversionStartTime = Date.now();
+        conversionPhase = 'converting';
+        conversionInProgress = true;
+        
+        // Start progress animation
+        progressTimer = startProgressAnimation();
+        
+        try {
+            logDebug(`Starting conversion for URL: ${url}`);
+            
+            // Prepare request data
+            const requestData = {
+                url: url,
+                turnstileToken: turnstileToken
+            };
+            
+            // Make API request
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            });
+            
+            // Clear progress animation
+            clearInterval(progressTimer);
+            
+            // Handle error responses
+            if (!response.ok) {
+                let errorData = { message: 'Unknown error occurred' };
+                
+                try {
+                    errorData = await response.json();
+                } catch (e) {
+                    console.error('Failed to parse error response:', e);
+                }
+                
+                const errorMessage = handleError(errorData, response);
+                
+                logDebug(`API error: ${errorMessage}`);
+                showError(errorMessage);
+                
+                // Reset button state
+                elements.convertBtn.disabled = false;
+                elements.convertBtn.textContent = 'Convert Now';
+                elements.convertBtn.classList.remove('processing');
+                
+                // Reset Turnstile
+                resetTurnstile();
+                
+                return;
+            }
+            
+            // Get audio file details and blob
+            const audioBlob = await response.blob();
+            
+            // Extract filename from headers or generate one
+            convertedFileName = getFilenameFromResponse(response) || 'tiktok-audio.mp3';
+            
+            logDebug(`Conversion successful. Filename: ${convertedFileName}`);
+            
+            // Complete the progress bar
+            elements.progressBarInner.style.width = '100%';
+            elements.progressPercentage.textContent = '100%';
+            elements.progressStatus.textContent = 'Conversion Complete!';
+            elements.progressText.textContent = 'Ready to download';
+            
+            // Get metadata from response if available
+            let metadata = {};
+            try {
+                const metadataHeader = response.headers.get('X-Audio-Metadata');
+                if (metadataHeader) {
+                    metadata = JSON.parse(decodeURIComponent(metadataHeader));
+                    logDebug('Metadata received:', metadata);
+                }
+            } catch (e) {
+                console.error('Failed to parse metadata:', e);
+            }
+            
+            // Create object URL for download
+            const audioUrl = URL.createObjectURL(audioBlob);
+            
+            // Update download section
+            elements.downloadLink.href = audioUrl;
+            elements.downloadLink.download = convertedFileName;
+            
+            // Update audio info if available
+            if (elements.audioTitleEl) {
+                elements.audioTitleEl.textContent = metadata.title || 'TikTok Audio';
+            }
+            if (elements.audioAuthorEl) {
+                elements.audioAuthorEl.textContent = metadata.author || 'Unknown Author';
+            }
+            if (elements.audioDurationEl) {
+                elements.audioDurationEl.textContent = formatDuration(metadata.duration);
+            }
+            
+            // Show download section after a short delay for better UX
+            setTimeout(() => {
+                elements.downloadSection.classList.add('visible');
+                
+                // Scroll to download section
+                smoothScrollTo(elements.downloadSection);
+                
+                // Show success toast
+                showToast('Success', 'TikTok successfully converted to MP3!', 'success');
+                
+                // Add enhanced audio player with visualization if container exists
+                if (elements.audioPlayer) {
+                    // Insert the audio player HTML
+                    elements.audioPlayer.innerHTML = createAudioPlayer();
+                    elements.audioPlayer.classList.add('visible');
+                    
+                    // Initialize the audio player
+                    initAudioPlayer();
+                    
+                    // Set audio source
+                    const audioElement = document.getElementById('audio-element');
+                    if (audioElement) {
+                        audioElement.src = audioUrl;
+                    }
+                }
+                
+                // Reset conversion state and button
+                conversionPhase = 'complete';
+                elements.convertBtn.textContent = 'Convert New';
+                elements.convertBtn.disabled = false;
+                elements.convertBtn.classList.remove('processing');
+                
+                // Reset Turnstile for next conversion
+                resetTurnstile();
+                
+                // Track conversion in analytics if available
+                if (window.gtag) {
+                    window.gtag('event', 'conversion_complete', {
+                        'event_category': 'conversion',
+                        'event_label': 'tiktok_to_mp3'
+                    });
+                }
+                
+                // Auto-download if setting enabled
+                const autoDownload = localStorage.getItem('autoDownload') === 'true';
+                if (autoDownload) {
+                    logDebug('Auto-download enabled, triggering download');
+                    elements.downloadLink.click();
+                }
+            }, 1000);
+            
+        } catch (error) {
+            console.error('Conversion error:', error);
+            
+            // Clear progress animation
+            clearInterval(progressTimer);
+            
+            // Show error message
+            const errorMessage = 'Failed to connect to the server. Please check your internet connection and try again.';
+            showError(errorMessage);
+            
+            // Reset button state
+            elements.convertBtn.disabled = false;
+            elements.convertBtn.textContent = 'Convert Now';
+            elements.convertBtn.classList.remove('processing');
+            
+            // Reset Turnstile
+            resetTurnstile();
+            
+            // Log error in analytics if available
+            if (window.gtag) {
+                window.gtag('event', 'conversion_error', {
+                    'event_category': 'error',
+                    'event_label': error.message || 'unknown_error'
+                });
+            }
+        }
+    }
+    
+    // Check for URL parameters on page load
+    window.addEventListener('load', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const tiktokUrl = urlParams.get('url');
+        
+        if (tiktokUrl && isValidTikTokUrl(tiktokUrl)) {
+            elements.urlInput.value = tiktokUrl;
+            logDebug('TikTok URL found in query parameters');
+            
+            // Auto-convert if parameter is set
+            if (urlParams.get('autoConvert') === 'true') {
+                // Wait for Turnstile to initialize
+                const checkTurnstile = setInterval(() => {
+                    if (turnstileToken) {
+                        clearInterval(checkTurnstile);
+                        elements.convertBtn.click();
+                    }
+                }, 500);
+                
+                // Set a timeout in case Turnstile doesn't load
+                setTimeout(() => {
+                    clearInterval(checkTurnstile);
+                }, 10000);
+            }
+        }
+    });
+    
+    // Setup periodic token refresh for Turnstile
+    setInterval(() => {
+        if (window.turnstile && turnstileWidget) {
+            window.turnstile.reset(turnstileWidget);
+        }
+    }, 3600000); // Refresh token every hour
+});
+
+// Add page load performance tracking
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        if (window.performance) {
+            const perfData = window.performance.timing;
+            const pageLoadTime = perfData.loadEventEnd - perfData.navigationStart;
+            
+            console.log('Page load time:', pageLoadTime + 'ms');
+            
+            // Track page load time in analytics if available
+            if (window.gtag) {
+                window.gtag('event', 'page_performance', {
+                    'event_category': 'performance',
+                    'event_label': 'page_load',
+                    'value': Math.round(pageLoadTime)
+                });
+            }
+        }
+    }, 0);
+});
+
+// Service worker registration for PWA support
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(registration => {
+                console.log('ServiceWorker registered with scope:', registration.scope);
+            })
+            .catch(error => {
+                console.log('ServiceWorker registration failed:', error);
+            });
+    });
+}
 </script>
 </body>
 </html>
