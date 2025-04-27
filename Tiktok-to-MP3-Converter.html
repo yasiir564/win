@@ -1628,96 +1628,73 @@
     </div>
 
     <!-- Main Content -->
-   <main>
-  <div class="container">
-    <header>
-      <h1>TikTok to MP3 Converter</h1>
-      <p class="subtitle">Convert TikTok videos into high-quality MP3 audio instantly.</p>
-    </header>
-
-    <div class="form-group">
-      <label for="tiktok-url">Enter TikTok Video URL</label>
-      <div class="input-wrapper">
-        <input 
-          type="text" 
-          id="tiktok-url" 
-          placeholder="Paste TikTok video link here" 
-          autocomplete="off"
-        >
-        <button id="paste-btn" class="paste-btn" title="Paste from clipboard">
-          <i class="fas fa-paste"></i>
-        </button>
-      </div>
-    </div>
-     <!-- Quality Selection -->
-            <div class="quality-options">
-                <div class="quality-option" data-bitrate="128k">128 kbps</div>
-                <div class="quality-option active" data-bitrate="192k">192 kbps</div>
-                <div class="quality-option" data-bitrate="320k">320 kbps</div>
+    <main>
+        <div class="container">
+            <header>
+                <h1>TikTok to MP3 Converter</h1>
+                <p class="subtitle">Extract high-quality audio from TikTok videos in seconds</p>
+            </header>
+            
+            <div class="form-group">
+                <label for="tiktok-url">Paste TikTok Video URL</label>
+                <div class="input-wrapper">
+                    <input type="text" id="tiktok-url" placeholder="https://www.tiktok.com/@username/video/1234567890" autocomplete="off">
+                    <button id="paste-btn" class="paste-btn" title="Paste from clipboard">
+                        <i class="fas fa-paste"></i>
+                    </button>
+                </div>
             </div>
-
-    <button id="convert-btn">Convert to MP3</button>
-
-    <div id="progress-container" class="progress-container" style="display: none;">
-      <div class="progress-header">
-        <div id="progress-status" class="progress-status">Preparing...</div>
+            
+            <button id="convert-btn">Convert to MP3</button>
+            
+           <div id="progress-container" class="progress-container">
+    <div class="progress-header">
+        <div id="progress-status" class="progress-status">Initializing...</div>
         <div id="progress-percentage" class="progress-percentage">0%</div>
-      </div>
-      <div class="progress-bar">
+    </div>
+    <div class="progress-bar">
         <div id="progress-bar-inner" class="progress-bar-inner"></div>
-      </div>
-      <div id="progress-text" class="progress-text"></div>
     </div>
-
-    <div id="status" class="status"></div>
-
-    <div id="audio-player-container" class="audio-player-container" style="display: none;">
-      <div class="audio-player">
+    <div id="progress-text" class="progress-text">Getting ready</div>
+</div>
+            
+            <div id="status" class="status"></div>
+            <div id="audio-player-container" class="audio-player-container">
+    <div class="audio-player">
         <div class="audio-controls">
-          <button id="play-pause-btn" class="player-btn play-pause">
-            <i class="fas fa-play"></i>
-          </button>
-
-          <div class="time-slider">
-            <span id="current-time" class="time">0:00</span>
-            <input 
-              type="range" 
-              id="seek-slider" 
-              class="seek-slider" 
-              min="0" 
-              max="100" 
-              value="0" 
-              step="1"
-            >
-            <span id="duration-time" class="time">0:00</span>
-          </div>
-
-          <div class="volume-controls">
-            <button id="volume-btn" class="player-btn volume">
-              <i class="fas fa-volume-up"></i>
+            <button id="play-pause-btn" class="player-btn play-pause">
+                <i class="fas fa-play"></i>
             </button>
-            <input 
-              type="range" 
-              id="volume-control" 
-              class="volume-slider" 
-              min="0" 
-              max="100" 
-              value="70" 
-              step="1"
-            >
-          </div>
+            
+            <div class="time-slider">
+                <span id="current-time" class="time">0:00</span>
+                <input type="range" id="seek-slider" class="seek-slider" min="0" max="100" value="0" step="1">
+                <span id="duration-time" class="time">0:00</span>
+            </div>
+            
+            <div class="volume-controls">
+                <button id="volume-btn" class="player-btn volume">
+                    <i class="fas fa-volume-up"></i>
+                </button>
+                <input type="range" id="volume-control" class="volume-slider" min="0" max="100" value="70" step="1">
+            </div>
         </div>
-
+        
         <audio id="audio-element"></audio>
-      </div>
     </div>
-
-    <a id="download-link" class="download-link" href="#" download style="display: none;">
-      <i class="fas fa-download"></i> Download MP3
-    </a>
-  </div>
-</main>
-
+</div>
+            <div id="download-section" class="download-section">
+                <div class="audio-info">
+                    <p id="audio-title"><strong>Title:</strong> <span>Unknown</span></p>
+                    <p id="audio-author"><strong>Creator:</strong> <span>Unknown</span></p>
+                    <p id="audio-duration"><strong>Duration:</strong> <span>Unknown</span></p>
+                </div>
+                <a id="download-link" class="download-link" href="#" download>
+                    <i class="fas fa-download"></i> Download MP3
+                </a>
+            </div>
+        </div>
+    </main>
 
     <!-- How to Use Section -->
 <section class="how-to-use">
@@ -1909,7 +1886,7 @@
 
 
     <script>
-document.addEventListener('DOMContentLoaded', function() {
+     document.addEventListener('DOMContentLoaded', function() {
     // Cache DOM elements
     const elements = {
         urlInput: document.getElementById('tiktok-url'),
@@ -1921,15 +1898,17 @@ document.addEventListener('DOMContentLoaded', function() {
         progressPercentage: document.getElementById('progress-percentage'),
         progressBarInner: document.getElementById('progress-bar-inner'),
         progressText: document.getElementById('progress-text'),
-        downloadSection: document.getElementById('download-section') || document.createElement('div'), // Create if missing
+        downloadSection: document.getElementById('download-section'),
         downloadLink: document.getElementById('download-link'),
-        qualityOptions: document.querySelectorAll('.quality-option'),
-        darkModeToggle: document.getElementById('darkModeToggle') || document.createElement('button'), // Create if missing
+        audioTitleEl: document.getElementById('audio-title'),
+        audioAuthorEl: document.getElementById('audio-author'),
+        audioDurationEl: document.getElementById('audio-duration'),
+        darkModeToggle: document.getElementById('darkModeToggle'),
         body: document.body,
-        mobileMenuToggle: document.getElementById('mobileMenuToggle') || document.createElement('button'), // Create if missing
-        mobileMenu: document.getElementById('mobileMenu') || document.createElement('div'), // Create if missing
-        mobileMenuClose: document.getElementById('mobileMenuClose') || document.createElement('button'), // Create if missing
-        overlay: document.getElementById('overlay') || document.createElement('div'), // Create if missing
+        mobileMenuToggle: document.getElementById('mobileMenuToggle'),
+        mobileMenu: document.getElementById('mobileMenu'),
+        mobileMenuClose: document.getElementById('mobileMenuClose'),
+        overlay: document.getElementById('overlay'),
         toast: document.getElementById('toast'),
         toastText: document.getElementById('toastText'),
         toastIcon: document.getElementById('toastIcon'),
@@ -1941,315 +1920,114 @@ document.addEventListener('DOMContentLoaded', function() {
         currentTimeEl: document.getElementById('current-time'),
         durationEl: document.getElementById('duration-time'),
         volumeControl: document.getElementById('volume-control'),
-        volumeBtn: document.getElementById('volume-btn'),
-        turnstileContainer: document.getElementById('cf-turnstile') || createTurnstileContainer()
+        volumeBtn: document.getElementById('volume-btn')
     };
-
-    // Create Turnstile container if missing
-    function createTurnstileContainer() {
-        const container = document.createElement('div');
-        container.id = 'cf-turnstile';
-        container.className = 'turnstile-container';
-        
-        // Create hidden input for token
-        const tokenInput = document.createElement('input');
-        tokenInput.type = 'hidden';
-        tokenInput.id = 'cf-turnstile-response';
-        container.appendChild(tokenInput);
-        
-        // Insert before convert button
-        if (elements.convertBtn && elements.convertBtn.parentNode) {
-            elements.convertBtn.parentNode.insertBefore(container, elements.convertBtn);
-        } else {
-            document.querySelector('.form-group')?.appendChild(container);
-        }
-        
-        return container;
-    }
-
-    // Create download section if missing
-    if (!document.getElementById('download-section')) {
-        const downloadSection = document.createElement('div');
-        downloadSection.id = 'download-section';
-        downloadSection.className = 'download-section';
-        if (elements.progressContainer && elements.progressContainer.parentNode) {
-            elements.progressContainer.parentNode.insertBefore(downloadSection, elements.progressContainer.nextSibling);
-        }
-    }
 
     // Constants
     const API_URL = 'https://mainpy-v09m.onrender.com/api/convert';
     const TOAST_DURATION = 3000;
-    const TURNSTILE_SITE_KEY = '0x4AAAAAABHoxdccCZ_9Cezk';
-    
-    // Optimized conversion stages with meaningful messages
     const CONVERSION_STAGES = [
-        { 
-            threshold: 10, 
-            message: 'Initializing download process...', 
-            subtext: 'Preparing conversion environment',
-            icon: 'fa-rocket'
-        },
-        { 
-            threshold: 25, 
-            message: 'Analyzing TikTok video content...', 
-            subtext: 'Extracting media information',
-            icon: 'fa-search'
-        },
-        { 
-            threshold: 45, 
-            message: 'Extracting audio stream...', 
-            subtext: 'Separating audio from video',
-            icon: 'fa-headphones'
-        },
-        { 
-            threshold: 65, 
-            message: 'Processing audio...', 
-            subtext: 'Applying quality settings',
-            icon: 'fa-sliders-h'
-        },
-        { 
-            threshold: 85, 
-            message: 'Finalizing MP3 conversion...', 
-            subtext: 'Removing metadata and preparing download',
-            icon: 'fa-file-audio'
-        }
+        { threshold: 5, message: 'Initializing download process...', subtext: 'Getting ready' },
+        { threshold: 15, message: 'Connecting to our servers...', subtext: 'Establishing secure connection' },
+        { threshold: 25, message: 'Fetching video information...', subtext: 'Retrieving metadata' },
+        { threshold: 40, message: 'Retrieving audio stream...', subtext: 'Finding the best quality' },
+        { threshold: 55, message: 'Extracting audio content...', subtext: 'Isolating the sound' },
+        { threshold: 70, message: 'Processing audio file...', subtext: 'Almost there' },
+        { threshold: 85, message: 'Optimizing audio quality...', subtext: 'Making it sound great' },
+        { threshold: 95, message: 'Preparing download...', subtext: 'Final touches' }
     ];
 
-    // Initialize features
+    // Initialize dark mode
     initDarkMode();
+    
+    // Initialize event listeners
     initEventListeners();
+    
+    // Check for TikTok URL in clipboard on load
     detectClipboardUrl();
+
+    // Initialize audio player
     initAudioPlayer();
-    initTurnstile();
 
     // Dark mode functionality
     function initDarkMode() {
         const isDarkMode = localStorage.getItem('darkMode') === 'true';
         if (isDarkMode) {
             elements.body.setAttribute('data-theme', 'dark');
-            if (elements.darkModeToggle.innerHTML) {
-                elements.darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            }
-        }
-    }
-
-    // Initialize Cloudflare Turnstile with proper error handling
-    function initTurnstile() {
-        if (!elements.turnstileContainer) return;
-        
-        // Ensure Turnstile container is visible
-        elements.turnstileContainer.style.display = 'block';
-        
-        // We need to wait for the Turnstile script to load
-        function renderTurnstile() {
-            if (window.turnstile) {
-                try {
-                    window.turnstile.render('#cf-turnstile', {
-                        sitekey: TURNSTILE_SITE_KEY,
-                        theme: elements.body.getAttribute('data-theme') === 'dark' ? 'dark' : 'light',
-                        callback: function(token) {
-                            const tokenInput = document.getElementById('cf-turnstile-response');
-                            if (tokenInput) {
-                                tokenInput.value = token;
-                            }
-                            enableConvertButton();
-                        },
-                        'error-callback': function() {
-                            console.error('Turnstile encountered an error');
-                            showToast('Security verification failed. Please try again.', 'error');
-                        },
-                        'expired-callback': function() {
-                            if (window.turnstile) {
-                                window.turnstile.reset('#cf-turnstile');
-                            }
-                            showToast('Security verification expired. Please verify again.', 'warning');
-                        }
-                    });
-                } catch (error) {
-                    console.error('Failed to initialize Turnstile:', error);
-                    enableConvertButton(); // Fallback if Turnstile fails
-                }
-            } else {
-                console.warn('Turnstile not available. Security verification might not work.');
-                setTimeout(renderTurnstile, 500); // Try again in 500ms
-            }
-        }
-        
-        if (document.readyState === 'complete') {
-            renderTurnstile();
-        } else {
-            window.addEventListener('load', renderTurnstile);
-        }
-    }
-    
-    // Enable convert button
-    function enableConvertButton() {
-        if (elements.convertBtn) {
-            elements.convertBtn.disabled = false;
+            elements.darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
         }
     }
 
     // Set up all event listeners
     function initEventListeners() {
         // Dark mode toggle
-        if (elements.darkModeToggle && elements.darkModeToggle.tagName) {
-            elements.darkModeToggle.addEventListener('click', toggleDarkMode);
-        }
+        elements.darkModeToggle.addEventListener('click', toggleDarkMode);
 
         // Mobile menu
-        if (elements.mobileMenuToggle && elements.mobileMenuToggle.tagName) {
-            elements.mobileMenuToggle.addEventListener('click', openMobileMenu);
-        }
-        if (elements.mobileMenuClose && elements.mobileMenuClose.tagName) {
-            elements.mobileMenuClose.addEventListener('click', closeMobileMenu);
-        }
-        if (elements.overlay && elements.overlay.tagName) {
-            elements.overlay.addEventListener('click', closeMobileMenu);
-        }
+        elements.mobileMenuToggle.addEventListener('click', openMobileMenu);
+        elements.mobileMenuClose.addEventListener('click', closeMobileMenu);
+        elements.overlay.addEventListener('click', closeMobileMenu);
 
         // Toast
-        if (elements.toastClose) {
-            elements.toastClose.addEventListener('click', hideToast);
-        }
+        elements.toastClose.addEventListener('click', hideToast);
 
         // Paste button
-        if (elements.pasteBtn) {
-            elements.pasteBtn.addEventListener('click', pasteFromClipboard);
-        }
+        elements.pasteBtn.addEventListener('click', pasteFromClipboard);
 
         // Convert button
-        if (elements.convertBtn) {
-            elements.convertBtn.addEventListener('click', convertTikTokToMp3);
-        }
+        elements.convertBtn.addEventListener('click', convertTikTokToMp3);
 
         // Enter key to submit
-        if (elements.urlInput) {
-            elements.urlInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter' && elements.convertBtn && !elements.convertBtn.disabled) {
-                    elements.convertBtn.click();
-                }
-            });
-        }
-        
-        // Quality selector
-        if (elements.qualityOptions) {
-            elements.qualityOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    elements.qualityOptions.forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Add ripple effect
-                    const ripple = document.createElement('span');
-                    ripple.classList.add('ripple');
-                    this.appendChild(ripple);
-                    
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 600);
-                });
-            });
-        }
-
-        // FAQ Accordion Functionality
-        const faqQuestions = document.querySelectorAll('.faq-question');
-        faqQuestions.forEach(question => {
-            question.addEventListener('click', () => {
-                question.classList.toggle('active');
-                
-                const answer = question.nextElementSibling;
-                if (answer && answer.classList.contains('faq-answer')) {
-                    if (answer.style.maxHeight) {
-                        answer.style.maxHeight = null;
-                    } else {
-                        answer.style.maxHeight = answer.scrollHeight + 'px';
-                    }
-                    
-                    const chevron = question.querySelector('.fa-chevron-down');
-                    if (chevron) {
-                        chevron.classList.toggle('rotate');
-                    }
-                }
-            });
-
-            // Add keyboard support
-            question.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    question.click();
-                }
-            });
+        elements.urlInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !elements.convertBtn.disabled) {
+                elements.convertBtn.click();
+            }
         });
     }
 
-    // Initialize audio player with optimized event handling
+    // Initialize audio player
     function initAudioPlayer() {
         if (!elements.audioElement) return;
         
         // Play/Pause button
-        if (elements.playPauseBtn) {
-            elements.playPauseBtn.addEventListener('click', togglePlayPause);
-        }
+        elements.playPauseBtn.addEventListener('click', togglePlayPause);
         
         // Update seek slider as audio plays
         elements.audioElement.addEventListener('timeupdate', updateSeekSlider);
         
         // Allow seeking
-        if (elements.seekSlider) {
-            elements.seekSlider.addEventListener('input', seekAudio);
-        }
+        elements.seekSlider.addEventListener('input', seekAudio);
         
         // Update duration when metadata is loaded
         elements.audioElement.addEventListener('loadedmetadata', function() {
-            if (elements.durationEl) {
-                elements.durationEl.textContent = formatTime(elements.audioElement.duration);
-            }
-            if (elements.seekSlider) {
-                elements.seekSlider.max = Math.floor(elements.audioElement.duration);
-            }
+            elements.durationEl.textContent = formatTime(elements.audioElement.duration);
+            elements.seekSlider.max = Math.floor(elements.audioElement.duration);
         });
         
         // Handle volume control
-        if (elements.volumeControl) {
-            elements.volumeControl.addEventListener('input', function() {
-                elements.audioElement.volume = this.value / 100;
-                updateVolumeIcon(this.value);
-            });
-        }
+        elements.volumeControl.addEventListener('input', function() {
+            elements.audioElement.volume = this.value / 100;
+            updateVolumeIcon(this.value);
+        });
         
         // Handle volume button click (mute/unmute)
-        if (elements.volumeBtn) {
-            elements.volumeBtn.addEventListener('click', toggleMute);
-        }
+        elements.volumeBtn.addEventListener('click', toggleMute);
         
         // Reset player when audio ends
         elements.audioElement.addEventListener('ended', function() {
-            if (elements.playPauseBtn) {
-                elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-            }
-            if (elements.seekSlider) {
-                elements.seekSlider.value = 0;
-            }
-            if (elements.currentTimeEl) {
-                elements.currentTimeEl.textContent = '0:00';
-            }
+            elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            elements.seekSlider.value = 0;
+            elements.currentTimeEl.textContent = '0:00';
         });
     }
 
     // Toggle play/pause
     function togglePlayPause() {
-        if (!elements.audioElement) return;
-        
         if (elements.audioElement.paused) {
-            elements.audioElement.play()
-                .then(() => {
-                    elements.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                })
-                .catch(err => {
-                    console.error('Failed to play audio:', err);
-                    showToast('Failed to play audio. Please try again.', 'error');
-                });
+            elements.audioElement.play();
+            elements.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
             
+            // Add pulse animation to the play button
             elements.playPauseBtn.classList.add('pulse');
             setTimeout(() => {
                 elements.playPauseBtn.classList.remove('pulse');
@@ -2262,27 +2040,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update seek slider and current time
     function updateSeekSlider() {
-        if (!elements.audioElement || !elements.seekSlider || !elements.currentTimeEl) return;
-        
         const currentTime = Math.floor(elements.audioElement.currentTime);
         elements.seekSlider.value = currentTime;
         elements.currentTimeEl.textContent = formatTime(currentTime);
         
-        // Calculate gradient percentage for the seek slider
+        // Update seek slider background
         const percentage = (currentTime / elements.audioElement.duration) * 100;
         elements.seekSlider.style.background = `linear-gradient(to right, var(--tiktok-red) 0%, var(--tiktok-blue) ${percentage}%, #e5e5e5 ${percentage}%, #e5e5e5 100%)`;
     }
 
     // Seek audio
     function seekAudio() {
-        if (!elements.audioElement || !elements.seekSlider) return;
         elements.audioElement.currentTime = elements.seekSlider.value;
     }
 
     // Toggle mute
     function toggleMute() {
-        if (!elements.audioElement || !elements.volumeBtn || !elements.volumeControl) return;
-        
         elements.audioElement.muted = !elements.audioElement.muted;
         
         if (elements.audioElement.muted) {
@@ -2296,8 +2069,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update volume icon based on level
     function updateVolumeIcon(volumeLevel) {
-        if (!elements.volumeBtn) return;
-        
         if (volumeLevel == 0) {
             elements.volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
         } else if (volumeLevel < 50) {
@@ -2330,30 +2101,58 @@ document.addEventListener('DOMContentLoaded', function() {
             elements.darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
             localStorage.setItem('darkMode', 'true');
         }
-        
-        // Update Turnstile theme
-        if (window.turnstile) {
-            try {
-                window.turnstile.remove('#cf-turnstile');
-                initTurnstile();
-            } catch (err) {
-                console.error('Failed to reset Turnstile:', err);
-            }
-        }
     }
-    
+
+    // FAQ Accordion Functionality
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+            // Toggle active class on clicked question
+            question.classList.toggle('active');
+            
+            // Get the answer element
+            const answer = question.nextElementSibling;
+            
+            // Toggle visibility of answer
+            if (answer.style.maxHeight) {
+                answer.style.maxHeight = null;
+            } else {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+            }
+            
+            // Rotate chevron icon
+            const chevron = question.querySelector('.fa-chevron-down');
+            if (chevron) {
+                chevron.classList.toggle('rotate');
+            }
+        });
+
+        // Add keyboard support (Enter and Space key)
+        question.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                question.click();
+            }
+        });
+    });
+
+    // Sign In Button Functionality
+    const signInButton = document.querySelector('.btn-sign-in');
+    if (signInButton) {
+        signInButton.addEventListener('click', () => {
+            // Redirect to login page
+            window.location.href = 'login.html';
+        });
+    }
+        
     // Mobile menu functions
     function openMobileMenu() {
-        if (!elements.mobileMenu || !elements.overlay) return;
-        
         elements.mobileMenu.classList.add('open');
         elements.overlay.classList.add('open');
         document.body.style.overflow = 'hidden';
     }
 
     function closeMobileMenu() {
-        if (!elements.mobileMenu || !elements.overlay) return;
-        
         elements.mobileMenu.classList.remove('open');
         elements.overlay.classList.remove('open');
         document.body.style.overflow = '';
@@ -2361,8 +2160,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Toast notification function
     function showToast(message, type = 'success') {
-        if (!elements.toast || !elements.toastText || !elements.toastIcon) return;
-        
         const iconMap = {
             success: 'fa-check-circle',
             error: 'fa-exclamation-circle',
@@ -2376,28 +2173,22 @@ document.addEventListener('DOMContentLoaded', function() {
         
         elements.toast.classList.add('show');
         
+        // Clear any existing timeout
         if (window.toastTimeout) {
             clearTimeout(window.toastTimeout);
         }
         
+        // Set new timeout
         window.toastTimeout = setTimeout(hideToast, TOAST_DURATION);
     }
 
     function hideToast() {
-        if (!elements.toast) return;
         elements.toast.classList.remove('show');
     }
 
     // Paste functionality
     async function pasteFromClipboard() {
-        if (!elements.urlInput) return;
-        
         try {
-            // Check if clipboard API is available
-            if (!navigator.clipboard || !navigator.clipboard.readText) {
-                throw new Error('Clipboard API not available');
-            }
-            
             const text = await navigator.clipboard.readText();
             elements.urlInput.value = text;
             
@@ -2412,83 +2203,46 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Enhanced URL validation with support for various TikTok URL formats
+    // URL validation
     function isValidTikTokUrl(url) {
-        if (!url) return false;
-        
-        const regex = /^(https?:\/\/)?(www\.|vm\.|vt\.)?(tiktok\.com)(\/(@[\w.-]+\/video\/\d+|\w+\/\w+\/\w+|v\/\w+|[A-Za-z0-9]+))/;
+        // Enhanced regex to support more TikTok URL formats including the requested format
+        const regex = /^(https?:\/\/)?(www\.|vm\.)?(tiktok\.com)(\/(@[\w.-]+\/video\/\d+|\w+\/\w+\/\w+|v\/\w+|[A-Za-z0-9]+))/;
         return regex.test(url);
     }
 
     // Reset UI elements before conversion
     function resetUI() {
-        if (elements.progressContainer) {
-            elements.progressContainer.classList.remove('visible');
-        }
-        
-        if (elements.statusDiv) {
-            elements.statusDiv.style.display = 'none';
-        }
-        
-        // Get downloadSection if it exists now (might have been created after initial load)
-        const downloadSection = document.getElementById('download-section');
-        if (downloadSection) {
-            downloadSection.classList.remove('visible');
-        }
-        
-        if (elements.audioPlayer) {
-            elements.audioPlayer.classList.remove('visible');
-        }
+        elements.progressContainer.classList.remove('visible');
+        elements.statusDiv.style.display = 'none';
+        elements.downloadSection.classList.remove('visible');
+        elements.audioPlayer.classList.remove('visible');
         
         // Reset audio player
         if (elements.audioElement) {
             elements.audioElement.pause();
             elements.audioElement.src = '';
-            
-            if (elements.playPauseBtn) {
-                elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-            }
+            elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
         }
     }
 
-    // Optimized progress animation
+    // Update progress animation with more detailed stages and subtext
     function startProgressAnimation() {
         let progress = 0;
         let currentStageIndex = 0;
         
-        // Safety check for required elements
-        if (!elements.progressBarInner || !elements.progressPercentage || 
-            !elements.progressStatus || !elements.progressText) {
-            console.error('Missing progress UI elements');
-            return setInterval(() => {}, 1000); // Return dummy interval
-        }
-        
         return setInterval(() => {
             if (progress < 95) {
-                // Calculate a realistic increment with slight randomness for natural feel
+                // Calculate a random increment between 0.5 and 2
                 const increment = 0.5 + Math.random() * 1.5;
                 progress += increment;
                 
                 // Check if we need to update the stage message
                 while (currentStageIndex < CONVERSION_STAGES.length && 
                       progress >= CONVERSION_STAGES[currentStageIndex].threshold) {
-                    const stage = CONVERSION_STAGES[currentStageIndex];
-                    
-                    // Update message with fade effect
-                    elements.progressStatus.classList.add('fade-out');
-                    
-                    setTimeout(() => {
-                        elements.progressStatus.innerHTML = `<i class="fas ${stage.icon}"></i> ${stage.message}`;
-                        elements.progressStatus.classList.remove('fade-out');
-                        elements.progressStatus.classList.add('fade-in');
-                        
-                        setTimeout(() => {
-                            elements.progressStatus.classList.remove('fade-in');
-                        }, 300);
-                    }, 300);
+                    elements.progressStatus.textContent = CONVERSION_STAGES[currentStageIndex].message;
                     
                     // Update subtext with typing animation
-                    updateProgressSubtext(stage.subtext);
+                    updateProgressSubtext(CONVERSION_STAGES[currentStageIndex].subtext);
                     
                     currentStageIndex++;
                 }
@@ -2497,7 +2251,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 elements.progressBarInner.style.width = `${progress}%`;
                 elements.progressPercentage.textContent = `${Math.round(progress)}%`;
                 
-                // Add occasional pulsing animation for visual feedback
+                // Add pulsing animation for visual feedback
                 if (progress % 10 < 0.5) {
                     elements.progressBarInner.classList.add('pulse');
                     setTimeout(() => {
@@ -2529,10 +2283,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 50);
     }
 
+    // Format duration in seconds to MM:SS
+    function formatDuration(seconds) {
+        if (!seconds || isNaN(seconds)) return 'Unknown';
+        
+        seconds = Math.round(parseFloat(seconds));
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
     // Helper function to extract filename from the Content-Disposition header
     function getFilenameFromResponse(response) {
-        if (!response || !response.headers) return null;
-        
         const contentDisposition = response.headers.get('Content-Disposition');
         if (!contentDisposition) return null;
         
@@ -2547,21 +2309,27 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleError(error, response) {
         let errorMessage = 'Failed to convert TikTok to MP3. Please try again.';
         
+        // Check if it's a network error
         if (!navigator.onLine) {
             errorMessage = 'No internet connection. Please check your network and try again.';
         }
+        // Check if it's a server error
         else if (response && response.status >= 500) {
             errorMessage = 'Server error. Our service is experiencing issues. Please try again later.';
         }
+        // Check if it's a rate limit error
         else if (response && response.status === 429) {
             errorMessage = 'Too many requests. Please wait a moment and try again.';
         }
+        // Check if TikTok video is not found or private
         else if (response && response.status === 404) {
             errorMessage = 'Video not found. The TikTok may be private or deleted.';
         }
+        // Check if it's a bad request
         else if (response && response.status === 400) {
             errorMessage = 'Invalid request. Please check the TikTok URL format.';
         }
+        // If we have an error message from the server, use it
         else if (error.message) {
             errorMessage = error.message;
         }
@@ -2582,65 +2350,67 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Display completion and download section with proper metadata handling
-    function displayCompletionUI(data, removeMetadata = true) {
+    // Display completion and download section
+    function displayCompletionUI(data) {
         // Complete progress
-        if (elements.progressBarInner) elements.progressBarInner.style.width = '100%';
-        if (elements.progressPercentage) elements.progressPercentage.textContent = '100%';
-        if (elements.progressStatus) elements.progressStatus.innerHTML = '<i class="fas fa-check-circle"></i> Conversion complete!';
-        if (elements.progressText) elements.progressText.textContent = 'Your MP3 is ready';
+        elements.progressBarInner.style.width = '100%';
+        elements.progressPercentage.textContent = '100%';
+        elements.progressStatus.textContent = 'Conversion complete!';
+        elements.progressText.textContent = 'Your MP3 is ready';
         
         // Add completion animation
-        if (elements.progressBarInner) elements.progressBarInner.classList.add('complete');
+        elements.progressBarInner.classList.add('complete');
         
-        // Generate a clean filename with no metadata
-        const cleanFilename = `TikTok_Audio_${Date.now()}.mp3`;
-        if (elements.downloadLink) {
-            elements.downloadLink.download = cleanFilename;
-            elements.downloadLink.style.display = 'flex';
+        // Show metadata in download section
+        elements.audioTitleEl.querySelector('span').textContent = data.title || 'Unknown';
+        elements.audioAuthorEl.querySelector('span').textContent = data.author || 'Unknown';
+        elements.audioDurationEl.querySelector('span').textContent = formatDuration(data.duration) || 'Unknown';
+        
+        // Set up download link
+        if (data.mp3_url) {
+            // For JSON API response with URL
+            const baseUrl = API_URL.split('/api/')[0];
+            const audioUrl = data.mp3_url.startsWith('http') ? data.mp3_url : baseUrl + data.mp3_url;
+            elements.downloadLink.href = audioUrl;
+        } else {
+            // For direct binary response, URL is already set
+            // Nothing to do here as the URL is already set in the conversion function
         }
         
-        // Set up audio player if we have a valid audio URL
-        if (elements.audioElement && elements.downloadLink && elements.downloadLink.href) {
+        // Set a meaningful filename
+        const sanitizedTitle = (data.title || 'tiktok').replace(/[<>:"/\\|?*]/g, '_');
+        const sanitizedAuthor = (data.author || 'unknown').replace(/[<>:"/\\|?*]/g, '_');
+        elements.downloadLink.download = `${sanitizedAuthor} - ${sanitizedTitle}.mp3`;
+        
+        // Set up audio player
+        if (!elements.audioElement.src) {
             elements.audioElement.src = elements.downloadLink.href;
-            elements.audioElement.volume = 0.7;
-            
-            if (elements.volumeControl) elements.volumeControl.value = 70;
-            if (elements.currentTimeEl) elements.currentTimeEl.textContent = '0:00';
-            
-            // Set duration if available
-            if (data && data.duration && elements.durationEl) {
-                elements.durationEl.textContent = formatTime(data.duration);
-            } else if (elements.durationEl) {
-                elements.durationEl.textContent = '0:00';
-            }
         }
+        elements.audioElement.volume = 0.7; // Set default volume
+        elements.volumeControl.value = 70;
+        elements.currentTimeEl.textContent = '0:00';
+        elements.durationEl.textContent = formatDuration(data.duration);
         
         // Show download section and audio player
-        const downloadSection = document.getElementById('download-section');
-        if (downloadSection) downloadSection.classList.add('visible');
-        if (elements.audioPlayer) elements.audioPlayer.classList.add('visible');
+        elements.downloadSection.classList.add('visible');
+        elements.audioPlayer.classList.add('visible');
         
-        // Try to auto-play audio with error handling
-        if (elements.audioElement && elements.playPauseBtn) {
-            elements.audioElement.play().then(() => {
-                elements.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            }).catch(error => {
-                console.log('Auto-play prevented by browser:', error);
-                elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-            });
-        }
+        // Auto-play audio
+        elements.audioElement.play().then(() => {
+            elements.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        }).catch(error => {
+            console.log('Auto-play prevented by browser:', error);
+            elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        });
         
         // Scroll to download section
         setTimeout(() => {
-            scrollToElement(downloadSection || elements.downloadLink);
+            scrollToElement(elements.downloadSection);
         }, 500);
     }
 
-    // Main conversion function with metadata removal and Turnstile verification
+    // Main conversion function
     async function convertTikTokToMp3() {
-        if (!elements.urlInput) return;
-        
         const url = elements.urlInput.value.trim();
         
         // Reset UI
@@ -2657,53 +2427,13 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Check if Turnstile is available and completed
-        const turnstileResponse = document.getElementById('cf-turnstile-response');
-        const turnstileRequired = !!elements.turnstileContainer && 
-                                window.turnstile && 
-                                turnstileResponse;
-                                
-        if (turnstileRequired && (!turnstileResponse || !turnstileResponse.value)) {
-            showToast('Please complete the security verification', 'warning');
-            
-            // Reset Turnstile to prompt user
-            if (window.turnstile) {
-                try {
-                    window.turnstile.reset('#cf-turnstile');
-                } catch (err) {
-                    console.error('Failed to reset Turnstile:', err);
-                }
-            }
-            return;
-        }
-        
-        // Get selected quality from active quality option
-        let selectedQuality = '192k'; // Default quality
-        document.querySelectorAll('.quality-option').forEach(option => {
-            if (option.classList.contains('active') && option.dataset.bitrate) {
-                selectedQuality = option.dataset.bitrate;
-            }
-        });
-        
         // Show progress
-        if (elements.progressContainer) {
-            elements.progressContainer.classList.add('visible');
-        }
-        if (elements.progressStatus) {
-            elements.progressStatus.innerHTML = '<i class="fas fa-rocket"></i> Initializing...';
-        }
-        if (elements.progressText) {
-            elements.progressText.textContent = 'Getting ready';
-        }
-        if (elements.progressPercentage) {
-            elements.progressPercentage.textContent = '0%';
-        }
-        if (elements.progressBarInner) {
-            elements.progressBarInner.style.width = '0%';
-        }
-        if (elements.convertBtn) {
-            elements.convertBtn.disabled = true;
-        }
+        elements.progressContainer.classList.add('visible');
+        elements.progressStatus.textContent = 'Initializing...';
+        elements.progressText.textContent = 'Getting ready';
+        elements.progressPercentage.textContent = '0%';
+        elements.progressBarInner.style.width = '0%';
+        elements.convertBtn.disabled = true;
         
         // Scroll to progress
         scrollToElement(elements.progressContainer);
@@ -2712,160 +2442,151 @@ document.addEventListener('DOMContentLoaded', function() {
         const progressInterval = startProgressAnimation();
         
         try {
-            // Set up request with timeout
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
-            
-            // Prepare request data
-            const requestData = { 
-                url: url,
-                quality: selectedQuality,
-                remove_metadata: true // Request server to strip metadata
-            };
-            
-            // Add turnstile token if available
-            if (turnstileResponse && turnstileResponse.value) {
-                requestData.turnstile_token = turnstileResponse.value;}
             
             // Make API request
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(requestData),
+                body: JSON.stringify({ url }),
                 signal: controller.signal
+            }).catch(error => {
+                if (error.name === 'AbortError') {
+                    throw new Error('Request timed out. The server might be busy or the video might be too long.');
+                }
+                throw error;
             });
             
             clearTimeout(timeoutId);
             
-            // Check for errors
             if (!response.ok) {
-                throw new Error(`Server responded with ${response.status}`);
+                // Try to get error as JSON first
+                let errorMessage;
+                const contentType = response.headers.get('Content-Type') || '';
+                
+                if (contentType.includes('application/json')) {
+                    const errorData = await response.json();
+                    errorMessage = errorData.error || `Server responded with ${response.status}`;
+                } else {
+                    errorMessage = await response.text() || `Server responded with ${response.status}`;
+                }
+                throw new Error(errorMessage);
             }
             
-            // Handle response
-            const blob = await response.blob();
-            const audioUrl = URL.createObjectURL(blob);
+            // Check if response is JSON or binary (MP3)
+            const contentType = response.headers.get('Content-Type') || '';
             
-            // Try to get filename from response headers
-            let filename = getFilenameFromResponse(response);
-            if (!filename) {
-                // Create a default filename if none provided
-                filename = `TikTok_Audio_${Date.now()}.mp3`;
-            }
-            
-            // Set download link
-            if (elements.downloadLink) {
+            if (contentType.includes('audio/mpeg')) {
+                // Handle direct MP3 file response
+                const blob = await response.blob();
+                const fileName = getFilenameFromResponse(response) || 'tiktok_audio.mp3';
+                
+                // Get video ID from filename if possible
+                let videoId = 'unknown';
+                const videoIdMatch = fileName.match(/tiktok_(\d+)\.mp3/);
+                if (videoIdMatch) {
+                    videoId = videoIdMatch[1];
+                }
+                
+                // Create object URL for the blob
+                const audioUrl = URL.createObjectURL(blob);
+                
+                // Set up download link
                 elements.downloadLink.href = audioUrl;
-                elements.downloadLink.download = filename;
-            }
-            
-            // Show completion UI
-            clearInterval(progressInterval);
-            displayCompletionUI({
-                duration: null // Server doesn't provide duration yet
-            });
-            
-            // Update status
-            if (elements.statusDiv) {
-                elements.statusDiv.style.display = 'block';
-                elements.statusDiv.textContent = 'Conversion completed successfully!';
-                elements.statusDiv.className = 'status success';
-            }
-            
-            showToast('TikTok converted to MP3 successfully!', 'success');
-            
-        } catch (error) {
-            // Stop progress animation
-            clearInterval(progressInterval);
-            
-            console.error('Conversion error:', error);
-            
-            // Handle specific error cases
-            const errorMessage = handleError(error, error.response);
-            
-            // Show error in UI
-            if (elements.statusDiv) {
-                elements.statusDiv.style.display = 'block';
-                elements.statusDiv.textContent = errorMessage;
-                elements.statusDiv.className = 'status error';
-            }
-            
-            if (elements.progressContainer) {
-                elements.progressContainer.classList.remove('visible');
-            }
-            
-            showToast(errorMessage, 'error');
-            
-        } finally {
-            // Re-enable convert button
-            if (elements.convertBtn) {
-                elements.convertBtn.disabled = false;
-            }
-            
-            // Reset Turnstile for next conversion
-            if (window.turnstile) {
+                elements.downloadLink.download = fileName;
+                
+                // Set up audio player
+                elements.audioElement.src = audioUrl;
+                
+                // Create a cleaner title from the filename
+                const title = fileName
+                    .replace(/^tiktok_/, '')
+                    .replace(/\.mp3$/, '')
+                    .replace(/_/g, ' ');
+                
+                // Create mock data for the UI
+                const mockData = {
+                    title: title,
+                    author: 'TikTok Creator',
+                    duration: 0 // Will be updated when audio is loaded
+                };
+                
+                // Update duration when audio metadata is loaded
+                elements.audioElement.onloadedmetadata = function() {
+                    mockData.duration = elements.audioElement.duration;
+                    elements.durationEl.textContent = formatDuration(elements.audioElement.duration);
+                    elements.audioDurationEl.querySelector('span').textContent = formatDuration(elements.audioElement.duration);
+                };
+                
+                // Complete progress animation
+                clearInterval(progressInterval);
+                
+                // Show download section
+                displayCompletionUI(mockData);
+                
+                showToast('Conversion successful! Your download is ready.', 'success');
+            } else {
+                // Handle JSON response (for backward compatibility)
                 try {
-                    window.turnstile.reset('#cf-turnstile');
-                } catch (err) {
-                    console.error('Failed to reset Turnstile:', err);
+                    const data = await response.json();
+                    
+                    if (!data.success && !data.mp3_url) {
+                        throw new Error(data.error || 'Failed to convert TikTok to MP3');
+                    }
+                    
+                    // Complete progress animation
+                    clearInterval(progressInterval);
+                    
+                    // Show download section
+                    displayCompletionUI(data);
+                    
+                    showToast('Conversion successful! Your download is ready.', 'success');
+                } catch (jsonError) {
+                    console.error('Error parsing JSON response:', jsonError);
+                    throw new Error('Invalid response format from server');
                 }
             }
+            
+        } catch (error) {
+            console.error('Conversion failed:', error);
+            
+            // Clear progress animation
+            clearInterval(progressInterval);
+            
+            // Handle specific error types
+            const errorMessage = handleError(error, error.response);
+            
+            // Display error status
+            elements.statusDiv.textContent = `Error: ${errorMessage}`;
+            elements.statusDiv.className = 'status error';
+            elements.statusDiv.style.display = 'block';
+            elements.progressContainer.classList.remove('visible');
+            
+            showToast(errorMessage, 'error');
+        } finally {
+            elements.convertBtn.disabled = false;
         }
     }
 
-    // Auto-detect clipboard URLs when page loads
-    function detectClipboardUrl() {
-        if (!navigator.clipboard || !navigator.clipboard.readText) {
-            console.log('Clipboard API not available for auto-detection');
-            return;
-        }
-        
-        // Only try to auto-detect if URL input is empty
-        if (elements.urlInput && elements.urlInput.value.trim() === '') {
-            navigator.clipboard.readText()
-                .then(text => {
-                    if (isValidTikTokUrl(text)) {
-                        elements.urlInput.value = text;
-                        showToast('TikTok URL detected in clipboard', 'info');
-                    }
-                })
-                .catch(err => {
-                    console.log('Auto clipboard detection unavailable:', err);
-                });
+    // Auto-detect TikTok links in clipboard when page loads
+    async function detectClipboardUrl() {
+        try {
+            // Check if clipboard API is available
+            if (navigator.clipboard && navigator.clipboard.readText) {
+                const clipboardText = await navigator.clipboard.readText();
+                if (isValidTikTokUrl(clipboardText) && elements.urlInput.value === '') {
+                    elements.urlInput.value = clipboardText;
+                    showToast('TikTok URL detected in clipboard', 'info');
+                }
+            }
+        } catch (err) {
+            // Silently ignore clipboard errors on load
+            console.log('Clipboard access denied or not available');
         }
     }
-
-    // Service worker registration for offline capabilities
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then(registration => {
-                    console.log('ServiceWorker registration successful');
-                })
-                .catch(error => {
-                    console.log('ServiceWorker registration failed:', error);
-                });
-        });
-    }
-
-    // Add analytics event tracking if available
-    function trackEvent(category, action, label) {
-        if (window.gtag) {
-            gtag('event', action, {
-                'event_category': category,
-                'event_label': label
-            });
-        }
-    }
-
-    // Export public methods for external use
-    window.TikTokConverter = {
-        convert: convertTikTokToMp3,
-        paste: pasteFromClipboard,
-        toggleDarkMode: toggleDarkMode
-    };
 });
 </script>
 </body>
