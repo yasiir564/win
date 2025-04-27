@@ -1628,68 +1628,90 @@
     </div>
 
     <!-- Main Content -->
-    <main>
-        <div class="container">
-            <header>
-                <h1>TikTok to MP3 Converter</h1>
-                <p class="subtitle">Extract high-quality audio from TikTok videos in seconds</p>
-            </header>
-            
-            <div class="form-group">
-                <label for="tiktok-url">Paste TikTok Video URL</label>
-                <div class="input-wrapper">
-                    <input type="text" id="tiktok-url" placeholder="https://www.tiktok.com/@username/video/1234567890" autocomplete="off">
-                    <button id="paste-btn" class="paste-btn" title="Paste from clipboard">
-                        <i class="fas fa-paste"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <button id="convert-btn">Convert to MP3</button>
-            
-           <div id="progress-container" class="progress-container">
-    <div class="progress-header">
-        <div id="progress-status" class="progress-status">Initializing...</div>
+   <main>
+  <div class="container">
+    <header>
+      <h1>TikTok to MP3 Converter</h1>
+      <p class="subtitle">Convert TikTok videos into high-quality MP3 audio instantly.</p>
+    </header>
+
+    <div class="form-group">
+      <label for="tiktok-url">Enter TikTok Video URL</label>
+      <div class="input-wrapper">
+        <input 
+          type="text" 
+          id="tiktok-url" 
+          placeholder="Paste TikTok video link here" 
+          autocomplete="off"
+        >
+        <button id="paste-btn" class="paste-btn" title="Paste from clipboard">
+          <i class="fas fa-paste"></i>
+        </button>
+      </div>
+    </div>
+
+    <button id="convert-btn">Convert to MP3</button>
+
+    <div id="progress-container" class="progress-container" style="display: none;">
+      <div class="progress-header">
+        <div id="progress-status" class="progress-status">Preparing...</div>
         <div id="progress-percentage" class="progress-percentage">0%</div>
-    </div>
-    <div class="progress-bar">
+      </div>
+      <div class="progress-bar">
         <div id="progress-bar-inner" class="progress-bar-inner"></div>
+      </div>
+      <div id="progress-text" class="progress-text"></div>
     </div>
-    <div id="progress-text" class="progress-text">Getting ready</div>
-</div>
-            
-            <div id="status" class="status"></div>
-            <div id="audio-player-container" class="audio-player-container">
-    <div class="audio-player">
+
+    <div id="status" class="status"></div>
+
+    <div id="audio-player-container" class="audio-player-container" style="display: none;">
+      <div class="audio-player">
         <div class="audio-controls">
-            <button id="play-pause-btn" class="player-btn play-pause">
-                <i class="fas fa-play"></i>
+          <button id="play-pause-btn" class="player-btn play-pause">
+            <i class="fas fa-play"></i>
+          </button>
+
+          <div class="time-slider">
+            <span id="current-time" class="time">0:00</span>
+            <input 
+              type="range" 
+              id="seek-slider" 
+              class="seek-slider" 
+              min="0" 
+              max="100" 
+              value="0" 
+              step="1"
+            >
+            <span id="duration-time" class="time">0:00</span>
+          </div>
+
+          <div class="volume-controls">
+            <button id="volume-btn" class="player-btn volume">
+              <i class="fas fa-volume-up"></i>
             </button>
-            
-            <div class="time-slider">
-                <span id="current-time" class="time">0:00</span>
-                <input type="range" id="seek-slider" class="seek-slider" min="0" max="100" value="0" step="1">
-                <span id="duration-time" class="time">0:00</span>
-            </div>
-            
-            <div class="volume-controls">
-                <button id="volume-btn" class="player-btn volume">
-                    <i class="fas fa-volume-up"></i>
-                </button>
-                <input type="range" id="volume-control" class="volume-slider" min="0" max="100" value="70" step="1">
-            </div>
+            <input 
+              type="range" 
+              id="volume-control" 
+              class="volume-slider" 
+              min="0" 
+              max="100" 
+              value="70" 
+              step="1"
+            >
+          </div>
         </div>
-        
+
         <audio id="audio-element"></audio>
+      </div>
     </div>
-</div>
-            
-                <a id="download-link" class="download-link" href="#" download>
-                    <i class="fas fa-download"></i> Download MP3
-                </a>
-            </div>
-        </div>
-    </main>
+
+    <a id="download-link" class="download-link" href="#" download style="display: none;">
+      <i class="fas fa-download"></i> Download MP3
+    </a>
+  </div>
+</main>
+
 
     <!-- How to Use Section -->
 <section class="how-to-use">
