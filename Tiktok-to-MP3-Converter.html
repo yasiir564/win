@@ -1886,50 +1886,17 @@
 
 
     <script>
-     document.addEventListener('DOMContentLoaded', function() {
-    // Cache DOM elements
-    const elements = {
-        urlInput: document.getElementById('tiktok-url'),
-        pasteBtn: document.getElementById('paste-btn'),
-        convertBtn: document.getElementById('convert-btn'),
-        statusDiv: document.getElementById('status'),
-        progressContainer: document.getElementById('progress-container'),
-        progressStatus: document.getElementById('progress-status'),
-        progressPercentage: document.getElementById('progress-percentage'),
-        progressBarInner: document.getElementById('progress-bar-inner'),
-        progressText: document.getElementById('progress-text'),
-        downloadSection: document.getElementById('download-section'),
-        downloadLink: document.getElementById('download-link'),
-        audioTitleEl: document.getElementById('audio-title'),
-        audioAuthorEl: document.getElementById('audio-author'),
-        audioDurationEl: document.getElementById('audio-duration'),
-        darkModeToggle: document.getElementById('darkModeToggle'),
-        body: document.body,
-        mobileMenuToggle: document.getElementById('mobileMenuToggle'),
-        mobileMenu: document.getElementById('mobileMenu'),
-        mobileMenuClose: document.getElementById('mobileMenuClose'),
-        overlay: document.getElementById('overlay'),
-        toast: document.getElementById('toast'),
-        toastText: document.getElementById('toastText'),
-        toastIcon: document.getElementById('toastIcon'),
-        toastClose: document.getElementById('toastClose'),
-        audioPlayer: document.getElementById('audio-player-container'),
-        audioElement: document.getElementById('audio-element'),
-        playPauseBtn: document.getElementById('play-pause-btn'),
-        seekSlider: document.getElementById('seek-slider'),
-        currentTimeEl: document.getElementById('current-time'),
-        durationEl: document.getElementById('duration-time'),
-        volumeControl: document.getElementById('volume-control'),
-        volumeBtn: document.getElementById('volume-btn')
-    };
-
+    document.addEventListener('DOMContentLoaded', function() {
     // Constants
     const API_URL = 'https://mainpy-v09m.onrender.com/api/convert';
-    const TOAST_DURATION = 3000;
+    const TOAST_DURATION = 5000;
+    const TURNSTILE_SITE_KEY = '0x4AAAAAABHoxdccCZ_9Cezk'; // Replace with your actual site key
+    
+    // Conversion stages with improved messaging from second file
     const CONVERSION_STAGES = [
         { threshold: 5, message: 'Initializing download process...', subtext: 'Getting ready' },
         { threshold: 15, message: 'Connecting to our servers...', subtext: 'Establishing secure connection' },
-        { threshold: 25, message: 'Fetching video information...', subtext: 'Retrieving metadata' },
+        { threshold: 25, message: 'Fetching TikTok video information...', subtext: 'Retrieving metadata' },
         { threshold: 40, message: 'Retrieving audio stream...', subtext: 'Finding the best quality' },
         { threshold: 55, message: 'Extracting audio content...', subtext: 'Isolating the sound' },
         { threshold: 70, message: 'Processing audio file...', subtext: 'Almost there' },
@@ -1937,41 +1904,156 @@
         { threshold: 95, message: 'Preparing download...', subtext: 'Final touches' }
     ];
 
-    // Initialize dark mode
+    // Cache DOM elements - combining elements from both files
+    const elements = {
+        // From first file - TikTok URL input elements
+        urlInput: document.getElementById('tiktok-url'),
+        pasteBtn: document.getElementById('paste-btn'),
+        convertBtn: document.getElementById('convert-btn'),
+        statusDiv: document.getElementById('status'),
+        
+        // Progress elements - enhanced with second file styling
+        progressContainer: document.getElementById('progress-container'),
+        progressStatus: document.getElementById('progress-status'),
+        progressPercentage: document.getElementById('progress-percentage'),
+        progressBarInner: document.getElementById('progress-bar-inner'),
+        progressText: document.getElementById('progress-text'),
+        progressTime: document.getElementById('progress-time'),
+        
+        // Download section - enhanced with second file styling
+        downloadSection: document.getElementById('download-section'),
+        downloadLink: document.getElementById('download-link'),
+        audioTitleEl: document.getElementById('audio-title'),
+        audioAuthorEl: document.getElementById('audio-author'),
+        audioDurationEl: document.getElementById('audio-duration'),
+        
+        // UI elements from second file
+        darkModeToggle: document.getElementById('darkModeToggle'),
+        body: document.body,
+        mobileMenuToggle: document.getElementById('mobileMenuToggle'),
+        mobileMenu: document.getElementById('mobileMenu'),
+        mobileMenuClose: document.getElementById('mobileMenuClose'),
+        overlay: document.getElementById('overlay'),
+        
+        // Toast notification elements - improved from second file
+        toast: document.getElementById('toast'),
+        toastText: document.getElementById('toastText'),
+        toastIcon: document.getElementById('toastIcon'),
+        toastTitle: document.getElementById('toastTitle'),
+        toastMessage: document.getElementById('toastMessage'),
+        toastClose: document.getElementById('toastClose'),
+        
+        // Audio player elements - improved with visualization from second file
+        audioPlayer: document.getElementById('audio-player-container'),
+        audioElement: document.getElementById('audio-element'),
+        playPauseBtn: document.getElementById('play-pause-btn'),
+        seekSlider: document.getElementById('seek-slider'),
+        currentTimeEl: document.getElementById('current-time'),
+        durationEl: document.getElementById('duration-time'),
+        volumeControl: document.getElementById('volume-control'),
+        volumeBtn: document.getElementById('volume-btn'),
+        
+        // Error elements from second file
+        errorContainer: document.getElementById('errorContainer'),
+        errorMessage: document.getElementById('errorMessage'),
+        tryAgainBtn: document.getElementById('tryAgainBtn')
+    };
+
+    // State variables
+    let conversionStartTime = null;
+    let progressTimer = null;
+    let conversionPhase = 'idle';
+    let conversionInProgress = false;
+    let turnstileWidget = null;
+    let turnstileToken = null;
+    let convertedFileName = null;
+
+    // Initialize
     initDarkMode();
-    
-    // Initialize event listeners
     initEventListeners();
-    
-    // Check for TikTok URL in clipboard on load
     detectClipboardUrl();
+    initTurnstile();
 
-    // Initialize audio player
-    initAudioPlayer();
-
-    // Dark mode functionality
+    // Initialize dark mode
     function initDarkMode() {
         const isDarkMode = localStorage.getItem('darkMode') === 'true';
         if (isDarkMode) {
             elements.body.setAttribute('data-theme', 'dark');
             elements.darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        } else {
+            elements.darkModeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+        }
+    }
+
+    // Initialize Cloudflare Turnstile (from second file)
+    function initTurnstile() {
+        // Create a container for Turnstile widget if it doesn't exist
+        let turnstileContainer = document.getElementById('turnstileContainer');
+        if (!turnstileContainer) {
+            turnstileContainer = document.createElement('div');
+            turnstileContainer.id = 'turnstileContainer';
+            // Insert before the convert button
+            elements.convertBtn.parentNode.insertBefore(turnstileContainer, elements.convertBtn);
+        }
+
+        // Render the Turnstile widget
+        if (window.turnstile) {
+            turnstileWidget = window.turnstile.render('#turnstileContainer', {
+                sitekey: TURNSTILE_SITE_KEY,
+                callback: function(token) {
+                    turnstileToken = token;
+                    logDebug('Turnstile token received');
+                    // Enable the convert button when token is received
+                    elements.convertBtn.disabled = false;
+                },
+                'expired-callback': function() {
+                    turnstileToken = null;
+                    logDebug('Turnstile token expired');
+                    // Disable convert button if token expires
+                    elements.convertBtn.disabled = true;
+                }
+            });
+        } else {
+            logDebug('Turnstile not loaded. Loading script...');
+            // Load Turnstile script if not already loaded
+            const script = document.createElement('script');
+            script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+            script.async = true;
+            script.onload = () => {
+                logDebug('Turnstile script loaded');
+                initTurnstile();
+            };
+            document.head.appendChild(script);
+        }
+    }
+
+    // Reset Turnstile widget
+    function resetTurnstile() {
+        if (window.turnstile && turnstileWidget) {
+            window.turnstile.reset(turnstileWidget);
+            turnstileToken = null;
+            logDebug('Turnstile widget reset');
         }
     }
 
     // Set up all event listeners
     function initEventListeners() {
-        // Dark mode toggle
+        // Dark mode toggle from second file
         elements.darkModeToggle.addEventListener('click', toggleDarkMode);
 
-        // Mobile menu
-        elements.mobileMenuToggle.addEventListener('click', openMobileMenu);
-        elements.mobileMenuClose.addEventListener('click', closeMobileMenu);
-        elements.overlay.addEventListener('click', closeMobileMenu);
+        // Mobile menu from second file
+        if (elements.mobileMenuToggle) {
+            elements.mobileMenuToggle.addEventListener('click', openMobileMenu);
+            elements.mobileMenuClose.addEventListener('click', closeMobileMenu);
+            elements.overlay.addEventListener('click', closeMobileMenu);
+        }
 
-        // Toast
-        elements.toastClose.addEventListener('click', hideToast);
+        // Toast from second file
+        if (elements.toastClose) {
+            elements.toastClose.addEventListener('click', hideToast);
+        }
 
-        // Paste button
+        // Paste button from first file
         elements.pasteBtn.addEventListener('click', pasteFromClipboard);
 
         // Convert button
@@ -1983,112 +2065,65 @@
                 elements.convertBtn.click();
             }
         });
-    }
 
-    // Initialize audio player
-    function initAudioPlayer() {
-        if (!elements.audioElement) return;
-        
-        // Play/Pause button
-        elements.playPauseBtn.addEventListener('click', togglePlayPause);
-        
-        // Update seek slider as audio plays
-        elements.audioElement.addEventListener('timeupdate', updateSeekSlider);
-        
-        // Allow seeking
-        elements.seekSlider.addEventListener('input', seekAudio);
-        
-        // Update duration when metadata is loaded
-        elements.audioElement.addEventListener('loadedmetadata', function() {
-            elements.durationEl.textContent = formatTime(elements.audioElement.duration);
-            elements.seekSlider.max = Math.floor(elements.audioElement.duration);
-        });
-        
-        // Handle volume control
-        elements.volumeControl.addEventListener('input', function() {
-            elements.audioElement.volume = this.value / 100;
-            updateVolumeIcon(this.value);
-        });
-        
-        // Handle volume button click (mute/unmute)
-        elements.volumeBtn.addEventListener('click', toggleMute);
-        
-        // Reset player when audio ends
-        elements.audioElement.addEventListener('ended', function() {
-            elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-            elements.seekSlider.value = 0;
-            elements.currentTimeEl.textContent = '0:00';
-        });
-    }
+        // Try again button (from second file)
+        if (elements.tryAgainBtn) {
+            elements.tryAgainBtn.addEventListener('click', function() {
+                hideError();
+                resetConverter();
+                resetTurnstile();
+            });
+        }
 
-    // Toggle play/pause
-    function togglePlayPause() {
-        if (elements.audioElement.paused) {
-            elements.audioElement.play();
-            elements.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-            
-            // Add pulse animation to the play button
-            elements.playPauseBtn.classList.add('pulse');
-            setTimeout(() => {
-                elements.playPauseBtn.classList.remove('pulse');
-            }, 300);
-        } else {
-            elements.audioElement.pause();
-            elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        // FAQ Accordion Functionality (from both files)
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                question.classList.toggle('active');
+                const answer = question.nextElementSibling;
+                
+                if (answer.style.maxHeight) {
+                    answer.style.maxHeight = null;
+                } else {
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                }
+                
+                const chevron = question.querySelector('.fa-chevron-down');
+                if (chevron) {
+                    chevron.classList.toggle('rotate');
+                }
+            });
+
+            // Add keyboard support
+            question.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    question.click();
+                }
+            });
+        });
+
+        // Sign In Button Functionality (from both files)
+        const signInButton = document.querySelector('.btn-sign-in');
+        if (signInButton) {
+            signInButton.addEventListener('click', () => {
+                window.location.href = 'login.html';
+            });
         }
     }
 
-    // Update seek slider and current time
-    function updateSeekSlider() {
-        const currentTime = Math.floor(elements.audioElement.currentTime);
-        elements.seekSlider.value = currentTime;
-        elements.currentTimeEl.textContent = formatTime(currentTime);
+    // Smooth scroll function (from second file)
+    function smoothScrollTo(element) {
+        if (!element) return;
         
-        // Update seek slider background
-        const percentage = (currentTime / elements.audioElement.duration) * 100;
-        elements.seekSlider.style.background = `linear-gradient(to right, var(--tiktok-red) 0%, var(--tiktok-blue) ${percentage}%, #e5e5e5 ${percentage}%, #e5e5e5 100%)`;
+        const y = element.getBoundingClientRect().top + window.pageYOffset - 20;
+        window.scrollTo({
+            top: y,
+            behavior: 'smooth'
+        });
     }
 
-    // Seek audio
-    function seekAudio() {
-        elements.audioElement.currentTime = elements.seekSlider.value;
-    }
-
-    // Toggle mute
-    function toggleMute() {
-        elements.audioElement.muted = !elements.audioElement.muted;
-        
-        if (elements.audioElement.muted) {
-            elements.volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-            elements.volumeControl.value = 0;
-        } else {
-            updateVolumeIcon(elements.volumeControl.value);
-            elements.volumeControl.value = elements.audioElement.volume * 100;
-        }
-    }
-
-    // Update volume icon based on level
-    function updateVolumeIcon(volumeLevel) {
-        if (volumeLevel == 0) {
-            elements.volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-        } else if (volumeLevel < 50) {
-            elements.volumeBtn.innerHTML = '<i class="fas fa-volume-down"></i>';
-        } else {
-            elements.volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
-        }
-    }
-
-    // Format time in seconds to MM:SS
-    function formatTime(seconds) {
-        if (!seconds || isNaN(seconds)) return '0:00';
-        
-        seconds = Math.round(parseFloat(seconds));
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-    }
-
-    // Dark mode toggle function
+    // Dark mode toggle function (from second file)
     function toggleDarkMode() {
         const isDarkMode = elements.body.getAttribute('data-theme') === 'dark';
         
@@ -2103,49 +2138,7 @@
         }
     }
 
-    // FAQ Accordion Functionality
-    const faqQuestions = document.querySelectorAll('.faq-question');
-    faqQuestions.forEach(question => {
-        question.addEventListener('click', () => {
-            // Toggle active class on clicked question
-            question.classList.toggle('active');
-            
-            // Get the answer element
-            const answer = question.nextElementSibling;
-            
-            // Toggle visibility of answer
-            if (answer.style.maxHeight) {
-                answer.style.maxHeight = null;
-            } else {
-                answer.style.maxHeight = answer.scrollHeight + 'px';
-            }
-            
-            // Rotate chevron icon
-            const chevron = question.querySelector('.fa-chevron-down');
-            if (chevron) {
-                chevron.classList.toggle('rotate');
-            }
-        });
-
-        // Add keyboard support (Enter and Space key)
-        question.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                question.click();
-            }
-        });
-    });
-
-    // Sign In Button Functionality
-    const signInButton = document.querySelector('.btn-sign-in');
-    if (signInButton) {
-        signInButton.addEventListener('click', () => {
-            // Redirect to login page
-            window.location.href = 'login.html';
-        });
-    }
-        
-    // Mobile menu functions
+    // Mobile menu functions (from second file)
     function openMobileMenu() {
         elements.mobileMenu.classList.add('open');
         elements.overlay.classList.add('open');
@@ -2158,8 +2151,8 @@
         document.body.style.overflow = '';
     }
 
-    // Toast notification function
-    function showToast(message, type = 'success') {
+    // Toast notification function (enhanced from second file)
+    function showToast(title, message, type = 'success') {
         const iconMap = {
             success: 'fa-check-circle',
             error: 'fa-exclamation-circle',
@@ -2167,10 +2160,21 @@
             warning: 'fa-exclamation-triangle'
         };
         
+        // Set toast content
         elements.toastIcon.className = 'toast-icon ' + type;
         elements.toastIcon.innerHTML = `<i class="fas ${iconMap[type] || iconMap.success}"></i>`;
-        elements.toastText.textContent = message;
         
+        if (elements.toastTitle) {
+            elements.toastTitle.textContent = title;
+        }
+        
+        if (elements.toastMessage) {
+            elements.toastMessage.textContent = message;
+        } else if (elements.toastText) {
+            elements.toastText.textContent = message;
+        }
+        
+        // Show toast
         elements.toast.classList.add('show');
         
         // Clear any existing timeout
@@ -2186,26 +2190,43 @@
         elements.toast.classList.remove('show');
     }
 
-    // Paste functionality
+    // Paste functionality from first file
     async function pasteFromClipboard() {
         try {
             const text = await navigator.clipboard.readText();
             elements.urlInput.value = text;
             
             if (isValidTikTokUrl(text)) {
-                showToast('TikTok URL pasted from clipboard', 'info');
+                showToast('URL Pasted', 'TikTok URL pasted from clipboard', 'info');
             } else {
-                showToast('URL pasted, but it doesn\'t appear to be a valid TikTok URL', 'warning');
+                showToast('Invalid URL', 'URL pasted, but it doesn\'t appear to be a valid TikTok URL', 'warning');
             }
         } catch (err) {
             console.error('Clipboard error:', err);
-            showToast('Failed to read clipboard. Please paste manually.', 'error');
+            showToast('Clipboard Error', 'Failed to read clipboard. Please paste manually.', 'error');
         }
     }
 
-    // URL validation
+    // Check for TikTok URL in clipboard on load (from first file)
+    async function detectClipboardUrl() {
+        try {
+            // Check if clipboard API is available
+            if (navigator.clipboard && navigator.clipboard.readText) {
+                const clipboardText = await navigator.clipboard.readText();
+                if (isValidTikTokUrl(clipboardText) && elements.urlInput.value === '') {
+                    elements.urlInput.value = clipboardText;
+                    showToast('URL Detected', 'TikTok URL detected in clipboard', 'info');
+                }
+            }
+        } catch (err) {
+            // Silently ignore clipboard errors on load
+            console.log('Clipboard access denied or not available');
+        }
+    }
+
+    // URL validation (enhanced from first file)
     function isValidTikTokUrl(url) {
-        // Enhanced regex to support more TikTok URL formats including the requested format
+        // Enhanced regex to support more TikTok URL formats
         const regex = /^(https?:\/\/)?(www\.|vm\.)?(tiktok\.com)(\/(@[\w.-]+\/video\/\d+|\w+\/\w+\/\w+|v\/\w+|[A-Za-z0-9]+))/;
         return regex.test(url);
     }
@@ -2223,9 +2244,49 @@
             elements.audioElement.src = '';
             elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
         }
+        
+        // Reset progress elements
+        if (elements.progressBarInner) {
+            elements.progressBarInner.style.width = '0%';
+        }
+        if (elements.progressPercentage) {
+            elements.progressPercentage.textContent = '0%';
+        }
+        if (elements.progressTime) {
+            elements.progressTime.textContent = '00:00';
+        }
+        
+        // Hide error container if exists
+        if (elements.errorContainer) {
+            elements.errorContainer.style.display = 'none';
+        }
     }
 
-    // Update progress animation with more detailed stages and subtext
+    // Reset converter to initial state (from second file)
+    function resetConverter() {
+        convertedFileName = null;
+        resetUI();
+        elements.convertBtn.disabled = !turnstileToken;
+        elements.convertBtn.textContent = 'Convert Now';
+        elements.convertBtn.classList.remove('processing');
+        conversionPhase = 'idle';
+        conversionInProgress = false;
+        
+        // Remove audio player with visualization if it exists
+        const audioPlayerContainer = document.querySelector('.audio-player-container');
+        if (audioPlayerContainer) {
+            audioPlayerContainer.remove();
+        }
+        
+        if (progressTimer) {
+            clearInterval(progressTimer);
+            progressTimer = null;
+        }
+        
+        logDebug('Converter reset to initial state');
+    }
+
+    // Update progress animation with more detailed stages (combined from both files)
     function startProgressAnimation() {
         let progress = 0;
         let currentStageIndex = 0;
@@ -2251,6 +2312,11 @@
                 elements.progressBarInner.style.width = `${progress}%`;
                 elements.progressPercentage.textContent = `${Math.round(progress)}%`;
                 
+                // Update elapsed time if the element exists
+                if (elements.progressTime) {
+                    updateElapsedTime();
+                }
+                
                 // Add pulsing animation for visual feedback
                 if (progress % 10 < 0.5) {
                     elements.progressBarInner.classList.add('pulse');
@@ -2262,7 +2328,18 @@
         }, 350);
     }
     
-    // Typing animation for progress subtext
+    // Update elapsed time (from second file)
+    function updateElapsedTime() {
+        if (!conversionStartTime || !elements.progressTime) return;
+        
+        const elapsedSeconds = Math.floor((Date.now() - conversionStartTime) / 1000);
+        const minutes = Math.floor(elapsedSeconds / 60);
+        const seconds = elapsedSeconds % 60;
+        
+        elements.progressTime.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    
+    // Typing animation for progress subtext (from first file)
     function updateProgressSubtext(text) {
         if (!elements.progressText) return;
         
@@ -2305,7 +2382,7 @@
         return null;
     }
 
-    // Handle specific error types
+    // Handle specific error types (enhanced from second file)
     function handleError(error, response) {
         let errorMessage = 'Failed to convert TikTok to MP3. Please try again.';
         
@@ -2337,257 +2414,264 @@
         return errorMessage;
     }
 
-    // Scroll to element function with smooth animation
-    function scrollToElement(element) {
-        if (!element) return;
-        
-        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-        const offset = 80; // Offset for fixed headers
-        
-        window.scrollTo({
-            top: elementPosition - offset,
-            behavior: 'smooth'
-        });
-    }
-
-    // Display completion and download section
-    function displayCompletionUI(data) {
-        // Complete progress
-        elements.progressBarInner.style.width = '100%';
-        elements.progressPercentage.textContent = '100%';
-        elements.progressStatus.textContent = 'Conversion complete!';
-        elements.progressText.textContent = 'Your MP3 is ready';
-        
-        // Add completion animation
-        elements.progressBarInner.classList.add('complete');
-        
-        // Show metadata in download section
-        elements.audioTitleEl.querySelector('span').textContent = data.title || 'Unknown';
-        elements.audioAuthorEl.querySelector('span').textContent = data.author || 'Unknown';
-        elements.audioDurationEl.querySelector('span').textContent = formatDuration(data.duration) || 'Unknown';
-        
-        // Set up download link
-        if (data.mp3_url) {
-            // For JSON API response with URL
-            const baseUrl = API_URL.split('/api/')[0];
-            const audioUrl = data.mp3_url.startsWith('http') ? data.mp3_url : baseUrl + data.mp3_url;
-            elements.downloadLink.href = audioUrl;
+    // Show error message (from second file)
+    function showError(message) {
+        if (elements.errorContainer) {
+            elements.errorContainer.style.display = 'block';
+            elements.errorMessage.textContent = message;
+            elements.progressContainer.classList.remove('visible');
+            logDebug(`Error shown to user: ${message}`);
+            showToast('Error', message, 'error');
+            
+            // Scroll to error container
+            smoothScrollTo(elements.errorContainer);
         } else {
-            // For direct binary response, URL is already set
-            // Nothing to do here as the URL is already set in the conversion function
-        }
-        
-        // Set a meaningful filename
-        const sanitizedTitle = (data.title || 'tiktok').replace(/[<>:"/\\|?*]/g, '_');
-        const sanitizedAuthor = (data.author || 'unknown').replace(/[<>:"/\\|?*]/g, '_');
-        elements.downloadLink.download = `${sanitizedAuthor} - ${sanitizedTitle}.mp3`;
-        
-        // Set up audio player
-        if (!elements.audioElement.src) {
-            elements.audioElement.src = elements.downloadLink.href;
-        }
-        elements.audioElement.volume = 0.7; // Set default volume
-        elements.volumeControl.value = 70;
-        elements.currentTimeEl.textContent = '0:00';
-        elements.durationEl.textContent = formatDuration(data.duration);
-        
-        // Show download section and audio player
-        elements.downloadSection.classList.add('visible');
-        elements.audioPlayer.classList.add('visible');
-        
-        // Auto-play audio
-        elements.audioElement.play().then(() => {
-            elements.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        }).catch(error => {
-            console.log('Auto-play prevented by browser:', error);
-            elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-        });
-        
-        // Scroll to download section
-        setTimeout(() => {
-            scrollToElement(elements.downloadSection);
-        }, 500);
-    }
-
-    // Main conversion function
-    async function convertTikTokToMp3() {
-        const url = elements.urlInput.value.trim();
-        
-        // Reset UI
-        resetUI();
-        
-        // Validate URL
-        if (!url) {
-            showToast('Please enter a TikTok URL', 'error');
-            return;
-        }
-        
-        if (!isValidTikTokUrl(url)) {
-            showToast('Please enter a valid TikTok URL', 'error');
-            return;
-        }
-        
-        // Show progress
-        elements.progressContainer.classList.add('visible');
-        elements.progressStatus.textContent = 'Initializing...';
-        elements.progressText.textContent = 'Getting ready';
-        elements.progressPercentage.textContent = '0%';
-        elements.progressBarInner.style.width = '0%';
-        elements.convertBtn.disabled = true;
-        
-        // Scroll to progress
-        scrollToElement(elements.progressContainer);
-        
-        // Start progress animation
-        const progressInterval = startProgressAnimation();
-        
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
-            
-            // Make API request
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ url }),
-                signal: controller.signal
-            }).catch(error => {
-                if (error.name === 'AbortError') {
-                    throw new Error('Request timed out. The server might be busy or the video might be too long.');
-                }
-                throw error;
-            });
-            
-            clearTimeout(timeoutId);
-            
-            if (!response.ok) {
-                // Try to get error as JSON first
-                let errorMessage;
-                const contentType = response.headers.get('Content-Type') || '';
-                
-                if (contentType.includes('application/json')) {
-                    const errorData = await response.json();
-                    errorMessage = errorData.error || `Server responded with ${response.status}`;
-                } else {
-                    errorMessage = await response.text() || `Server responded with ${response.status}`;
-                }
-                throw new Error(errorMessage);
-            }
-            
-            // Check if response is JSON or binary (MP3)
-            const contentType = response.headers.get('Content-Type') || '';
-            
-            if (contentType.includes('audio/mpeg')) {
-                // Handle direct MP3 file response
-                const blob = await response.blob();
-                const fileName = getFilenameFromResponse(response) || 'tiktok_audio.mp3';
-                
-                // Get video ID from filename if possible
-                let videoId = 'unknown';
-                const videoIdMatch = fileName.match(/tiktok_(\d+)\.mp3/);
-                if (videoIdMatch) {
-                    videoId = videoIdMatch[1];
-                }
-                
-                // Create object URL for the blob
-                const audioUrl = URL.createObjectURL(blob);
-                
-                // Set up download link
-                elements.downloadLink.href = audioUrl;
-                elements.downloadLink.download = fileName;
-                
-                // Set up audio player
-                elements.audioElement.src = audioUrl;
-                
-                // Create a cleaner title from the filename
-                const title = fileName
-                    .replace(/^tiktok_/, '')
-                    .replace(/\.mp3$/, '')
-                    .replace(/_/g, ' ');
-                
-                // Create mock data for the UI
-                const mockData = {
-                    title: title,
-                    author: 'TikTok Creator',
-                    duration: 0 // Will be updated when audio is loaded
-                };
-                
-                // Update duration when audio metadata is loaded
-                elements.audioElement.onloadedmetadata = function() {
-                    mockData.duration = elements.audioElement.duration;
-                    elements.durationEl.textContent = formatDuration(elements.audioElement.duration);
-                    elements.audioDurationEl.querySelector('span').textContent = formatDuration(elements.audioElement.duration);
-                };
-                
-                // Complete progress animation
-                clearInterval(progressInterval);
-                
-                // Show download section
-                displayCompletionUI(mockData);
-                
-                showToast('Conversion successful! Your download is ready.', 'success');
-            } else {
-                // Handle JSON response (for backward compatibility)
-                try {
-                    const data = await response.json();
-                    
-                    if (!data.success && !data.mp3_url) {
-                        throw new Error(data.error || 'Failed to convert TikTok to MP3');
-                    }
-                    
-                    // Complete progress animation
-                    clearInterval(progressInterval);
-                    
-                    // Show download section
-                    displayCompletionUI(data);
-                    
-                    showToast('Conversion successful! Your download is ready.', 'success');
-                } catch (jsonError) {
-                    console.error('Error parsing JSON response:', jsonError);
-                    throw new Error('Invalid response format from server');
-                }
-            }
-            
-        } catch (error) {
-            console.error('Conversion failed:', error);
-            
-            // Clear progress animation
-            clearInterval(progressInterval);
-            
-            // Handle specific error types
-            const errorMessage = handleError(error, error.response);
-            
-            // Display error status
-            elements.statusDiv.textContent = `Error: ${errorMessage}`;
+            // Fallback to status div if no error container
+            elements.statusDiv.textContent = `Error: ${message}`;
             elements.statusDiv.className = 'status error';
             elements.statusDiv.style.display = 'block';
             elements.progressContainer.classList.remove('visible');
             
-            showToast(errorMessage, 'error');
-        } finally {
-            elements.convertBtn.disabled = false;
+            showToast('Error', message, 'error');
         }
     }
 
-    // Auto-detect TikTok links in clipboard when page loads
-    async function detectClipboardUrl() {
-        try {
-            // Check if clipboard API is available
-            if (navigator.clipboard && navigator.clipboard.readText) {
-                const clipboardText = await navigator.clipboard.readText();
-                if (isValidTikTokUrl(clipboardText) && elements.urlInput.value === '') {
-                    elements.urlInput.value = clipboardText;
-                    showToast('TikTok URL detected in clipboard', 'info');
-                }
-            }
-        } catch (err) {
-            // Silently ignore clipboard errors on load
-            console.log('Clipboard access denied or not available');
+    // Hide error message
+    function hideError() {
+        if (elements.errorContainer) {
+            elements.errorContainer.style.display = 'none';
+        }
+        if (elements.statusDiv) {
+            elements.statusDiv.style.display = 'none';
         }
     }
-});
+
+    // Log debug information (from second file)
+    function logDebug(message) {
+        const timestamp = new Date().toLocaleTimeString();
+        const logMessage = `[${timestamp}] ${message}`;
+        console.log(logMessage);
+        
+        // For development troubleshooting
+        const debugInfo = document.getElementById('debugInfo');
+        if (debugInfo && debugInfo.style.display === 'block') {
+            debugInfo.innerHTML += logMessage + '<br>';
+        }
+    }
+
+    // Create enhanced audio player with visualization (from second file)
+    function createAudioPlayer() {
+        const audioPlayerHTML = `
+            <div class="audio-player-container">
+                <div class="audio-player">
+                    <div class="player-visualization">
+                        <div class="visualization-bars">
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                            <div class="bar"></div>
+                        </div>
+                    </div>
+                    <div class="player-controls">
+                        <button class="play-pause" id="play-pause-btn">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <div class="timeline-container">
+                            <div class="timeline" id="seek-slider">
+                                <div class="progress"></div>
+                            </div>
+                            <div class="time">
+                                <span class="current" id="current-time">0:00</span>
+                                <span class="duration" id="duration-time">0:00</span>
+                            </div>
+                        </div>
+                        <div class="volume-container">
+                            <button class="volume-btn" id="volume-btn">
+                                <i class="fas fa-volume-up"></i>
+                            </button>
+                            <div class="volume-slider" id="volume-control">
+                                <div class="volume-progress"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <audio id="audio-element"></audio>
+                </div>
+            </div>
+        `;
+        
+        return audioPlayerHTML;
+    }
+
+    // Initialize audio player with visualization (from second file)
+    function initAudioPlayer() {
+        const audioElement = document.getElementById('audio-element');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const timeline = document.getElementById('seek-slider');
+        const progress = document.querySelector('.progress');
+        const currentTime = document.getElementById('current-time');
+        const duration = document.getElementById('duration-time');
+        const volumeBtn = document.getElementById('volume-btn');
+        const volumeSlider = document.getElementById('volume-control');
+        const volumeProgress = document.querySelector('.volume-progress');
+        const visualizationBars = document.querySelectorAll('.bar');
+        
+        let isPlaying = false;
+        let animationFrameId;
+        
+        // Set audio source
+        if (convertedFileName) {
+            // If we have a direct URL to the MP3
+            audioElement.src = elements.downloadLink.href;
+        }
+        
+        // Auto play when loaded
+        audioElement.addEventListener('canplaythrough', () => {
+            // Update duration display
+            const audioDuration = formatTime(audioElement.duration);
+            duration.textContent = audioDuration;
+            
+            // Start playing automatically if permitted by browser
+            audioElement.play().then(() => {
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                isPlaying = true;
+                animateVisualizationBars();
+            }).catch(error => {
+                // Auto-play prevented by browser
+                console.log('Auto-play prevented by browser:', error);
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                isPlaying = false;
+            });
+        });
+        
+        // Play/Pause toggle
+        playPauseBtn.addEventListener('click', () => {
+            if (isPlaying) {
+                audioElement.pause();
+                playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+                isPlaying = false;
+                
+                // Stop visualization animation
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                }
+            } else {
+                audioElement.play();
+                playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                isPlaying = true;
+                
+                // Start visualization animation
+                animateVisualizationBars();
+            }
+        });
+        
+        // Timeline click
+        timeline.addEventListener('click', (e) => {
+            const timelineWidth = timeline.clientWidth;
+            const clickPosition = e.offsetX;
+            const clickPercentage = clickPosition / timelineWidth;
+            const seekTime = clickPercentage * audioElement.duration;
+            
+            audioElement.currentTime = seekTime;
+        });
+        
+        // Volume button click
+        volumeBtn.addEventListener('click', () => {
+            if (audioElement.muted) {
+                audioElement.muted = false;
+                volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                volumeProgress.style.width = (audioElement.volume * 100) + '%';
+            } else {
+                audioElement.muted = true;
+                volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                volumeProgress.style.width = '0%';
+            }
+        });
+        
+        // Volume slider click
+        volumeSlider.addEventListener('click', (e) => {
+            const sliderWidth = volumeSlider.clientWidth;
+            const clickPosition = e.offsetX;
+            const newVolume = clickPosition / sliderWidth;
+            
+            audioElement.volume = newVolume;
+            volumeProgress.style.width = (newVolume * 100) + '%';
+            
+            // Update volume icon
+            updateVolumeIcon(newVolume);
+        });
+        
+        // Update time and progress
+        audioElement.addEventListener('timeupdate', () => {
+            const currentTimeValue = audioElement.currentTime;
+            const durationValue = audioElement.duration;
+            
+            // Update current time display
+            currentTime.textContent = formatTime(currentTimeValue);
+            
+            // Update progress bar
+            const progressPercentage = (currentTimeValue / durationValue) * 100;
+            progress.style.width = progressPercentage + '%';
+        });
+        
+        // When audio ends
+        audioElement.addEventListener('ended', () => {
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            isPlaying = false;
+            audioElement.currentTime = 0;
+            
+            // Stop visualization animation
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            
+            // Reset bars
+            visualizationBars.forEach(bar => {
+                bar.style.height = '5px';
+            });
+        });
+        
+        // Format time function (converts seconds to MM:SS format)
+        function formatTime(seconds) {
+            if (isNaN(seconds)) return "0:00";
+            
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = Math.floor(seconds % 60);
+            
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Update volume icon based on volume level
+        function updateVolumeIcon(volume) {
+            if (volume === 0 || audioElement.muted) {
+                volumeBtn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+            } else if (volume < 0.5) {
+                volumeBtn.innerHTML = '<i class="fas fa-volume-down"></i>';
+            } else {
+                volumeBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+            }
+        }
+        
+        // Animation for visualization bars
+        function animateVisualizationBars() {
+            if (!isPlaying) {
+                // Reset bars when not playing
+                visualizationBars.forEach(bar => {
+                    bar.style.height = '5px';
+                });
+                return;
+            }
+            
+            visualizationBars.forEach(bar => {
+                // Create random heights for the bars when audio is playing
+                const height = isPlaying ? 5 + Math.random() * 35 : 5;
+                bar.style.height = `${height}px`;
+            });
 </script>
 </body>
 </html>
