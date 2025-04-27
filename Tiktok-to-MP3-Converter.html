@@ -1900,9 +1900,7 @@
         progressText: document.getElementById('progress-text'),
         downloadSection: document.getElementById('download-section'),
         downloadLink: document.getElementById('download-link'),
-        audioTitleEl: document.getElementById('audio-title'),
-        audioAuthorEl: document.getElementById('audio-author'),
-        audioDurationEl: document.getElementById('audio-duration'),
+        qualitySelector: document.getElementById('quality-selector'),
         darkModeToggle: document.getElementById('darkModeToggle'),
         body: document.body,
         mobileMenuToggle: document.getElementById('mobileMenuToggle'),
@@ -1920,21 +1918,65 @@
         currentTimeEl: document.getElementById('current-time'),
         durationEl: document.getElementById('duration-time'),
         volumeControl: document.getElementById('volume-control'),
-        volumeBtn: document.getElementById('volume-btn')
+        volumeBtn: document.getElementById('volume-btn'),
+        turnstileContainer: document.getElementById('cf-turnstile')
     };
 
     // Constants
     const API_URL = 'https://mainpy-v09m.onrender.com/api/convert';
     const TOAST_DURATION = 3000;
+    const TURNSTILE_SITE_KEY = '0x4AAAAAABHoxdccCZ_9Cezk';
+    
+    // Enhanced conversion stages with more engaging text and animations
     const CONVERSION_STAGES = [
-        { threshold: 5, message: 'Initializing download process...', subtext: 'Getting ready' },
-        { threshold: 15, message: 'Connecting to our servers...', subtext: 'Establishing secure connection' },
-        { threshold: 25, message: 'Fetching video information...', subtext: 'Retrieving metadata' },
-        { threshold: 40, message: 'Retrieving audio stream...', subtext: 'Finding the best quality' },
-        { threshold: 55, message: 'Extracting audio content...', subtext: 'Isolating the sound' },
-        { threshold: 70, message: 'Processing audio file...', subtext: 'Almost there' },
-        { threshold: 85, message: 'Optimizing audio quality...', subtext: 'Making it sound great' },
-        { threshold: 95, message: 'Preparing download...', subtext: 'Final touches' }
+        { 
+            threshold: 5, 
+            message: 'Initializing download process...', 
+            subtext: 'Setting up conversion pipeline',
+            icon: 'fa-rocket'
+        },
+        { 
+            threshold: 15, 
+            message: 'Establishing secure connection...', 
+            subtext: 'Creating encrypted channel to our servers',
+            icon: 'fa-shield-alt'
+        },
+        { 
+            threshold: 25, 
+            message: 'Analyzing TikTok video content...', 
+            subtext: 'Scanning audio and video layers',
+            icon: 'fa-search'
+        },
+        { 
+            threshold: 40, 
+            message: 'Extracting high-quality audio stream...', 
+            subtext: 'Separating audio from video components',
+            icon: 'fa-headphones'
+        },
+        { 
+            threshold: 55, 
+            message: 'Processing audio waveforms...', 
+            subtext: 'Applying your selected quality settings',
+            icon: 'fa-wave-square'
+        },
+        { 
+            threshold: 70, 
+            message: 'Optimizing sound profile...', 
+            subtext: 'Enhancing audio clarity and depth',
+            icon: 'fa-sliders-h'
+        },
+        { 
+            threshold: 85, 
+            message: 'Finalizing MP3 encoding...', 
+            subtext: 'Packaging audio for optimal compatibility',
+            icon: 'fa-file-audio'
+        },
+        { 
+            threshold: 95, 
+            message: 'Preparing your download...', 
+            subtext: 'Just a few more seconds',
+            icon: 'fa-check-circle'
+        }
     ];
 
     // Initialize dark mode
@@ -1948,6 +1990,9 @@
 
     // Initialize audio player
     initAudioPlayer();
+    
+    // Initialize Cloudflare Turnstile
+    initTurnstile();
 
     // Dark mode functionality
     function initDarkMode() {
@@ -1955,6 +2000,28 @@
         if (isDarkMode) {
             elements.body.setAttribute('data-theme', 'dark');
             elements.darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+    }
+
+    // Initialize Cloudflare Turnstile
+    function initTurnstile() {
+        if (!elements.turnstileContainer) return;
+        
+        if (window.turnstile) {
+            window.turnstile.render('#cf-turnstile', {
+                sitekey: TURNSTILE_SITE_KEY,
+                theme: elements.body.getAttribute('data-theme') === 'dark' ? 'dark' : 'light',
+                callback: function(token) {
+                    // Store token in a hidden input field
+                    const tokenInput = document.getElementById('cf-turnstile-response');
+                    if (tokenInput) {
+                        tokenInput.value = token;
+                    }
+                    
+                    // Enable convert button if previously disabled due to missing verification
+                    elements.convertBtn.disabled = false;
+                }
+            });
         }
     }
 
@@ -1983,6 +2050,34 @@
                 elements.convertBtn.click();
             }
         });
+        
+        // Quality selector animation
+        if (elements.qualitySelector) {
+            const qualityOptions = elements.qualitySelector.querySelectorAll('.quality-option');
+            qualityOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove selected class from all options
+                    qualityOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Store selected quality
+                    const qualityValue = this.getAttribute('data-quality');
+                    document.getElementById('selected-quality').value = qualityValue;
+                    
+                    // Add ripple effect
+                    const ripple = document.createElement('span');
+                    ripple.classList.add('ripple');
+                    this.appendChild(ripple);
+                    
+                    // Remove ripple after animation completes
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        }
     }
 
     // Initialize audio player
@@ -2100,6 +2195,12 @@
             elements.body.setAttribute('data-theme', 'dark');
             elements.darkModeToggle.innerHTML = '<i class="fas fa-sun"></i>';
             localStorage.setItem('darkMode', 'true');
+        }
+        
+        // Update Turnstile theme if exists
+        if (window.turnstile) {
+            window.turnstile.remove();
+            initTurnstile();
         }
     }
 
@@ -2225,7 +2326,7 @@
         }
     }
 
-    // Update progress animation with more detailed stages and subtext
+    // Update progress animation with more engaging stages and animations
     function startProgressAnimation() {
         let progress = 0;
         let currentStageIndex = 0;
@@ -2239,10 +2340,23 @@
                 // Check if we need to update the stage message
                 while (currentStageIndex < CONVERSION_STAGES.length && 
                       progress >= CONVERSION_STAGES[currentStageIndex].threshold) {
-                    elements.progressStatus.textContent = CONVERSION_STAGES[currentStageIndex].message;
+                    const stage = CONVERSION_STAGES[currentStageIndex];
+                    
+                    // Update message with fade effect
+                    elements.progressStatus.classList.add('fade-out');
+                    
+                    setTimeout(() => {
+                        elements.progressStatus.innerHTML = `<i class="fas ${stage.icon}"></i> ${stage.message}`;
+                        elements.progressStatus.classList.remove('fade-out');
+                        elements.progressStatus.classList.add('fade-in');
+                        
+                        setTimeout(() => {
+                            elements.progressStatus.classList.remove('fade-in');
+                        }, 300);
+                    }, 300);
                     
                     // Update subtext with typing animation
-                    updateProgressSubtext(CONVERSION_STAGES[currentStageIndex].subtext);
+                    updateProgressSubtext(stage.subtext);
                     
                     currentStageIndex++;
                 }
@@ -2355,16 +2469,11 @@
         // Complete progress
         elements.progressBarInner.style.width = '100%';
         elements.progressPercentage.textContent = '100%';
-        elements.progressStatus.textContent = 'Conversion complete!';
+        elements.progressStatus.innerHTML = '<i class="fas fa-check-circle"></i> Conversion complete!';
         elements.progressText.textContent = 'Your MP3 is ready';
         
         // Add completion animation
         elements.progressBarInner.classList.add('complete');
-        
-        // Show metadata in download section
-        elements.audioTitleEl.querySelector('span').textContent = data.title || 'Unknown';
-        elements.audioAuthorEl.querySelector('span').textContent = data.author || 'Unknown';
-        elements.audioDurationEl.querySelector('span').textContent = formatDuration(data.duration) || 'Unknown';
         
         // Set up download link
         if (data.mp3_url) {
@@ -2379,8 +2488,7 @@
         
         // Set a meaningful filename
         const sanitizedTitle = (data.title || 'tiktok').replace(/[<>:"/\\|?*]/g, '_');
-        const sanitizedAuthor = (data.author || 'unknown').replace(/[<>:"/\\|?*]/g, '_');
-        elements.downloadLink.download = `${sanitizedAuthor} - ${sanitizedTitle}.mp3`;
+        elements.downloadLink.download = `TikTok_Audio_${sanitizedTitle}.mp3`;
         
         // Set up audio player
         if (!elements.audioElement.src) {
@@ -2427,9 +2535,20 @@
             return;
         }
         
+        // Check if Turnstile is completed
+        const turnstileResponse = document.getElementById('cf-turnstile-response');
+        if (turnstileResponse && !turnstileResponse.value) {
+            showToast('Please complete the security verification', 'warning');
+            return;
+        }
+        
+        // Get selected quality
+        const qualitySelect = document.getElementById('selected-quality');
+        const selectedQuality = qualitySelect ? qualitySelect.value : 'high';
+        
         // Show progress
         elements.progressContainer.classList.add('visible');
-        elements.progressStatus.textContent = 'Initializing...';
+        elements.progressStatus.innerHTML = '<i class="fas fa-rocket"></i> Initializing...';
         elements.progressText.textContent = 'Getting ready';
         elements.progressPercentage.textContent = '0%';
         elements.progressBarInner.style.width = '0%';
@@ -2445,13 +2564,24 @@
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
             
+            // Prepare request data
+            const requestData = { 
+                url: url,
+                quality: selectedQuality
+            };
+            
+            // Add turnstile token if available
+            if (turnstileResponse && turnstileResponse.value) {
+                requestData.turnstile_token = turnstileResponse.value;
+            }
+            
             // Make API request
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ url }),
+                body: JSON.stringify(requestData),
                 signal: controller.signal
             }).catch(error => {
                 if (error.name === 'AbortError') {
@@ -2484,13 +2614,6 @@
                 const blob = await response.blob();
                 const fileName = getFilenameFromResponse(response) || 'tiktok_audio.mp3';
                 
-                // Get video ID from filename if possible
-                let videoId = 'unknown';
-                const videoIdMatch = fileName.match(/tiktok_(\d+)\.mp3/);
-                if (videoIdMatch) {
-                    videoId = videoIdMatch[1];
-                }
-                
                 // Create object URL for the blob
                 const audioUrl = URL.createObjectURL(blob);
                 
@@ -2510,7 +2633,6 @@
                 // Create mock data for the UI
                 const mockData = {
                     title: title,
-                    author: 'TikTok Creator',
                     duration: 0 // Will be updated when audio is loaded
                 };
                 
@@ -2518,7 +2640,6 @@
                 elements.audioElement.onloadedmetadata = function() {
                     mockData.duration = elements.audioElement.duration;
                     elements.durationEl.textContent = formatDuration(elements.audioElement.duration);
-                    elements.audioDurationEl.querySelector('span').textContent = formatDuration(elements.audioElement.duration);
                 };
                 
                 // Complete progress animation
@@ -2566,6 +2687,11 @@
             elements.progressContainer.classList.remove('visible');
             
             showToast(errorMessage, 'error');
+            
+            // Reset Turnstile if it exists
+            if (window.turnstile) {
+                window.turnstile.reset();
+            }
         } finally {
             elements.convertBtn.disabled = false;
         }
