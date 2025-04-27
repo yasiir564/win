@@ -1886,7 +1886,7 @@
 
 
     <script>
-     document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     // Cache DOM elements
     const elements = {
         urlInput: document.getElementById('tiktok-url'),
@@ -1927,71 +1927,45 @@
     const TOAST_DURATION = 3000;
     const TURNSTILE_SITE_KEY = '0x4AAAAAABHoxdccCZ_9Cezk';
     
-    // Enhanced conversion stages with more engaging text and animations
+    // Optimized conversion stages with meaningful messages
     const CONVERSION_STAGES = [
         { 
-            threshold: 5, 
+            threshold: 10, 
             message: 'Initializing download process...', 
-            subtext: 'Setting up conversion pipeline',
+            subtext: 'Preparing conversion environment',
             icon: 'fa-rocket'
-        },
-        { 
-            threshold: 15, 
-            message: 'Establishing secure connection...', 
-            subtext: 'Creating encrypted channel to our servers',
-            icon: 'fa-shield-alt'
         },
         { 
             threshold: 25, 
             message: 'Analyzing TikTok video content...', 
-            subtext: 'Scanning audio and video layers',
+            subtext: 'Extracting media information',
             icon: 'fa-search'
         },
         { 
-            threshold: 40, 
-            message: 'Extracting high-quality audio stream...', 
-            subtext: 'Separating audio from video components',
+            threshold: 45, 
+            message: 'Extracting audio stream...', 
+            subtext: 'Separating audio from video',
             icon: 'fa-headphones'
         },
         { 
-            threshold: 55, 
-            message: 'Processing audio waveforms...', 
-            subtext: 'Applying your selected quality settings',
-            icon: 'fa-wave-square'
-        },
-        { 
-            threshold: 70, 
-            message: 'Optimizing sound profile...', 
-            subtext: 'Enhancing audio clarity and depth',
+            threshold: 65, 
+            message: 'Processing audio...', 
+            subtext: 'Applying quality settings',
             icon: 'fa-sliders-h'
         },
         { 
             threshold: 85, 
-            message: 'Finalizing MP3 encoding...', 
-            subtext: 'Packaging audio for optimal compatibility',
+            message: 'Finalizing MP3 conversion...', 
+            subtext: 'Removing metadata and preparing download',
             icon: 'fa-file-audio'
-        },
-        { 
-            threshold: 95, 
-            message: 'Preparing your download...', 
-            subtext: 'Just a few more seconds',
-            icon: 'fa-check-circle'
         }
     ];
 
-    // Initialize dark mode
+    // Initialize features
     initDarkMode();
-    
-    // Initialize event listeners
     initEventListeners();
-    
-    // Check for TikTok URL in clipboard on load
     detectClipboardUrl();
-
-    // Initialize audio player
     initAudioPlayer();
-    
-    // Initialize Cloudflare Turnstile
     initTurnstile();
 
     // Dark mode functionality
@@ -2003,25 +1977,36 @@
         }
     }
 
-    // Initialize Cloudflare Turnstile
+    // Initialize Cloudflare Turnstile with proper error handling
     function initTurnstile() {
         if (!elements.turnstileContainer) return;
         
         if (window.turnstile) {
-            window.turnstile.render('#cf-turnstile', {
-                sitekey: TURNSTILE_SITE_KEY,
-                theme: elements.body.getAttribute('data-theme') === 'dark' ? 'dark' : 'light',
-                callback: function(token) {
-                    // Store token in a hidden input field
-                    const tokenInput = document.getElementById('cf-turnstile-response');
-                    if (tokenInput) {
-                        tokenInput.value = token;
+            try {
+                window.turnstile.render('#cf-turnstile', {
+                    sitekey: TURNSTILE_SITE_KEY,
+                    theme: elements.body.getAttribute('data-theme') === 'dark' ? 'dark' : 'light',
+                    callback: function(token) {
+                        const tokenInput = document.getElementById('cf-turnstile-response');
+                        if (tokenInput) {
+                            tokenInput.value = token;
+                        }
+                        elements.convertBtn.disabled = false;
+                    },
+                    'error-callback': function() {
+                        console.error('Turnstile encountered an error');
+                        showToast('Security verification failed. Please try again.', 'error');
+                    },
+                    'expired-callback': function() {
+                        window.turnstile.reset();
+                        showToast('Security verification expired. Please verify again.', 'warning');
                     }
-                    
-                    // Enable convert button if previously disabled due to missing verification
-                    elements.convertBtn.disabled = false;
-                }
-            });
+                });
+            } catch (error) {
+                console.error('Failed to initialize Turnstile:', error);
+            }
+        } else {
+            console.warn('Turnstile not available. Security verification might not work.');
         }
     }
 
@@ -2031,56 +2016,88 @@
         elements.darkModeToggle.addEventListener('click', toggleDarkMode);
 
         // Mobile menu
-        elements.mobileMenuToggle.addEventListener('click', openMobileMenu);
-        elements.mobileMenuClose.addEventListener('click', closeMobileMenu);
-        elements.overlay.addEventListener('click', closeMobileMenu);
+        if (elements.mobileMenuToggle) elements.mobileMenuToggle.addEventListener('click', openMobileMenu);
+        if (elements.mobileMenuClose) elements.mobileMenuClose.addEventListener('click', closeMobileMenu);
+        if (elements.overlay) elements.overlay.addEventListener('click', closeMobileMenu);
 
         // Toast
-        elements.toastClose.addEventListener('click', hideToast);
+        if (elements.toastClose) elements.toastClose.addEventListener('click', hideToast);
 
         // Paste button
-        elements.pasteBtn.addEventListener('click', pasteFromClipboard);
+        if (elements.pasteBtn) elements.pasteBtn.addEventListener('click', pasteFromClipboard);
 
         // Convert button
-        elements.convertBtn.addEventListener('click', convertTikTokToMp3);
+        if (elements.convertBtn) elements.convertBtn.addEventListener('click', convertTikTokToMp3);
 
         // Enter key to submit
-        elements.urlInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter' && !elements.convertBtn.disabled) {
-                elements.convertBtn.click();
-            }
-        });
+        if (elements.urlInput) {
+            elements.urlInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !elements.convertBtn.disabled) {
+                    elements.convertBtn.click();
+                }
+            });
+        }
         
         // Quality selector animation
         if (elements.qualitySelector) {
             const qualityOptions = elements.qualitySelector.querySelectorAll('.quality-option');
             qualityOptions.forEach(option => {
                 option.addEventListener('click', function() {
-                    // Remove selected class from all options
                     qualityOptions.forEach(opt => opt.classList.remove('selected'));
-                    
-                    // Add selected class to clicked option
                     this.classList.add('selected');
                     
-                    // Store selected quality
                     const qualityValue = this.getAttribute('data-quality');
                     document.getElementById('selected-quality').value = qualityValue;
                     
-                    // Add ripple effect
                     const ripple = document.createElement('span');
                     ripple.classList.add('ripple');
                     this.appendChild(ripple);
                     
-                    // Remove ripple after animation completes
                     setTimeout(() => {
                         ripple.remove();
                     }, 600);
                 });
             });
         }
+
+        // FAQ Accordion Functionality
+        const faqQuestions = document.querySelectorAll('.faq-question');
+        faqQuestions.forEach(question => {
+            question.addEventListener('click', () => {
+                question.classList.toggle('active');
+                
+                const answer = question.nextElementSibling;
+                if (answer.style.maxHeight) {
+                    answer.style.maxHeight = null;
+                } else {
+                    answer.style.maxHeight = answer.scrollHeight + 'px';
+                }
+                
+                const chevron = question.querySelector('.fa-chevron-down');
+                if (chevron) {
+                    chevron.classList.toggle('rotate');
+                }
+            });
+
+            // Add keyboard support
+            question.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    question.click();
+                }
+            });
+        });
+
+        // Sign In Button
+        const signInButton = document.querySelector('.btn-sign-in');
+        if (signInButton) {
+            signInButton.addEventListener('click', () => {
+                window.location.href = 'login.html';
+            });
+        }
     }
 
-    // Initialize audio player
+    // Initialize audio player with optimized event handling
     function initAudioPlayer() {
         if (!elements.audioElement) return;
         
@@ -2122,7 +2139,6 @@
             elements.audioElement.play();
             elements.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
             
-            // Add pulse animation to the play button
             elements.playPauseBtn.classList.add('pulse');
             setTimeout(() => {
                 elements.playPauseBtn.classList.remove('pulse');
@@ -2139,7 +2155,6 @@
         elements.seekSlider.value = currentTime;
         elements.currentTimeEl.textContent = formatTime(currentTime);
         
-        // Update seek slider background
         const percentage = (currentTime / elements.audioElement.duration) * 100;
         elements.seekSlider.style.background = `linear-gradient(to right, var(--tiktok-red) 0%, var(--tiktok-blue) ${percentage}%, #e5e5e5 ${percentage}%, #e5e5e5 100%)`;
     }
@@ -2197,55 +2212,13 @@
             localStorage.setItem('darkMode', 'true');
         }
         
-        // Update Turnstile theme if exists
+        // Update Turnstile theme
         if (window.turnstile) {
             window.turnstile.remove();
             initTurnstile();
         }
     }
-
-    // FAQ Accordion Functionality
-    const faqQuestions = document.querySelectorAll('.faq-question');
-    faqQuestions.forEach(question => {
-        question.addEventListener('click', () => {
-            // Toggle active class on clicked question
-            question.classList.toggle('active');
-            
-            // Get the answer element
-            const answer = question.nextElementSibling;
-            
-            // Toggle visibility of answer
-            if (answer.style.maxHeight) {
-                answer.style.maxHeight = null;
-            } else {
-                answer.style.maxHeight = answer.scrollHeight + 'px';
-            }
-            
-            // Rotate chevron icon
-            const chevron = question.querySelector('.fa-chevron-down');
-            if (chevron) {
-                chevron.classList.toggle('rotate');
-            }
-        });
-
-        // Add keyboard support (Enter and Space key)
-        question.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                question.click();
-            }
-        });
-    });
-
-    // Sign In Button Functionality
-    const signInButton = document.querySelector('.btn-sign-in');
-    if (signInButton) {
-        signInButton.addEventListener('click', () => {
-            // Redirect to login page
-            window.location.href = 'login.html';
-        });
-    }
-        
+    
     // Mobile menu functions
     function openMobileMenu() {
         elements.mobileMenu.classList.add('open');
@@ -2274,12 +2247,10 @@
         
         elements.toast.classList.add('show');
         
-        // Clear any existing timeout
         if (window.toastTimeout) {
             clearTimeout(window.toastTimeout);
         }
         
-        // Set new timeout
         window.toastTimeout = setTimeout(hideToast, TOAST_DURATION);
     }
 
@@ -2304,10 +2275,9 @@
         }
     }
 
-    // URL validation
+    // Enhanced URL validation with support for various TikTok URL formats
     function isValidTikTokUrl(url) {
-        // Enhanced regex to support more TikTok URL formats including the requested format
-        const regex = /^(https?:\/\/)?(www\.|vm\.)?(tiktok\.com)(\/(@[\w.-]+\/video\/\d+|\w+\/\w+\/\w+|v\/\w+|[A-Za-z0-9]+))/;
+        const regex = /^(https?:\/\/)?(www\.|vm\.|vt\.)?(tiktok\.com)(\/(@[\w.-]+\/video\/\d+|\w+\/\w+\/\w+|v\/\w+|[A-Za-z0-9]+))/;
         return regex.test(url);
     }
 
@@ -2326,14 +2296,14 @@
         }
     }
 
-    // Update progress animation with more engaging stages and animations
+    // Optimized progress animation
     function startProgressAnimation() {
         let progress = 0;
         let currentStageIndex = 0;
         
         return setInterval(() => {
             if (progress < 95) {
-                // Calculate a random increment between 0.5 and 2
+                // Calculate a realistic increment
                 const increment = 0.5 + Math.random() * 1.5;
                 progress += increment;
                 
@@ -2365,7 +2335,7 @@
                 elements.progressBarInner.style.width = `${progress}%`;
                 elements.progressPercentage.textContent = `${Math.round(progress)}%`;
                 
-                // Add pulsing animation for visual feedback
+                // Add occasional pulsing animation for visual feedback
                 if (progress % 10 < 0.5) {
                     elements.progressBarInner.classList.add('pulse');
                     setTimeout(() => {
@@ -2397,16 +2367,6 @@
         }, 50);
     }
 
-    // Format duration in seconds to MM:SS
-    function formatDuration(seconds) {
-        if (!seconds || isNaN(seconds)) return 'Unknown';
-        
-        seconds = Math.round(parseFloat(seconds));
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-    }
-
     // Helper function to extract filename from the Content-Disposition header
     function getFilenameFromResponse(response) {
         const contentDisposition = response.headers.get('Content-Disposition');
@@ -2423,27 +2383,21 @@
     function handleError(error, response) {
         let errorMessage = 'Failed to convert TikTok to MP3. Please try again.';
         
-        // Check if it's a network error
         if (!navigator.onLine) {
             errorMessage = 'No internet connection. Please check your network and try again.';
         }
-        // Check if it's a server error
         else if (response && response.status >= 500) {
             errorMessage = 'Server error. Our service is experiencing issues. Please try again later.';
         }
-        // Check if it's a rate limit error
         else if (response && response.status === 429) {
             errorMessage = 'Too many requests. Please wait a moment and try again.';
         }
-        // Check if TikTok video is not found or private
         else if (response && response.status === 404) {
             errorMessage = 'Video not found. The TikTok may be private or deleted.';
         }
-        // Check if it's a bad request
         else if (response && response.status === 400) {
             errorMessage = 'Invalid request. Please check the TikTok URL format.';
         }
-        // If we have an error message from the server, use it
         else if (error.message) {
             errorMessage = error.message;
         }
@@ -2464,8 +2418,8 @@
         });
     }
 
-    // Display completion and download section
-    function displayCompletionUI(data) {
+    // Display completion and download section with proper metadata handling
+    function displayCompletionUI(data, removeMetadata = true) {
         // Complete progress
         elements.progressBarInner.style.width = '100%';
         elements.progressPercentage.textContent = '100%';
@@ -2475,41 +2429,38 @@
         // Add completion animation
         elements.progressBarInner.classList.add('complete');
         
-        // Set up download link
-        if (data.mp3_url) {
-            // For JSON API response with URL
-            const baseUrl = API_URL.split('/api/')[0];
-            const audioUrl = data.mp3_url.startsWith('http') ? data.mp3_url : baseUrl + data.mp3_url;
-            elements.downloadLink.href = audioUrl;
-        } else {
-            // For direct binary response, URL is already set
-            // Nothing to do here as the URL is already set in the conversion function
-        }
+        // Generate a clean filename with no metadata
+        const cleanFilename = `TikTok_Audio_${Date.now()}.mp3`;
+        elements.downloadLink.download = cleanFilename;
         
-        // Set a meaningful filename
-        const sanitizedTitle = (data.title || 'tiktok').replace(/[<>:"/\\|?*]/g, '_');
-        elements.downloadLink.download = `TikTok_Audio_${sanitizedTitle}.mp3`;
-        
-        // Set up audio player
-        if (!elements.audioElement.src) {
+        // Set up audio player if we have a valid audio URL
+        if (elements.audioElement && elements.downloadLink.href) {
             elements.audioElement.src = elements.downloadLink.href;
+            elements.audioElement.volume = 0.7;
+            elements.volumeControl.value = 70;
+            elements.currentTimeEl.textContent = '0:00';
+            
+            // Set duration if available
+            if (data && data.duration) {
+                elements.durationEl.textContent = formatTime(data.duration);
+            } else {
+                elements.durationEl.textContent = '0:00';
+            }
         }
-        elements.audioElement.volume = 0.7; // Set default volume
-        elements.volumeControl.value = 70;
-        elements.currentTimeEl.textContent = '0:00';
-        elements.durationEl.textContent = formatDuration(data.duration);
         
         // Show download section and audio player
         elements.downloadSection.classList.add('visible');
         elements.audioPlayer.classList.add('visible');
         
-        // Auto-play audio
-        elements.audioElement.play().then(() => {
-            elements.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
-        }).catch(error => {
-            console.log('Auto-play prevented by browser:', error);
-            elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
-        });
+        // Try to auto-play audio with error handling
+        if (elements.audioElement) {
+            elements.audioElement.play().then(() => {
+                elements.playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+            }).catch(error => {
+                console.log('Auto-play prevented by browser:', error);
+                elements.playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+            });
+        }
         
         // Scroll to download section
         setTimeout(() => {
@@ -2517,7 +2468,7 @@
         }, 500);
     }
 
-    // Main conversion function
+    // Main conversion function with metadata removal
     async function convertTikTokToMp3() {
         const url = elements.urlInput.value.trim();
         
@@ -2537,8 +2488,13 @@
         
         // Check if Turnstile is completed
         const turnstileResponse = document.getElementById('cf-turnstile-response');
-        if (turnstileResponse && !turnstileResponse.value) {
+        if (elements.turnstileContainer && (!turnstileResponse || !turnstileResponse.value)) {
             showToast('Please complete the security verification', 'warning');
+            
+            // Reset Turnstile to prompt user
+            if (window.turnstile) {
+                window.turnstile.reset();
+            }
             return;
         }
         
@@ -2561,13 +2517,15 @@
         const progressInterval = startProgressAnimation();
         
         try {
+            // Set up request with timeout
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 120000); // 2 minute timeout
             
             // Prepare request data
             const requestData = { 
                 url: url,
-                quality: selectedQuality
+                quality: selectedQuality,
+                remove_metadata: true // Request server to strip metadata
             };
             
             // Add turnstile token if available
@@ -2612,7 +2570,9 @@
             if (contentType.includes('audio/mpeg')) {
                 // Handle direct MP3 file response
                 const blob = await response.blob();
-                const fileName = getFilenameFromResponse(response) || 'tiktok_audio.mp3';
+                
+                // Create a clean filename with timestamp for uniqueness
+                const fileName = `TikTok_Audio_${Date.now()}.mp3`;
                 
                 // Create object URL for the blob
                 const audioUrl = URL.createObjectURL(blob);
@@ -2624,29 +2584,22 @@
                 // Set up audio player
                 elements.audioElement.src = audioUrl;
                 
-                // Create a cleaner title from the filename
-                const title = fileName
-                    .replace(/^tiktok_/, '')
-                    .replace(/\.mp3$/, '')
-                    .replace(/_/g, ' ');
+                // Complete progress animation
+                clearInterval(progressInterval);
                 
-                // Create mock data for the UI
-                const mockData = {
-                    title: title,
+                // Simple metadata structure with minimal info
+                const audioData = {
                     duration: 0 // Will be updated when audio is loaded
                 };
                 
                 // Update duration when audio metadata is loaded
                 elements.audioElement.onloadedmetadata = function() {
-                    mockData.duration = elements.audioElement.duration;
-                    elements.durationEl.textContent = formatDuration(elements.audioElement.duration);
+                    audioData.duration = elements.audioElement.duration;
+                    elements.durationEl.textContent = formatTime(elements.audioElement.duration);
                 };
                 
-                // Complete progress animation
-                clearInterval(progressInterval);
-                
                 // Show download section
-                displayCompletionUI(mockData);
+                displayCompletionUI(audioData, true);
                 
                 showToast('Conversion successful! Your download is ready.', 'success');
             } else {
@@ -2658,11 +2611,18 @@
                         throw new Error(data.error || 'Failed to convert TikTok to MP3');
                     }
                     
+                    // Set up download link
+                    if (data.mp3_url) {
+                        const baseUrl = API_URL.split('/api/')[0];
+                        const audioUrl = data.mp3_url.startsWith('http') ? data.mp3_url : baseUrl + data.mp3_url;
+                        elements.downloadLink.href = audioUrl;
+                    }
+                    
                     // Complete progress animation
                     clearInterval(progressInterval);
                     
                     // Show download section
-                    displayCompletionUI(data);
+                    displayCompletionUI(data, true);
                     
                     showToast('Conversion successful! Your download is ready.', 'success');
                 } catch (jsonError) {
@@ -2700,7 +2660,6 @@
     // Auto-detect TikTok links in clipboard when page loads
     async function detectClipboardUrl() {
         try {
-            // Check if clipboard API is available
             if (navigator.clipboard && navigator.clipboard.readText) {
                 const clipboardText = await navigator.clipboard.readText();
                 if (isValidTikTokUrl(clipboardText) && elements.urlInput.value === '') {
