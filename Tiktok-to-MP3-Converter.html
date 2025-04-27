@@ -1672,27 +1672,45 @@
             <button id="tryAgainBtn" class="try-again-btn">Try Again</button>
         </div>
         
+        <!-- Updated Audio Player Container with Visualization -->
         <div id="audio-player-container" class="audio-player-container">
             <div class="audio-player">
-                <div class="audio-controls">
-                    <button id="play-pause-btn" class="player-btn play-pause">
-                        <i class="fas fa-play"></i>
-                    </button>
-                    
-                    <div class="time-slider">
-                        <span id="current-time" class="time">0:00</span>
-                        <input type="range" id="seek-slider" class="seek-slider" min="0" max="100" value="0" step="1">
-                        <span id="duration-time" class="time">0:00</span>
-                    </div>
-                    
-                    <div class="volume-controls">
-                        <button id="volume-btn" class="player-btn volume">
-                            <i class="fas fa-volume-up"></i>
-                        </button>
-                        <input type="range" id="volume-control" class="volume-slider" min="0" max="100" value="70" step="1">
+                <div class="player-visualization">
+                    <div class="visualization-bars">
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
+                        <div class="bar"></div>
                     </div>
                 </div>
-                
+                <div class="player-controls">
+                    <button class="play-pause" id="play-pause-btn">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <div class="timeline-container">
+                        <div class="timeline" id="seek-slider">
+                            <div class="progress"></div>
+                        </div>
+                        <div class="time">
+                            <span class="current" id="current-time">0:00</span>
+                            <span class="duration" id="duration-time">0:00</span>
+                        </div>
+                    </div>
+                    <div class="volume-container">
+                        <button class="volume-btn" id="volume-btn">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <div class="volume-slider" id="volume-control">
+                            <div class="volume-progress"></div>
+                        </div>
+                    </div>
+                </div>
                 <audio id="audio-element"></audio>
             </div>
         </div>
