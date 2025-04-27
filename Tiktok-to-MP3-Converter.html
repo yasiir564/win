@@ -1113,6 +1113,7 @@
 
 /* Audio Player Styles */
 .audio-player-container {
+    display: none;
     width: 100%;
     margin: 20px 0;
     padding: 10px;
@@ -1120,6 +1121,10 @@
     background: var(--card-bg);
     box-shadow: var(--card-shadow);
     transition: var(--transition);
+}
+
+.audio-player-container.visible {
+    display: block;
 }
 
 .audio-player-container:hover {
