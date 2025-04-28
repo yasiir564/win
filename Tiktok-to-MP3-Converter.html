@@ -1029,7 +1029,6 @@
     }
 }
 
-      /* Progress Bar Enhancement - Keeping as is */
 .progress-container {
     display: none;
     flex-direction: column;
@@ -1041,25 +1040,31 @@
     box-shadow: var(--card-shadow);
     border: 1px solid var(--card-border);
     transition: var(--transition);
+    position: relative;
 }
+
 .progress-container.visible {
     display: flex;
     animation: fadeIn 0.5s ease;
 }
+
 .progress-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
 }
+
 .progress-status {
     font-weight: 600;
     color: var(--text-primary);
 }
+
 .progress-percentage {
     font-weight: 700;
     color: var(--tiktok-red);
 }
+
 .progress-bar {
     width: 100%;
     height: 12px;
@@ -1067,48 +1072,120 @@
     border-radius: 10px;
     overflow: hidden;
     position: relative;
+    margin-bottom: 15px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
 .progress-bar-inner {
     height: 100%;
     width: 0;
     background: var(--tiktok-gradient);
     border-radius: 10px;
-    transition: width 0.3s ease;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
 }
+
 .progress-bar-inner::after {
     content: '';
     position: absolute;
     top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
     background: linear-gradient(
         90deg,
         rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.3) 50%,
         rgba(255, 255, 255, 0) 100%
     );
-    animation: shimmer 2s infinite;
+    animation: shimmer 1.5s infinite;
 }
-.progress-bar-inner.pulse {
-    animation: pulse 0.3s ease;
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 5px;
 }
-.progress-bar-inner.complete {
-    animation: complete 1s ease;
-}
+
 .progress-text {
     font-size: 14px;
-    margin-top: 10px;
     color: var(--tiktok-dark-gray);
-    opacity: 0.7;
+    font-weight: 500;
     min-height: 20px;
     position: relative;
 }
+
+.progress-time {
+    font-size: 14px;
+    color: var(--tiktok-dark-gray);
+    font-weight: 500;
+}
+
+.loader-container {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+}
+
+.spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--tiktok-light-gray);
+    border-top: 3px solid var(--tiktok-red);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.progress-bar-inner.pulse {
+    animation: pulse 0.3s ease;
+}
+
+.progress-bar-inner.complete {
+    animation: complete 1s ease;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+@keyframes complete {
+    0% { background: var(--tiktok-gradient); }
+    50% { background: #4CAF50; }
+    100% { background: var(--tiktok-gradient); }
+}
+
 .progress-text.typing::after {
     content: '|';
     animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
 /* Audio Player Styles */
@@ -1633,17 +1710,21 @@
         <button id="convert-btn">Convert to MP3</button>
         
         <div id="progress-container" class="progress-container">
-            <div class="progress-header">
-                <div id="progress-status" class="progress-status">Initializing...</div>
-                <div id="progress-percentage" class="progress-percentage">0%</div>
-            </div>
-            <div class="progress-bar">
-                <div id="progress-bar-inner" class="progress-bar-inner"></div>
-            </div>
-            <div id="progress-text" class="progress-text">Getting ready</div>
-            <!-- Added progress time element referenced in JS -->
-            <div id="progress-time" class="progress-time">00:00</div>
-        </div>
+    <div class="progress-header">
+        <div id="progress-status" class="progress-status">Initializing...</div>
+        <div id="progress-percentage" class="progress-percentage">0%</div>
+    </div>
+    <div class="progress-bar">
+        <div id="progress-bar-inner" class="progress-bar-inner"></div>
+    </div>
+    <div class="progress-info">
+        <div id="progress-text" class="progress-text">Getting ready</div>
+        <div id="progress-time" class="progress-time">00:00</div>
+    </div>
+    <div class="loader-container">
+        <div class="spinner"></div>
+    </div>
+</div>
         
         <div id="status" class="status"></div>
         
